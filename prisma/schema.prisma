@@ -1,0 +1,120 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Group {
+  id        Int      @id @default(autoincrement())
+  name      String   /// @encrypted
+  order     Int      @default(0)
+  isDivider Boolean  @default(false)
+  isPrivate Boolean  @default(false)
+  iconName  String?  /// @encrypted
+  iconColor String   @default("gray")
+  viewMode  String   @default("grid")
+  sortField String   @default("order") /// @encrypted  // "order" | "createdAt" | "updatedAt" | "dueAt"
+  sortDirection String @default("asc") /// @encrypted  // "asc" | "desc"
+  items     Item[]   
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([order])
+}
+
+model Item {
+  id            Int       @id @default(autoincrement())
+  name          String
+  description   String    @default("")
+  status        String    @default("gray")
+  iconName      String    @default("")
+  order         Int       @default(0)
+  useStatusColor Boolean  @default(true)
+  dueAt         DateTime?
+  groupId       Int?
+  group         Group?    @relation(fields: [groupId], references: [id])
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Settings {
+  id                Int      @id @default(1)
+  title             String   @default("Congeal")                     /// @encrypted: false
+  tagline           String   @default("Create balanced groups with ease") /// @encrypted: false
+  isDark            Boolean  @default(false)    @map("is_dark")      /// @encrypted: false
+  headerImage       String?                                          /// @encrypted: false
+  headerEnabled     Boolean  @default(true)    @map("header_enabled") /// @encrypted: false
+  all_view_mode       String   @default("grid")   @map("all_view_mode") /// @encrypted: false
+  ungrouped_view_mode String   @default("grid")   @map("ungrouped_view_mode") /// @encrypted: false
+  showPrivateGroups Boolean  @default(false)    @map("show_private_groups") /// @encrypted: false
+  version           String   @default("1.0.20")                        /// @encrypted: false
+  debugMode         Boolean  @default(false)    @map("debug_mode")   /// @encrypted: false
+  updatedAt         DateTime @updatedAt         @map("updated_at")   /// @encrypted: false
+  language          String   @default("en")
+  emailEnabled      Boolean @default(false)
+  google_enabled    Boolean   @default(false)
+  outlook_enabled   Boolean   @default(false)
+  all_sort_field      String   @default("order")
+  all_sort_direction  String   @default("asc")
+  ungrouped_sort_field      String   @default("order")
+  ungrouped_sort_direction  String   @default("asc")
+}
+
+model User {
+  id            Int      @id @default(autoincrement())
+  username      String   @unique
+  password      String   
+  isAdmin       Boolean  @default(true)
+  encryptionSalt String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Quote {
+  id        Int      @id @default(autoincrement())
+  quote     String   /// @encrypted
+  thinker   String   /// @encrypted
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Mailbox {
+  id        Int       @id @default(autoincrement())
+  name      String
+  iconName  String?
+  iconColor String?
+  email     String?
+  imapHost  String?
+  imapPort  Int?
+  username  String?
+  password  String?
+  useSSL    Boolean   @default(true)
+  useOAuth  Boolean   @default(false)
+  order     Int       @default(0)
+  messages  Message[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  subject   String
+  body      String
+  mailbox   Mailbox  @relation(fields: [mailboxId], references: [id])
+  mailboxId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Note {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  tags      String   // We'll store tags as comma-separated string
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+} 

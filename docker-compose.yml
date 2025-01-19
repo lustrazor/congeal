@@ -1,0 +1,13 @@
+services:
+  app:
+    build: .
+    container_name: congeal-app
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./prisma:/app/prisma
+      - ./snapshots:/app/snapshots
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=file:/app/prisma/dev.db
+    restart: unless-stopped
