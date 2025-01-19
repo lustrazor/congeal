@@ -1,25 +1,13 @@
-# congeal
-################################################
-################################################
-Congeal - A secure, encrypted organization tool 
-for managing groups and items with customizable views.
-################################################
-################################################
+# Congeal
 
-########################
+A secure, encrypted organization tool for managing groups and items with customizable views.
+
 ## First-Time Setup
-########################
 
-The first time the app loads in a browser, 
-you will be prompted to create an admin account. 
-There is also an option to seed the database  
-with some example data, which serves as a 
-guide to using the app.
+The first time the app loads in a browser, you will be prompted to create an admin account. There is also an option to seed the database with some example data, which serves as a guide to using the app.
 
 
-########################
 ## Starting the App
-########################
 
 ### Running with Docker Compose (Recommended)
 1. Clone the repository
@@ -42,9 +30,7 @@ docker run -p 3000:3000 congeal
 docker ps -a
 
 
-########################
 ## Docker Configuration
-########################
 
 The project includes Docker support with:
 - Dockerfile: Node.js 18 slim image with minimal dependencies
@@ -68,9 +54,8 @@ Docker-specific features:
 4. Or build and run production: `npm run build && npm start`
 
 
-########################
 ## Key Features
-########################
+
 
 ### Authentication Flow
 1. First-time setup shows an initialization modal
@@ -255,9 +240,8 @@ Docker-specific features:
   )
   ```
 
-########################
+
 ## First-Time Setup
-########################
 
 When first accessing the application:
 1. The initialization modal appears
@@ -268,130 +252,130 @@ When first accessing the application:
 6. Redirected to login page
 7. Login with created credentials
 
-########################
+
 ## Data Storage
-########################
-├── localStorage
-│   ├── selectedGroupId (string)
-│   │   ├── "all" (for Show All view)
-│   │   ├── "ungrouped" (for Ungrouped view)
-│   │   └── "{number}" (specific group ID)
-│   ├── settings
-│   │   ├── allViewMode ("grid" | "list" | "expanded")
-│   │   ├── ungroupedViewMode ("grid" | "list" | "expanded")
-│   │   └── showPrivateGroups (boolean)
-│   ├── quotesPageSortOrder ("newest" | "oldest" | "az")
-│   └── quotesPageSize (10 | 20 | 50 | 100)
-│
-########################
-├── SQLite Database
-│   ├── Groups
-│   │   ├── id (number, primary key)
-│   │   ├── name (string) /// @encrypted
-│   │   ├── order (number)
-│   │   ├── isDivider (boolean)
-│   │   ├── isPrivate (boolean)
-│   │   ├── iconName (string, optional) /// @encrypted
-│   │   ├── iconColor (string)
-│   │   ├── viewMode ("grid" | "list" | "expanded")
-│   │   ├── sortField ("order" | "createdAt" | "updatedAt" | "dueAt") /// @encrypted
-│   │   ├── sortDirection ("asc" | "desc") /// @encrypted
-│   │   ├── createdAt (Date)
-│   │   └── updatedAt (Date)
-│   │
-│   ├── Items
-│   │   ├── id (number, primary key)
-│   │   ├── name (string)
-│   │   ├── description (string, optional)
-│   │   ├── status ("gray" | "red" | "yellow" | "green" | "blue" | "purple")
-│   │   ├── iconName (string)
-│   │   ├── order (number)
-│   │   ├── useStatusColor (boolean)
-│   │   ├── dueAt (Date, optional)
-│   │   ├── groupId (number, foreign key, nullable)
-│   │   ├── createdAt (Date)
-│   │   └── updatedAt (Date)
-│   │
-│   ├── Notes
-│   │   ├── id (number, primary key)
-│   │   ├── title (string)
-│   │   ├── content (string)
-│   │   ├── tags (string) // Comma-separated tags
-│   │   ├── createdAt (Date)
-│   │   └── updatedAt (Date)
-│   │
-│   ├── Quotes
-│   │   ├── id (number, primary key)
-│   │   ├── quote (string) /// @encrypted
-│   │   ├── thinker (string) /// @encrypted
-│   │   ├── createdAt (Date)
-│   │   └── updatedAt (Date)
-│   │
-│   ├── Settings
-│   │   ├── id (number, primary key)
-│   │   ├── title (string)
-│   │   ├── tagline (string)
-│   │   ├── isDark (boolean)
-│   │   ├── headerImage (string, optional)
-│   │   ├── headerEnabled (boolean)
-│   │   ├── allViewMode ("grid" | "list" | "expanded")
-│   │   ├── ungroupedViewMode ("grid" | "list" | "expanded")
-│   │   ├── showPrivateGroups (boolean)
-│   │   ├── version (string)
-│   │   ├── debugMode (boolean)
-│   │   ├── language (string)
-│   │   ├── emailEnabled (boolean)
-│   │   ├── googleEnabled (boolean)
-│   │   ├── outlookEnabled (boolean)
-│   │   └── updatedAt (Date)
-│   │
-│   ├── Users
-│   │   ├── id (number, primary key)
-│   │   ├── username (string, unique)
-│   │   ├── password (string)
-│   │   ├── isAdmin (boolean)
-│   │   ├── encryptionSalt (string, optional)
-│   │   ├── createdAt (Date)
-│   │   └── updatedAt (Date)
-│   │
-│   ├── Mailboxes
-│   │   ├── id (number, primary key)
-│   │   ├── name (string)
-│   │   ├── iconName (string, optional)
-│   │   ├── iconColor (string, optional)
-│   │   ├── email (string, optional)
-│   │   ├── imapHost (string, optional)
-│   │   ├── imapPort (number, optional)
-│   │   ├── username (string, optional)
-│   │   ├── password (string, optional)
-│   │   ├── useSSL (boolean)
-│   │   ├── useOAuth (boolean)
-│   │   ├── order (number)
-│   │   ├── createdAt (Date)
-│   │   └── updatedAt (Date)
-│   │
-│   └── Messages
-│       ├── id (number, primary key)
-│       ├── subject (string)
-│       ├── body (string)
-│       ├── mailboxId (number, foreign key)
-│       ├── createdAt (Date)
-│       └── updatedAt (Date)
-########################
+
+### Local Storage
+
+- **selectedGroupId** (string)
+  - `"all"` (for Show All view)
+  - `"ungrouped"` (for Ungrouped view)
+  - `"{number}"` (specific group ID)
+- **settings**
+  - **allViewMode** (`"grid"` | `"list"` | `"expanded"`)
+  - **ungroupedViewMode** (`"grid"` | `"list"` | `"expanded"`)
+  - **showPrivateGroups** (boolean)
+- **quotesPageSortOrder** (`"newest"` | `"oldest"` | `"az"`)
+- **quotesPageSize** (`10` | `20` | `50` | `100`)
+
+---
+
+### SQLite Database
+
+#### Groups
+- **id** (number, primary key)
+- **name** (string) _@encrypted_
+- **order** (number)
+- **isDivider** (boolean)
+- **isPrivate** (boolean)
+- **iconName** (string, optional) _@encrypted_
+- **iconColor** (string)
+- **viewMode** (`"grid"` | `"list"` | `"expanded"`)
+- **sortField** (`"order"` | `"createdAt"` | `"updatedAt"` | `"dueAt"`) _@encrypted_
+- **sortDirection** (`"asc"` | `"desc"`) _@encrypted_
+- **createdAt** (Date)
+- **updatedAt** (Date)
+
+#### Items
+- **id** (number, primary key)
+- **name** (string)
+- **description** (string, optional)
+- **status** (`"gray"` | `"red"` | `"yellow"` | `"green"` | `"blue"` | `"purple"`)
+- **iconName** (string)
+- **order** (number)
+- **useStatusColor** (boolean)
+- **dueAt** (Date, optional)
+- **groupId** (number, foreign key, nullable)
+- **createdAt** (Date)
+- **updatedAt** (Date)
+
+#### Notes
+- **id** (number, primary key)
+- **title** (string)
+- **content** (string)
+- **tags** (string) _Comma-separated tags_
+- **createdAt** (Date)
+- **updatedAt** (Date)
+
+#### Quotes
+- **id** (number, primary key)
+- **quote** (string) _@encrypted_
+- **thinker** (string) _@encrypted_
+- **createdAt** (Date)
+- **updatedAt** (Date)
+
+#### Settings
+- **id** (number, primary key)
+- **title** (string)
+- **tagline** (string)
+- **isDark** (boolean)
+- **headerImage** (string, optional)
+- **headerEnabled** (boolean)
+- **allViewMode** (`"grid"` | `"list"` | `"expanded"`)
+- **ungroupedViewMode** (`"grid"` | `"list"` | `"expanded"`)
+- **showPrivateGroups** (boolean)
+- **version** (string)
+- **debugMode** (boolean)
+- **language** (string)
+- **emailEnabled** (boolean)
+- **googleEnabled** (boolean)
+- **outlookEnabled** (boolean)
+- **updatedAt** (Date)
+
+#### Users
+- **id** (number, primary key)
+- **username** (string, unique)
+- **password** (string)
+- **isAdmin** (boolean)
+- **encryptionSalt** (string, optional)
+- **createdAt** (Date)
+- **updatedAt** (Date)
+
+#### Mailboxes
+- **id** (number, primary key)
+- **name** (string)
+- **iconName** (string, optional)
+- **iconColor** (string, optional)
+- **email** (string, optional)
+- **imapHost** (string, optional)
+- **imapPort** (number, optional)
+- **username** (string, optional)
+- **password** (string, optional)
+- **useSSL** (boolean)
+- **useOAuth** (boolean)
+- **order** (number)
+- **createdAt** (Date)
+- **updatedAt** (Date)
+
+#### Messages
+- **id** (number, primary key)
+- **subject** (string)
+- **body** (string)
+- **mailboxId** (number, foreign key)
+- **createdAt** (Date)
+- **updatedAt** (Date)
 
 
-########################
+
 ## Contributing
-########################
 
 1. Create a feature branch
 2. Make changes
 3. Run tests: `npm test`
 4. Submit pull request
 
-########################
+
 ## Security Considerations
-########################
 
 - JWT tokens are HTTP-only cookies
 - Passwords are hashed with bcrypt
@@ -399,14 +383,10 @@ When first accessing the application:
 - API routes are protected by middleware
 - Password-based encryption key derivation
 
-########################
+
 ## License
-########################
 
-GPLv3 License - See LICENSE.txt file for details
+GPLv3 License - See LICENSE file for details
 
-########################
-## Support
-########################
 
 For issues and feature requests, please use the GitHub issue tracker.
