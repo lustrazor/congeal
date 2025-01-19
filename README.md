@@ -21,7 +21,7 @@ The app will be available at http://localhost:3000
 2. Build and start the container:
 ```bash
 # Build the Docker image
-docker build -t congeal-test .  
+docker build -t congeal .  
 
 # Start the container
 docker run -p 3000:3000 congeal
