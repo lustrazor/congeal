@@ -13,13 +13,15 @@ export async function GET() {
       where: { isAdmin: true }
     })
     
-    // Check settings
+    // Check settings and public access
     const settings = await prisma.settings.findFirst()
+    const isPublic = settings?.isPublic ?? false
 
     return NextResponse.json({ 
       isSetup: !!settings,
       hasUser: !!user,
-      isAuthenticated
+      isAuthenticated,
+      isPublic
     })
   } catch (error) {
     console.error('Setup check error:', error)
@@ -27,7 +29,8 @@ export async function GET() {
       error: 'Failed to check setup status',
       isSetup: false,
       hasUser: false,
-      isAuthenticated: false
+      isAuthenticated: false,
+      isPublic: false
     }, { 
       status: 500 
     })

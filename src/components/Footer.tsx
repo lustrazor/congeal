@@ -1,13 +1,17 @@
 'use client'
 import { useDebugStore } from '@/stores/debugStore'
 import { useState } from 'react'
+import { useSettings } from '@/hooks/useSettings'
+import { usePathname } from 'next/navigation'
 
 export default function Footer() {
   const debugStore = useDebugStore()
   const [isExpanded, setIsExpanded] = useState(false)
+  const { settings } = useSettings()
+  const pathname = usePathname()
 
-  // Early return if debug mode disabled
-  if (!debugStore.isEnabled) {
+  // Early return if debug mode disabled or on special pages
+  if (!debugStore.isEnabled || ['/denied', '/public', '/login', '/landing'].includes(pathname)) {
     return null
   }
 

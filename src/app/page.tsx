@@ -739,11 +739,12 @@ const getTimeStatus = (dueDate: Date) => {
 
         <main className="flex-1 overflow-auto bg-white dark:bg-gray-800">
           <div className="relative">
-            <div className="absolute inset-0 bg-[url('/images/dropshadow-light.png')] dark:bg-[url('/images/dropshadow-dark.png')] 
-              bg-top bg-repeat-x pointer-events-none" 
-            />
+            <div className="absolute inset-0 bg-top bg-repeat-x pointer-events-none
+            bg-[url('/images/dropshadow-light.png')] dark:bg-[url('/images/dropshadow-dark.png')] " />
             <div className="relative p-5">
               <div className="container mx-auto">
+
+
                 {/* Featured Quote */}
                 {featuredQuote && (
                   <div className="mb-8">
@@ -798,6 +799,7 @@ const getTimeStatus = (dueDate: Date) => {
                 <div className="mb-4 p-1 flex items-center justify-between gap-4 bg-gray-200/30 
                 dark:bg-gray-900/50 border border-gray-200/50 dark:border-gray-600/50 rounded-lg
                 max-h-[52px] overflow-y-none">
+                  
                   {/* Left side - View Mode Controls */}
                   <div className="flex items-center gap-1">
                     {/* View Mode Buttons */}
@@ -912,6 +914,9 @@ const getTimeStatus = (dueDate: Date) => {
                       <box-icon name="info-circle" size="20px" />
                     </button>
                     </div>
+
+
+
                   </div>
 
                   {/* Center - Status Filters */}

@@ -1,6 +1,6 @@
 import React from 'react'
 import './globals.css'
-import { Barlow, Figtree } from 'next/font/google'
+import { Barlow, Figtree, Inter } from 'next/font/google'
 import Footer from '@/components/Footer'
 import AuthWrapper from '@/components/AuthWrapper'
 import { Toaster } from 'react-hot-toast'
@@ -18,6 +18,13 @@ const figtree = Figtree({
   variable: '--font-figtree',
 })
 
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+  variable: '--font-inter',
+});
+
 export const metadata = {
   title: 'Congeal',
   description: 'Create balanced groups with ease',
@@ -30,7 +37,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${barlow.className} ${figtree.variable}`}>
+      <body className={`${barlow.className} ${barlow.variable}`}>
         <Providers>
           <AuthWrapper>
             {children}

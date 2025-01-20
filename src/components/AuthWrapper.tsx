@@ -1,6 +1,9 @@
 'use client'
 import { useEffect, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import FirstTimeSetup from './FirstTimeSetup'
+import LandingPage from '@/app/landing/page'
+import PublicPage from '@/app/public/page'
 import LoginPage from '@/app/login/page'
 
 export default function AuthWrapper({
@@ -11,6 +14,8 @@ export default function AuthWrapper({
   const [isLoading, setIsLoading] = useState(true)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [needsSetup, setNeedsSetup] = useState(false)
+  const [isPublic, setIsPublic] = useState(false)
+  const pathname = usePathname()
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -25,11 +30,8 @@ export default function AuthWrapper({
           return
         }
 
-        // Then check if user is authenticated
-        const authResponse = await fetch('/api/auth/session')
-        const authData = await authResponse.json()
-        
-        setIsAuthenticated(authData.isAuthenticated)
+        setIsAuthenticated(setupData.isAuthenticated)
+        setIsPublic(setupData.isPublic)
       } catch (error) {
         console.error('Auth check failed:', error)
       } finally {
@@ -46,10 +48,32 @@ export default function AuthWrapper({
     return <FirstTimeSetup />
   }
 
+  // If not authenticated...
   if (!isAuthenticated) {
-    return <LoginPage />
+    // Show denied page if public access is enabled and we're on the denied page
+    if (isPublic && pathname === '/denied') {
+      return children
+    }
+    
+    if (isPublic && pathname === '/login') {
+      return <LoginPage />
+    }
+
+    if (!isPublic && pathname === '/login') {
+      return <LoginPage />
+    }
+
+
+    // Show public version if public access is enabled and we're on the main page
+    if (isPublic && pathname === '/') {
+      return <PublicPage />
+    }
+    
+    // Otherwise show landing page
+    return <LandingPage />
   }
 
+  // Authenticated users see the normal app
   return (
     <div className="min-h-screen flex flex-col">
       {children}

@@ -978,6 +978,33 @@ export default function SettingsPage() {
                       </div>
                   </div>
 
+                 {/* Public Access Toggle */}
+                 <div className="border dark:border-gray-700 rounded-lg overflow-hidden mt-8">
+                    <div className="bg-gray-50 dark:bg-gray-800/50 px-4 py-3">
+                      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                        {t('publicAccess')}
+                      </h3>
+                    </div>
+                    <div className="p-4 space-y-4 bg-white dark:bg-gray-800">
+                      <div className="flex items-center gap-3">
+                        <Toggle
+                          enabled={settings?.isPublic ?? false}
+                          onChange={(enabled) => handleSettingChange('isPublic', enabled)}
+                          label={t('isPublic')} 
+                        />                        
+                        <div>
+                          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                            {t('allowPublicViewing')}
+                          </label>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            {t('publicViewingDescription')}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+
                   <div className="border-t border-gray-200 dark:border-gray-700 pt-0 mt-4"></div>
                   <div className="mt-8 space-y-6">
                     {/* Email Integration Toggle */}
@@ -998,8 +1025,7 @@ export default function SettingsPage() {
                           border-2 border-transparent transition-colors duration-200 ease-in-out 
                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
                           ${settings?.emailEnabled ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-700'}
-                        `}
-                      >
+                        `} >
                         <span
                           className={`
                             pointer-events-none inline-block h-5 w-5 transform rounded-full 
@@ -1088,8 +1114,7 @@ export default function SettingsPage() {
                       <Toggle
                         enabled={debugStore.isEnabled}
                         onChange={handleDebugToggle}
-                        label={t('debugMode')}
-                      />
+                        label={t('debugMode')} />
                     </div>
 
                     {/* Private Groups Toggle */}

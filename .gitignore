@@ -24,6 +24,7 @@ node_modules/
 
 # Prisma client
 prisma/client/
+prisma/migrations/
 
 # IDE/editor settings
 .vscode/

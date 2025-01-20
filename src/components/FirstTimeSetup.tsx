@@ -62,7 +62,7 @@ export default function FirstTimeSetup() {
         window.location.href = '/'
       } else {
         // If auto-login fails, redirect to login page
-        window.location.href = '/login?message=Setup completed successfully'
+        window.location.href = '/login'
       }
     } catch (error) {
       setError(error.message || 'Failed to create admin account')

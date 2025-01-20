@@ -106,7 +106,7 @@ export const translations = {
     debugMode: 'Debug Mode',
     debugModeHint: 'Enable detailed logging and debugging features',
     showPrivateGroups: 'Show Private Groups',
-    privateGroupsHint: 'Enable viewing of private group content',
+    privateGroupsHint: 'Enable viewing of private group content (not for public access)',
     changePasswordFor: 'Change Password for',
     currentPassword: 'Current Password',
     newPassword: 'New Password',
@@ -291,6 +291,16 @@ export const translations = {
     setupConfirmPassword: "Confirm Password",
     setupButton: "Create Admin Account",
     setupProcessing: "Setting Up...",
+    
+    // Public Access
+    publicAccess: 'Public Access',
+    isPublic: 'Public Access',
+    allowPublicViewing: 'Allow Public Viewing',
+    publicViewingDescription: 'When enabled, your homepage will be publicly viewable. This is useful for sharing your homepage with others. Private groups are not visible to the public.',
+    accessDenied: 'Access Denied',
+    noAccess: 'Content not available',
+    loading: 'Loading',
+    backToHome: 'Back to Home',
   },
   ja: {
     // General
@@ -584,6 +594,16 @@ export const translations = {
     setupConfirmPassword: "Confirm Password",
     setupButton: "Create Admin Account",
     setupProcessing: "Setting Up...",
+    
+    // Public Access
+    publicAccess: 'パブリックアクセス',
+    isPublic: 'パブリックアクセス',
+    allowPublicViewing: 'パブリック表示を許可',
+    publicViewingDescription: '有効にすると、ログインせずに閲覧できるようになります。変更はできません。',
+    accessDenied: 'アクセス拒否',
+    noAccess: 'コンテンツは利用できません',
+    loading: '読み込み中',
+    backToHome: 'ホームに戻る',
   }
 } as const
 
