@@ -110,7 +110,7 @@ Docker-specific features:
 - Language selection (English/Japanese)
 - Email integration toggle (alpha)
 
-### Email Integration (Alpha)
+### Email Integration (Pre-Alpha)
 - Optional IMAP email client integration
 - Current features:
   - Connect to IMAP servers
@@ -126,7 +126,7 @@ Docker-specific features:
   - Microsoft OAuth 2.0 integration
   - Message composition
   - Attachment handling
-- Note: This feature is in alpha and can be enabled in Settings
+- Note: This feature is commented out in /src/app/settings/page.tsx
 
 ### Developer Tools
 - Debug mode for monitoring operations
@@ -366,6 +366,50 @@ When first accessing the application:
 - **createdAt** (Date)
 - **updatedAt** (Date)
 
+
+## Environment Variable Requirements for Lost Password Recovery
+
+To enable password reset functionality via email, configure these environment variables:
+
+| Variable             | Description                                   | Example Value            |
+|---------------------|-----------------------------------------------|-------------------------|
+| `POSTFIX_SERVER`    | SMTP server hostname                          | `mail.example.com`      |
+| `POSTFIX_PORT`      | SMTP server port                             | `587`                   |
+| `POSTFIX_ACCOUNT`   | SMTP authentication username/email            | `user@example.com`      |
+| `POSTFIX_PASSWORD`  | SMTP authentication password                  | `your-smtp-password`    |
+| `MAIL_FROM_ADDRESS` | Email address used as sender                  | `no-reply@example.com`  |
+| `MAIL_REPLY_TO`     | Reply-to email address (optional)            | `support@example.com`   |
+
+### Notes:
+
+1. **Email Configuration**
+   - All variables except MAIL_REPLY_TO are required for email functionality
+   - If not configured, password reset feature will be disabled
+   - SMTP server must support TLS encryption
+
+2. **Docker Deployment**
+   - Set variables in your `.env` file for local development
+   - Configure through your deployment platform (e.g., Coolify) for production
+   - Port 25 must be exposed for Postfix to function
+
+3. **Security**
+   - Use app-specific passwords for Gmail and other providers that support it
+   - Store credentials securely in production environment
+   - Never commit real credentials to version control
+
+Example `.env` file:
+```env
+# Email Configuration
+POSTFIX_SERVER=mail.example.com
+POSTFIX_PORT=587
+POSTFIX_ACCOUNT=user@example.com
+POSTFIX_PASSWORD=your-smtp-password
+MAIL_FROM_ADDRESS=no-reply@example.com
+MAIL_REPLY_TO=support@example.com
+
+# App Configuration
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+```
 
 
 ## Contributing

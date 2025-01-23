@@ -38,6 +38,18 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${barlow.className} ${barlow.variable}`}>
+        <noscript>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-90">
+            <div className="max-w-md p-6 bg-white dark:bg-gray-800 rounded-lg shadow-xl text-center">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+                JavaScript Required
+              </h2>
+              <p className="text-gray-600 dark:text-gray-300">
+                Please enable JavaScript in your browser settings or disable JavaScript blocking extensions to view this page.
+              </p>
+            </div>
+          </div>
+        </noscript>
         <Providers>
           <AuthWrapper>
             {children}

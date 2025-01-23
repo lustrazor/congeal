@@ -536,8 +536,11 @@ export default function QuotesPage() {
     const search = noteSearchQuery.toLowerCase()
     const matchesSearch = note.title.toLowerCase().includes(search) ||
                          note.content.toLowerCase().includes(search)
+    
+    // Show notes that belong to any selected tag
     const matchesTags = selectedTags.length === 0 || 
-                     selectedTags.every(tag => parseTags(note.tags).includes(tag))
+                     selectedTags.some(tag => parseTags(note.tags).includes(tag))
+    
     return matchesSearch && matchesTags
   })
 

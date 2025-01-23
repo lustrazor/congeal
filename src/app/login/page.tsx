@@ -127,12 +127,21 @@ export default function LoginPage() {
             <p className="text-sm text-red-500">{error}</p>
           )}
 
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-          >
-            Login
-          </button>
+          <div className="flex flex-col space-y-4">
+            <button
+              type="submit"
+              className="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600" >
+              Login
+            </button>
+
+            <div className="text-center">
+              <a 
+                href="/resetpw" 
+                className="text-sm text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300" >
+                Forgot your password?
+              </a>
+            </div>
+          </div>
         </form>
       </div>
     </div>

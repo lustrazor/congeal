@@ -6,120 +6,104 @@ import { Encryption } from '@/lib/encryption'
 import initialData from '@/../../prisma/initial-data.json'
 
 // Create initial content from JSON file
-const createInitialContent = async (rawPrisma: PrismaClient, includeSeedData: boolean) => {
+const createInitialContent = async (prisma: PrismaClient, includeSeedData: boolean) => {
   console.log('Creating initial content with seed data:', includeSeedData)
 
-  // Create settings first
-  console.log('Creating settings...')
-  await rawPrisma.settings.create({
-    data: includeSeedData 
-      ? {
-          // Use settings from initial data when seed data is enabled
-          ...initialData.data.settings,
-          // Ensure dates are properly converted
-          updatedAt: new Date(initialData.data.settings.updatedAt)
-        }
-      : {
-          // Default settings when no seed data
-          title: 'Congeal',
-          tagline: 'Create balanced groups with ease',
-          isDark: false,
-          headerImage: null,
-          headerEnabled: false,
-          all_view_mode: 'grid',
-          ungrouped_view_mode: 'grid',
-          showPrivateGroups: false,
-          version: '1.0.21',
-          debugMode: false,
-          isPublic: false,
-          language: 'en',
-          emailEnabled: false,
-          google_enabled: false,
-          outlook_enabled: false,
-          all_sort_field: 'order',
-          all_sort_direction: 'asc',
-          ungrouped_sort_field: 'order',
-          ungrouped_sort_direction: 'asc'
-        }
-  })
-
-  if (!includeSeedData) {
-    console.log('Skipping seed data as requested')
-    return
-  }
-
-  // Create groups first (without items)
-  const groups = initialData?.data?.groups || []
-  for (const group of groups) {
-    await rawPrisma.group.create({
-      data: {
-        id: group.id,
-        name: group.name,
-        order: group.order,
-        iconName: group.iconName,
-        iconColor: group.iconColor,
-        isDivider: group.isDivider || false,
-        isPrivate: group.isPrivate || false,
-        viewMode: group.viewMode || 'grid',
-        sortField: group.sortField || 'order',
-        sortDirection: group.sortDirection || 'asc',
-        createdAt: new Date(group.createdAt || Date.now()),
-        updatedAt: new Date(group.updatedAt || Date.now())
-      }
+  try {
+    // Create settings first
+    console.log('Creating settings...')
+    await prisma.settings.create({
+      data: includeSeedData 
+        ? {
+            ...initialData.data.settings,
+            updatedAt: new Date(initialData.data.settings.updatedAt)
+          }
+        : {
+            title: 'Congeal',
+            tagline: 'Create balanced groups with ease',
+            isDark: false,
+            headerImage: null,
+            headerEnabled: false,
+            all_view_mode: 'grid',
+            ungrouped_view_mode: 'grid',
+            showPrivateGroups: false,
+            version: '1.0.22',
+            debugMode: false,
+            isPublic: false,
+            language: 'en',
+            emailEnabled: false,
+            google_enabled: false,
+            outlook_enabled: false,
+            all_sort_field: 'order',
+            all_sort_direction: 'asc',
+            ungrouped_sort_field: 'order',
+            ungrouped_sort_direction: 'asc',
+            updatedAt: new Date()
+          }
     })
-  }
 
-  // Create items separately
-  const items = initialData?.data?.items || []
-  if (items.length) {
+    if (!includeSeedData) {
+      console.log('Skipping seed data as requested')
+      return
+    }
+
+    // Create groups with exact data
+    console.log('Creating groups...')
+    const groups = initialData.data.groups || []
+    for (const group of groups) {
+      await prisma.group.create({
+        data: {
+          ...group,
+          createdAt: new Date(group.createdAt),
+          updatedAt: new Date(group.updatedAt)
+        }
+      })
+    }
+
+    // Create items with exact data
+    console.log('Creating items...')
+    const items = initialData.data.items || []
     for (const item of items) {
-      await rawPrisma.item.create({
+      await prisma.item.create({
         data: {
-          id: item.id,
-          name: item.name,
-          description: item.description || '',
-          status: item.status || 'gray',
-          iconName: item.iconName || '',
-          order: item.order || 0,
-          useStatusColor: item.useStatusColor || true,
+          ...item,
           dueAt: item.dueAt ? new Date(item.dueAt) : null,
-          groupId: item.groupId,
-          createdAt: new Date(item.createdAt || Date.now()),
-          updatedAt: new Date(item.updatedAt || Date.now())
+          createdAt: new Date(item.createdAt),
+          updatedAt: new Date(item.updatedAt)
         }
       })
     }
-  }
 
-  // Create quotes
-  const quotes = initialData?.data?.quotes || []
-  if (quotes.length) {
+    // Create quotes with exact data
+    console.log('Creating quotes...')
+    const quotes = initialData.data.quotes || []
     for (const quote of quotes) {
-      await rawPrisma.quote.create({
+      await prisma.quote.create({
         data: {
-          quote: quote.quote,
-          thinker: quote.thinker,
-          createdAt: new Date(quote.createdAt || Date.now()),
-          updatedAt: new Date(quote.updatedAt || Date.now())
+          ...quote,
+          createdAt: new Date(quote.createdAt),
+          updatedAt: new Date(quote.updatedAt)
         }
       })
     }
-  }
 
-  // Create notes
-  const notes = initialData?.data?.notes || []
-  if (notes.length) {
+    // Create notes with exact data
+    console.log('Creating notes...')
+    const notes = initialData.data.notes || []
     for (const note of notes) {
-      await rawPrisma.note.create({
+      await prisma.note.create({
         data: {
-          title: note.title,
-          content: note.content,
-          tags: note.tags || '',
-          createdAt: new Date(note.createdAt || Date.now()),
-          updatedAt: new Date(note.updatedAt || Date.now())
+          ...note,
+          createdAt: new Date(note.createdAt),
+          updatedAt: new Date(note.updatedAt)
         }
       })
     }
+
+    console.log('Seed data creation completed')
+  } catch (error) {
+    console.error('Error creating initial content:', error)
+    throw error // Re-throw to be handled by the transaction
   }
 }
 
@@ -128,13 +112,14 @@ export async function POST(request: Request) {
   
   try {
     const { username, password, includeSeedData } = await request.json()
-    console.log('Init request:', { username, includeSeedData }) // Debug log
+    console.log('Init request:', { username, includeSeedData })
 
     rawPrisma = new PrismaClient()
 
     // Check if user already exists first
     const existingUser = await rawPrisma.user.findFirst()
     if (existingUser) {
+      await rawPrisma.$disconnect()
       return NextResponse.json({ 
         error: 'Application already initialized' 
       }, { 
@@ -142,44 +127,41 @@ export async function POST(request: Request) {
       })
     }
 
-    // Clean up any existing data first
-    await rawPrisma.$transaction([
-      rawPrisma.item.deleteMany(),
-      rawPrisma.group.deleteMany(),
-      rawPrisma.quote.deleteMany(),
-      rawPrisma.note.deleteMany(),
-      rawPrisma.settings.deleteMany(),
-      rawPrisma.user.deleteMany(),
-    ])
+    // Wrap all operations in a transaction
+    await rawPrisma.$transaction(async (tx) => {
+      // Clean up existing data
+      await Promise.all([
+        tx.item.deleteMany(),
+        tx.group.deleteMany(),
+        tx.quote.deleteMany(),
+        tx.note.deleteMany(),
+        tx.settings.deleteMany(),
+        tx.user.deleteMany(),
+      ])
 
-    // Create admin user with encryption
-    console.log('Creating admin user...')
-    const hashedPassword = await hash(password, 12)
-    const salt = await Encryption.initialize(password)
-    await rawPrisma.user.create({
-      data: {
-        username,
-        password: hashedPassword,
-        isAdmin: true,
-        encryptionSalt: salt
-      }
+      // Create admin user
+      const hashedPassword = await hash(password, 12)
+      const salt = await Encryption.initialize(password)
+      await tx.user.create({
+        data: {
+          username,
+          password: hashedPassword,
+          isAdmin: true,
+          encryptionSalt: salt
+        }
+      })
+
+      // Create initial content
+      await createInitialContent(tx, includeSeedData)
     })
-
-    // Create initial content based on includeSeedData flag
-    await createInitialContent(rawPrisma, includeSeedData)
 
     console.log('Initialization completed successfully')
     await rawPrisma.$disconnect()
-    return NextResponse.json({ 
-      success: true,
-      message: 'Admin account created successfully'
-    })
+    return NextResponse.json({ success: true })
 
   } catch (error) {
-    console.error('Database operation failed:', error)
-    if (rawPrisma) {
-      await rawPrisma.$disconnect()
-    }
+    console.error('Initialization failed:', error)
+    if (rawPrisma) await rawPrisma.$disconnect()
     return NextResponse.json({ 
       error: error instanceof Error ? error.message : 'Failed to initialize application' 
     }, { 

@@ -6,6 +6,13 @@ import LandingPage from '@/app/landing/page'
 import PublicPage from '@/app/public/page'
 import LoginPage from '@/app/login/page'
 
+// Add array of public paths
+const PUBLIC_PATHS = [
+  '/login',
+  '/resetpw',
+  '/denied'
+]
+
 export default function AuthWrapper({
   children
 }: {
@@ -50,19 +57,10 @@ export default function AuthWrapper({
 
   // If not authenticated...
   if (!isAuthenticated) {
-    // Show denied page if public access is enabled and we're on the denied page
-    if (isPublic && pathname === '/denied') {
+    // Allow access to public paths without authentication
+    if (PUBLIC_PATHS.includes(pathname)) {
       return children
     }
-    
-    if (isPublic && pathname === '/login') {
-      return <LoginPage />
-    }
-
-    if (!isPublic && pathname === '/login') {
-      return <LoginPage />
-    }
-
 
     // Show public version if public access is enabled and we're on the main page
     if (isPublic && pathname === '/') {

@@ -15,6 +15,7 @@ import { Item } from '@/types'
 import useSWR from 'swr'
 import { mutate as globalMutate } from 'swr'
 import { useRouter } from 'next/navigation'
+import { Toaster } from 'react-hot-toast'
 
 const fetcher = (url: string) => fetch(url).then(res => res.json())
 
@@ -56,6 +57,7 @@ export default function SettingsPage() {
   const [factoryResetPassword, setFactoryResetPassword] = useState('')
   const [factoryResetError, setFactoryResetError] = useState('')
   const [isResetting, setIsResetting] = useState(false)
+  const [passwordSuccess, setPasswordSuccess] = useState(false)
 
   // Initialize form state when settings load
   useEffect(() => {
@@ -146,30 +148,123 @@ export default function SettingsPage() {
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault()
+    setPasswordError('')
+    debugStore.log('Password change started', {
+      type: 'PASSWORD_CHANGE_START',
+      data: { username }
+    })
+
+    // Password validation
+    if (newPassword.length < 12) {
+      const error = 'Password must be at least 12 characters long'
+      debugStore.log('Password validation failed', {
+        type: 'PASSWORD_VALIDATION_ERROR',
+        error
+      })
+      setPasswordError(error)
+      return
+    }
+    
+    const hasLowerCase = /[a-z]/.test(newPassword)
+    const hasUpperCase = /[A-Z]/.test(newPassword)
+    const hasNumber = /\d/.test(newPassword)
+    const hasSpecialChar = /[!#$%&_-]/.test(newPassword)
+
+    if (!hasLowerCase) {
+      setPasswordError('Password must include at least one lowercase letter')
+      return
+    }
+    if (!hasUpperCase) {
+      setPasswordError('Password must include at least one uppercase letter')
+      return
+    }
+    if (!hasNumber) {
+      setPasswordError('Password must include at least one number')
+      return
+    }
+    if (!hasSpecialChar) {
+      setPasswordError('Password must include at least one special character (!#$%&_-)')
+      return
+    }
+
     if (newPassword !== confirmPassword) {
       setPasswordError('Passwords do not match')
       return
     }
+
     try {
-      const response = await fetch('/api/auth/password', {
+      // First verify the current password
+      debugStore.log('Verifying current password', {
+        type: 'PASSWORD_VERIFY_START'
+      })
+      
+      const verifyResponse = await fetch('/api/auth/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: currentPassword })
+      })
+
+      const verifyData = await verifyResponse.json()
+      debugStore.log('Verify response received', {
+        type: 'PASSWORD_VERIFY_RESPONSE',
+        status: verifyResponse.status,
+        ok: verifyResponse.ok,
+        data: verifyData
+      })
+
+      if (!verifyResponse.ok) {
+        setPasswordError('Current password is incorrect')
+        return
+      }
+
+      // Then change the password
+      debugStore.log('Sending password change request', {
+        type: 'PASSWORD_CHANGE_REQUEST'
+      })
+
+      const response = await fetch('/api/auth/change-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           currentPassword,
-          newPassword
+          newPassword,
+          username
         })
       })
 
-      if (!response.ok) throw new Error('Failed to change password')
+      const changeData = await response.json()
+      debugStore.log('Change password response', {
+        type: 'PASSWORD_CHANGE_RESPONSE',
+        status: response.status,
+        ok: response.ok,
+        data: changeData
+      })
+
+      if (!response.ok) {
+        const error = changeData.error || 'Failed to change password'
+        throw new Error(error)
+      }
       
-      // Clear form
+      // Clear form and show success message
       setCurrentPassword('')
       setNewPassword('')
       setConfirmPassword('')
       setPasswordError('')
+      setPasswordSuccess(true)
+      setTimeout(() => setPasswordSuccess(false), 4000)
+
+      debugStore.log('Password change successful', {
+        type: 'PASSWORD_CHANGE_SUCCESS'
+      })
+
     } catch (error) {
-      setPasswordError('Failed to change password')
       console.error('Password change failed:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Failed to change password'
+      setPasswordError(errorMessage)
+      debugStore.log('Password change failed', {
+        type: 'PASSWORD_CHANGE_ERROR',
+        error: errorMessage
+      })
     }
   }
 
@@ -218,40 +313,55 @@ export default function SettingsPage() {
   }
 
   const handleFactoryResetConfirm = async () => {
-    if (!factoryResetPassword) {
-      setFactoryResetError(t('passwordRequired'))
+    setFactoryResetError('')
+
+    // Password validation
+    if (factoryResetPassword.length < 12) {
+      setFactoryResetError('Password must be at least 12 characters long')
+      return
+    }
+    
+    const hasLowerCase = /[a-z]/.test(factoryResetPassword)
+    const hasUpperCase = /[A-Z]/.test(factoryResetPassword)
+    const hasNumber = /\d/.test(factoryResetPassword)
+    const hasSpecialChar = /[!#$%&_-]/.test(factoryResetPassword)
+
+    if (!hasLowerCase) {
+      setFactoryResetError('Password must include at least one lowercase letter')
+      return
+    }
+    if (!hasUpperCase) {
+      setFactoryResetError('Password must include at least one uppercase letter')
+      return
+    }
+    if (!hasNumber) {
+      setFactoryResetError('Password must include at least one number')
+      return
+    }
+    if (!hasSpecialChar) {
+      setFactoryResetError('Password must include at least one special character (!#$%&_-)')
       return
     }
 
     setIsResetting(true)
     try {
-      // First verify the password
-      const verifyResponse = await fetch('/api/auth/verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: factoryResetPassword })
-      })
-
-      if (!verifyResponse.ok) {
-        throw new Error('Invalid password')
-      }
-
-      // Log the start of factory reset
       debugStore.log('Starting factory reset', {
         type: 'FACTORY_RESET_START',
         data: { timestamp: new Date().toISOString() }
       })
 
-      // Proceed with factory reset
-      const response = await fetch('/api/auth/reset', {
-        method: 'POST'
+      // Send password directly to factory reset endpoint
+      const response = await fetch('/api/auth/factory-reset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: factoryResetPassword })
       })
 
       if (!response.ok) {
-        throw new Error('Failed to reset application')
+        const data = await response.json()
+        throw new Error(data.error || 'Failed to reset application')
       }
 
-      // Log successful reset
       debugStore.log('Factory reset completed', {
         type: 'FACTORY_RESET_SUCCESS',
         data: { timestamp: new Date().toISOString() }
@@ -263,9 +373,7 @@ export default function SettingsPage() {
     } catch (error) {
       console.error('Factory reset failed:', error)
       setFactoryResetError(
-        error instanceof Error && error.message === 'Invalid password'
-          ? t('invalidPassword')
-          : t('resetFailed')
+        error instanceof Error ? error.message : 'Failed to reset application'
       )
       debugStore.log('Factory reset failed', {
         type: 'FACTORY_RESET_ERROR',
@@ -697,855 +805,903 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="flex-1 flex flex-col">
-      <Header />
-      <FloatingDueItems 
-        items={dueItems || []}
-        settings={settings}
-        onItemClick={(item) => {
-          window.location.href = `/?item=${item.id}`
+    <>
+      <Toaster
+        position="top-center"
+        reverseOrder={false}
+        gutter={8}
+        toastOptions={{
+          // Default options for all toasts
+          duration: 4000, // 4 seconds
+          style: {
+            padding: '16px',
+            borderRadius: '8px',
+            fontSize: '1rem',
+            maxWidth: '500px',
+            wordBreak: 'break-word'
+          },
+          success: {
+            duration: 4000,
+            iconTheme: {
+              primary: '#10B981',
+              secondary: '#ffffff',
+            },
+          }
         }}
       />
-      <div className="flex-1 overflow-y-auto">
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-          <div className="relative">
-            <div className="absolute inset-0 bg-[url('/images/dropshadow2-light.png')] dark:bg-[url('/images/dropshadow2-dark.png')] 
-              bg-top bg-repeat-x pointer-events-none" 
-            />
-            <div className="relative w-full max-w-4xl mx-auto p-6 space-y-4">
-              {/* Site Settings Section */}
-              <div className="space-y-6">
-                <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
-                  <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
-                    {t('siteSettings')}
-                  </h2>
-                  <form onSubmit={handleSaveSettings} className="space-y-6">
-                    {/* Site Title */}
-                    <div>
+      
+      <div className="flex-1 flex flex-col">
+        <Header />
+        <FloatingDueItems 
+          items={dueItems || []}
+          settings={settings}
+          onItemClick={(item) => {
+            window.location.href = `/?item=${item.id}`
+          }}
+        />
+        <div className="flex-1 overflow-y-auto">
+          <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+            <div className="relative">
+              <div className="absolute inset-0 bg-[url('/images/dropshadow2-light.png')] dark:bg-[url('/images/dropshadow2-dark.png')] 
+                bg-top bg-repeat-x pointer-events-none" 
+              />
+              <div className="relative w-full max-w-4xl mx-auto p-6 space-y-4">
+                {/* Site Settings Section */}
+                <div className="space-y-6">
+                  <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
+                    <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
+                      {t('siteSettings')}
+                    </h2>
+                    <form onSubmit={handleSaveSettings} className="space-y-6">
+                      {/* Site Title */}
                       <div>
-                        <h3 className="text-base font-medium text-gray-900 dark:text-white">
-                          {t('siteTitle')}
-                        </h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {t('siteTitleDescription')}
-                        </p>
+                        <div>
+                          <h3 className="text-base font-medium text-gray-900 dark:text-white">
+                            {t('siteTitle')}
+                          </h3>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            {t('siteTitleDescription')}
+                          </p>
+                        </div>
+                        <div className="mt-2">
+                          <input
+                            type="text"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                            className="w-full px-3 py-2 
+                              bg-white dark:bg-gray-900
+                              border border-gray-300 dark:border-gray-600 
+                              text-gray-900 dark:text-gray-100
+                              rounded-md focus:ring-1 focus:ring-blue-500
+                              focus:border-blue-500"
+                          />
+                        </div>
                       </div>
-                      <div className="mt-2">
-                        <input
-                          type="text"
-                          value={title}
-                          onChange={(e) => setTitle(e.target.value)}
-                          className="w-full px-3 py-2 
-                            bg-white dark:bg-gray-900
-                            border border-gray-300 dark:border-gray-600 
-                            text-gray-900 dark:text-gray-100
-                            rounded-md focus:ring-1 focus:ring-blue-500
-                            focus:border-blue-500"
+
+                      {/* Tagline */}
+                      <div>
+                        <div>
+                          <h3 className="text-base font-medium text-gray-900 dark:text-white">
+                            {t('tagline')}
+                          </h3>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            {t('taglineDescription')}
+                          </p>
+                        </div>
+                        <div className="mt-2">
+                          <input
+                            type="text"
+                            value={tagline}
+                            onChange={(e) => setTagline(e.target.value)}
+                            className="w-full px-3 py-2 
+                              bg-white dark:bg-gray-900
+                              border border-gray-300 dark:border-gray-600 
+                              text-gray-900 dark:text-gray-100
+                              rounded-md focus:ring-1 focus:ring-blue-500
+                              focus:border-blue-500"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Save Button */}
+                      <div className="flex justify-start">
+                        <button
+                          type="submit"
+                          disabled={isSaving}
+                          className="px-4 py-2 text-sm font-medium 
+                            text-white bg-blue-500 dark:bg-blue-600
+                            hover:bg-blue-600 dark:hover:bg-blue-700
+                            disabled:opacity-50 
+                            rounded-md transition-colors"
+                        >
+                          {isSaving ? t('saving') : t('saveSettings')}
+                        </button>
+                      </div>
+
+                    {/* Header Image section */}
+                    <div className="space-y-4 pt-6 border-t border-gray-200 dark:border-gray-700">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h3 className="text-base font-medium text-gray-900 dark:text-white">
+                              {t('headerImage')}
+                            </h3>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              {t('showCustomHeader')}
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleToggleSetting('headerEnabled', !settings?.headerEnabled)}
+                            className={`
+                              relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent 
+                              transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                              ${settings?.headerEnabled ? 'bg-blue-600' : 'bg-gray-200'}
+                            `}
+                          >
+                            <span className={`
+                              pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 
+                              transition duration-200 ease-in-out
+                              ${settings?.headerEnabled ? 'translate-x-5' : 'translate-x-0'}
+                            `} />
+                          </button>
+                        </div>
+                      </div>
+                      {settings?.headerEnabled && (
+                        <div className="mt-4 space-y-4 pb-5">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                              {t('imageUpload')}
+                            </label>
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="file"
+                                id="header-image"
+                                onChange={handleFileSelect}
+                                className="hidden"
+                                accept="image/*"
+                              />
+                              <label
+                                htmlFor="header-image"
+                                className="px-3 py-2 text-sm font-medium 
+                                  text-gray-700 dark:text-gray-300
+                                  bg-white dark:bg-gray-800
+                                  border border-gray-300 dark:border-gray-600
+                                  hover:bg-gray-50 dark:hover:bg-gray-700
+                                  rounded-md transition-colors"
+                              >
+                                {t('chooseFile')}
+                              </label>
+                              <span className="text-sm text-gray-500 dark:text-gray-400">
+                                {selectedFile ? selectedFile.name : t('noFileChosen')}
+                              </span>
+                              {selectedFile && (
+                                <button
+                                  onClick={() => handleImageUpload(selectedFile)}
+                                  className="px-4 py-2 text-sm font-medium 
+                                    text-white bg-blue-500 dark:bg-blue-600
+                                    hover:bg-blue-600 dark:hover:bg-blue-700
+                                    rounded-md transition-colors"
+                                >
+                                  {isUploadingImage ? t('saving') : t('upload')}
+                                </button>
+                              )}
+                            </div>
+                            {isUploadingImage && (
+                              <span className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                                {t('saving')}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </form>
+
+                    {/* Notification Sound section */}
+                    <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
+                        <div className="space-y-6">
+                          <div>
+                            <h2 className="text-base font-medium leading-7 text-gray-900 dark:text-gray-100">
+                              {t('notificationSound')}
+                            </h2>
+                            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                              {t('notificationSoundDescription')}
+                            </p>
+
+                            <div className="mt-4 flex items-center gap-4">
+                              <input
+                                type="file"
+                                accept=".mp3"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0]
+                                  if (!file) return
+                                  
+                                  // MP3 files can have various MIME types
+                                  const validMimeTypes = [
+                                    'audio/mp3',
+                                    'audio/mpeg',
+                                    'audio/mpeg3',
+                                    'audio/x-mpeg-3'
+                                  ]
+                                  
+                                  if (!validMimeTypes.includes(file.type)) {
+                                    toast.error(t('onlyMp3Allowed'))
+                                    return
+                                  }
+
+                                  setSelectedSound(file)
+                                }}
+                                className="hidden"
+                                id="notification-sound"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => document.getElementById('notification-sound')?.click()}
+                                className="px-3 py-2 text-sm font-medium 
+                                  text-gray-700 dark:text-gray-300
+                                  bg-white dark:bg-gray-800
+                                  border border-gray-300 dark:border-gray-600
+                                  hover:bg-gray-50 dark:hover:bg-gray-700
+                                  rounded-md transition-colors"
+                              >
+                                {t('chooseSound')}
+                              </button>
+
+                              {selectedSound && (
+                                <>
+                                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                                    {selectedSound.name}
+                                  </span>
+                                  <button
+                                    type="button"
+                                    onClick={async () => {
+                                      const formData = new FormData()
+                                      formData.append('file', selectedSound)
+                                      formData.append('type', 'notification')
+
+                                      debugStore.log('Uploading sound: ' + selectedSound.name)
+
+                                      try {
+                                        const response = await fetch('/api/upload/sound', {
+                                          method: 'POST',
+                                          body: formData
+                                        })
+
+                                        const data = await response.json()
+
+                                        if (!response.ok) throw new Error('Upload failed')
+                                        
+                                        debugStore.log('Sound upload successful: ' + data.message)
+                                        toast.success(t('notificationSoundUpdated'))
+                                        setSelectedSound(null)
+                                      } catch (error) {
+                                        const errorMessage = error instanceof Error ? error.message : String(error)
+                                        debugStore.log('Sound upload failed: ' + errorMessage)
+                                        toast.error(t('uploadFailed'))
+                                      }
+                                    }}
+                                    className="px-3 py-2 text-sm font-medium
+                                      text-white bg-blue-500 dark:bg-blue-600
+                                      hover:bg-blue-600 dark:hover:bg-blue-700
+                                      rounded-md transition-colors"
+                                  >
+                                    {t('upload')}
+                                  </button>
+                                </>
+                              )}
+
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  // Add timestamp to URL to prevent caching
+                                  const timestamp = new Date().getTime()
+                                  const audio = new Audio(`/sounds/notification.mp3?t=${timestamp}`)
+                                  audio.play().catch(console.error)
+                                }}
+                                className="px-3 py-2 text-sm font-medium
+                                  text-gray-700 dark:text-gray-300
+                                  bg-white dark:bg-gray-800
+                                  border border-gray-300 dark:border-gray-600
+                                  hover:bg-gray-50 dark:hover:bg-gray-700
+                                  rounded-md transition-colors"
+                              >
+                                {t('testSound')}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+
+                   {/* Public Access Toggle */}
+                   <div className="border dark:border-gray-700 rounded-lg overflow-hidden mt-8">
+                      <div className="bg-gray-50 dark:bg-gray-800/50 px-4 py-3">
+                        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                          {t('publicAccess')}
+                        </h3>
+                      </div>
+                      <div className="p-4 space-y-4 bg-white dark:bg-gray-800">
+                        <div className="flex items-center gap-3">
+                          <Toggle
+                            enabled={settings?.isPublic ?? false}
+                            onChange={(enabled) => handleSettingChange('isPublic', enabled)}
+                            label={t('isPublic')} 
+                          />                        
+                          <div>
+                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                              {t('allowPublicViewing')}
+                            </label>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              {t('publicViewingDescription')}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+
+                    <div className="border-t border-gray-200 dark:border-gray-700 pt-0 mt-4"></div>
+                    <div className="mt-8 space-y-6">
+                      {/* Email Integration Toggle - Temporarily disabled during development
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="text-base font-medium text-gray-900 dark:text-white">
+                            {t('emailFeature')}
+                          </h3>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            {t('emailFeatureDescription')}
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleToggleSetting('emailEnabled', !settings?.emailEnabled)}
+                          className={`
+                            relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full 
+                            border-2 border-transparent transition-colors duration-200 ease-in-out 
+                            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                            ${settings?.emailEnabled ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-700'}
+                          `} >
+                          <span
+                            className={`
+                              pointer-events-none inline-block h-5 w-5 transform rounded-full 
+                              bg-white shadow ring-0 transition duration-200 ease-in-out
+                              ${settings?.emailEnabled ? 'translate-x-5' : 'translate-x-0'}
+                            `}
+                          />
+                        </button>
+                      </div>
+
+                      {settings?.emailEnabled && (
+                        <div className="mt-4 ml-6 space-y-4">
+                          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                            {t('serverOfferings')}
+                          </h3>
+                          
+                          <div className="space-y-4">
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                  IMAP
+                                </h4>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                  {t('imapDescription')}
+                                </p>
+                              </div>
+                              <Switch
+                                enabled={true}
+                                onChange={() => {}}
+                                label="IMAP"
+                                disabled={true}
+                                className="bg-gray-500 dark:bg-gray-600"
+                              />
+                            </div>
+
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                  Google
+                                </h4>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                  {t('googleDescription')}
+                                </p>
+                              </div>
+                              <Switch
+                                enabled={settings?.google_enabled || false}
+                                onChange={(enabled) => handleSettingChange('google_enabled', enabled)}
+                                label="Google"
+                                className="dark:bg-gray-700"
+                              />
+                            </div>
+
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                  Outlook
+                                </h4>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                  {t('outlookDescription')}
+                                </p>
+                              </div>
+                              <Switch
+                                enabled={settings?.outlook_enabled || false}
+                                onChange={(enabled) => handleSettingChange('outlook_enabled', enabled)}
+                                label="Outlook"
+                                className="dark:bg-gray-700"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      )} */}
+
+                      {/* Debug Mode Toggle */}
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="text-base font-medium text-gray-900 dark:text-white">
+                            {t('debugMode')}
+                          </h3>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            {t('debugModeHint')}
+                          </p>
+                        </div>
+                        <Toggle
+                          enabled={debugStore.isEnabled}
+                          onChange={handleDebugToggle}
+                          label={t('debugMode')} />
+                      </div>
+
+                      {/* Private Groups Toggle */}
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="text-base font-medium text-gray-900 dark:text-white">
+                            {t('showPrivateGroups')}
+                          </h3>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            {t('privateGroupsHint')}
+                          </p>
+                        </div>
+                        <Toggle
+                          enabled={settings?.showPrivateGroups || false}
+                          onChange={handlePrivateGroupsToggle}
+                          label={t('showPrivateGroups')}
                         />
                       </div>
                     </div>
 
-                    {/* Tagline */}
-                    <div>
-                      <div>
-                        <h3 className="text-base font-medium text-gray-900 dark:text-white">
-                          {t('tagline')}
-                        </h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {t('taglineDescription')}
-                        </p>
+                    {/* Language Selection Section */}
+                    <div className="mt-8">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="text-base font-medium text-gray-900 dark:text-white">
+                            {t('language')}
+                          </h3>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            {t('selectLanguage')}
+                          </p>
+                        </div>
+                        <select
+                          value={language}
+                          onChange={(e) => handleLanguageChange(e.target.value as Language)}
+                          className="block w-40 px-3 py-2 text-sm 
+                            bg-white dark:bg-gray-900
+                            border border-gray-300 dark:border-gray-600 
+                            text-gray-900 dark:text-gray-100
+                            placeholder-gray-500 dark:placeholder-gray-400
+                            rounded-md focus:ring-1 focus:ring-blue-500
+                            focus:border-blue-500
+                            transition-colors"
+                        >
+                          <option value="en">English</option>
+                          <option value="ja">日本語</option>
+                          {/* <option value="tl">Tagalog</option> */}
+                        </select>
                       </div>
-                      <div className="mt-2">
+                    </div>
+
+
+
+                  </div>
+
+                  {/* Password Change Section */}
+                  <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
+                    <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
+                      {t('changePasswordFor')} {username}
+                    </h2>
+                    <form onSubmit={handlePasswordChange} className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          {t('currentPassword')}
+                        </label>
                         <input
-                          type="text"
-                          value={tagline}
-                          onChange={(e) => setTagline(e.target.value)}
+                          type="password"
+                          value={currentPassword}
+                          onChange={(e) => setCurrentPassword(e.target.value)}
                           className="w-full px-3 py-2 
                             bg-white dark:bg-gray-900
                             border border-gray-300 dark:border-gray-600 
                             text-gray-900 dark:text-gray-100
+                            placeholder-gray-500 dark:placeholder-gray-400
                             rounded-md focus:ring-1 focus:ring-blue-500
-                            focus:border-blue-500"
+                            focus:border-blue-500
+                            transition-colors"
+                          required
                         />
                       </div>
-                    </div>
-
-                    {/* Save Button */}
-                    <div className="flex justify-start">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          {t('newPassword')}
+                        </label>
+                        <input
+                          type="password"
+                          value={newPassword}
+                          onChange={(e) => setNewPassword(e.target.value)}
+                          className="w-full px-3 py-2 
+                            bg-white dark:bg-gray-900
+                            border border-gray-300 dark:border-gray-600 
+                            text-gray-900 dark:text-gray-100
+                            placeholder-gray-500 dark:placeholder-gray-400
+                            rounded-md focus:ring-1 focus:ring-blue-500
+                            focus:border-blue-500
+                            transition-colors"
+                          required
+                          pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!#$%&_-])[A-Za-z\d!#$%&_-]{12,}$"
+                          title="Password must meet the requirements"
+                        />
+                      </div>
+                      <div className="mt-1 text-sm text-gray-500 dark:text-gray-400 space-y-1">
+                        <p>Password must:</p>
+                        <ul className="list-disc pl-5 space-y-1">
+                          <li>Be at least 12 characters long</li>
+                          <li>Include at least one lowercase letter</li>
+                          <li>Include at least one uppercase letter</li>
+                          <li>Include at least one number</li>
+                          <li>Include at least one special character (!#$%&_-)</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          {t('confirmNewPassword')}
+                        </label>
+                        <input
+                          type="password"
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          className="w-full px-3 py-2 
+                            bg-white dark:bg-gray-900
+                            border border-gray-300 dark:border-gray-600 
+                            text-gray-900 dark:text-gray-100
+                            placeholder-gray-500 dark:placeholder-gray-400
+                            rounded-md focus:ring-1 focus:ring-blue-500
+                            focus:border-blue-500
+                            transition-colors"
+                          required
+                        />
+                      </div>
+                      {passwordError && (
+                        <p className="text-red-500 text-sm">{passwordError}</p>
+                      )}
+                      {passwordSuccess && (
+                        <div className="p-4 bg-green-50 dark:bg-green-900/20 
+                          border border-green-200 dark:border-green-900/30 
+                          rounded-md text-green-800 dark:text-green-200"
+                        >
+                          <p className="text-sm flex items-center gap-2">
+                            <span className="text-lg">✓</span>
+                            {t('passwordChanged')}
+                          </p>
+                        </div>
+                      )}
                       <button
                         type="submit"
-                        disabled={isSaving}
+                        className="w-full px-4 py-2 text-sm font-medium text-white 
+                          bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 
+                          dark:hover:bg-blue-700 rounded-md transition-colors"
+                      >
+                        {t('changePassword')}
+                      </button>
+                    </form>
+                  </div>
+
+                  {/* Session Section */}
+                  <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                          {t('session')}
+                        </h2>
+                        <p className="text-gray-600 dark:text-gray-400">
+                          {t('loggedInAs')} {username}
+                        </p>
+                      </div>
+                      <button
+                        onClick={handleLogout}
+                        className="px-4 py-2 text-sm font-medium 
+                          text-white bg-gray-500 dark:bg-gray-600
+                          hover:bg-gray-600 dark:hover:bg-gray-700
+                          rounded-md transition-colors"
+                      >
+                        {t('logout')}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Factory Reset Section */}
+                  <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                          {t('factoryReset')}
+                        </h2>
+                        <p className="text-gray-600 dark:text-gray-400">
+                          {t('factoryResetHint')}
+                        </p>
+                      </div>
+                      <button
+                        onClick={handleFactoryReset}
+                        className="w-32 ml-5 px-4 py-2 text-sm font-medium 
+                          text-white bg-red-500 dark:bg-red-600
+                          hover:bg-red-600 dark:hover:bg-red-700
+                          rounded-md transition-colors"
+                      >
+                        {t('factoryReset')}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Snapshots Section */}
+                  <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
+                    <div className="flex items-center justify-between mb-4">
+                      <div>
+                        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                          {t('snapshots')}
+                        </h2>
+                        <p className="text-gray-600 dark:text-gray-400">
+                          {t('snapshotsHint')}
+                        </p>
+                      </div>
+                      <button
+                        onClick={handleCreateSnapshot}
+                        disabled={isCreatingSnapshot}
                         className="px-4 py-2 text-sm font-medium 
                           text-white bg-blue-500 dark:bg-blue-600
                           hover:bg-blue-600 dark:hover:bg-blue-700
                           disabled:opacity-50 
                           rounded-md transition-colors"
                       >
-                        {isSaving ? t('saving') : t('saveSettings')}
+                        {isCreatingSnapshot ? t('creating') : t('createSnapshot')}
                       </button>
                     </div>
 
-                  {/* Header Image section */}
-                  <div className="space-y-4 pt-6 border-t border-gray-200 dark:border-gray-700">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h3 className="text-base font-medium text-gray-900 dark:text-white">
-                            {t('headerImage')}
-                          </h3>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
-                            {t('showCustomHeader')}
-                          </p>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => handleToggleSetting('headerEnabled', !settings?.headerEnabled)}
-                          className={`
-                            relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent 
-                            transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-                            ${settings?.headerEnabled ? 'bg-blue-600' : 'bg-gray-200'}
-                          `}
+                    {/* Snapshots List */}
+                    <div className="space-y-3">
+                      {snapshots.map((snapshot) => (
+                        <div 
+                          key={snapshot.id}
+                          className="flex items-center justify-between p-3 
+                            bg-gray-50 dark:bg-gray-900/50 
+                            border border-gray-200 dark:border-gray-700 
+                            rounded-lg"
                         >
-                          <span className={`
-                            pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 
-                            transition duration-200 ease-in-out
-                            ${settings?.headerEnabled ? 'translate-x-5' : 'translate-x-0'}
-                          `} />
-                        </button>
-                      </div>
-                    </div>
-                    {settings?.headerEnabled && (
-                      <div className="mt-4 space-y-4 pb-5">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            {t('imageUpload')}
-                          </label>
-                          <div className="flex items-center gap-2">
-                            <input
-                              type="file"
-                              id="header-image"
-                              onChange={handleFileSelect}
-                              className="hidden"
-                              accept="image/*"
-                            />
-                            <label
-                              htmlFor="header-image"
-                              className="px-3 py-2 text-sm font-medium 
-                                text-gray-700 dark:text-gray-300
-                                bg-white dark:bg-gray-800
-                                border border-gray-300 dark:border-gray-600
-                                hover:bg-gray-50 dark:hover:bg-gray-700
-                                rounded-md transition-colors"
-                            >
-                              {t('chooseFile')}
-                            </label>
-                            <span className="text-sm text-gray-500 dark:text-gray-400">
-                              {selectedFile ? selectedFile.name : t('noFileChosen')}
-                            </span>
-                            {selectedFile && (
-                              <button
-                                onClick={() => handleImageUpload(selectedFile)}
-                                className="px-4 py-2 text-sm font-medium 
-                                  text-white bg-blue-500 dark:bg-blue-600
-                                  hover:bg-blue-600 dark:hover:bg-blue-700
-                                  rounded-md transition-colors"
-                              >
-                                {isUploadingImage ? t('saving') : t('upload')}
-                              </button>
-                            )}
+                          <div className="text-sm text-gray-600 dark:text-gray-400">
+                            {new Date(snapshot.createdAt).toLocaleString()}
                           </div>
-                          {isUploadingImage && (
-                            <span className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                              {t('saving')}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </form>
-
-                  {/* Notification Sound section */}
-                  <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
-                      <div className="space-y-6">
-                        <div>
-                          <h2 className="text-base font-medium leading-7 text-gray-900 dark:text-gray-100">
-                            {t('notificationSound')}
-                          </h2>
-                          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                            {t('notificationSoundDescription')}
-                          </p>
-
-                          <div className="mt-4 flex items-center gap-4">
-                            <input
-                              type="file"
-                              accept=".mp3"
-                              onChange={(e) => {
-                                const file = e.target.files?.[0]
-                                if (!file) return
-                                
-                                // MP3 files can have various MIME types
-                                const validMimeTypes = [
-                                  'audio/mp3',
-                                  'audio/mpeg',
-                                  'audio/mpeg3',
-                                  'audio/x-mpeg-3'
-                                ]
-                                
-                                if (!validMimeTypes.includes(file.type)) {
-                                  toast.error(t('onlyMp3Allowed'))
-                                  return
-                                }
-
-                                setSelectedSound(file)
-                              }}
-                              className="hidden"
-                              id="notification-sound"
-                            />
+                          <div className="flex gap-2">
                             <button
-                              type="button"
-                              onClick={() => document.getElementById('notification-sound')?.click()}
-                              className="px-3 py-2 text-sm font-medium 
-                                text-gray-700 dark:text-gray-300
-                                bg-white dark:bg-gray-800
-                                border border-gray-300 dark:border-gray-600
-                                hover:bg-gray-50 dark:hover:bg-gray-700
-                                rounded-md transition-colors"
+                              onClick={() => handleRestoreSnapshot(snapshot.id)}
+                              disabled={isRestoring}
+                              className="px-3 py-1 text-sm font-medium 
+                                text-green-600 dark:text-green-400
+                                hover:text-green-700 dark:hover:text-green-300
+                                disabled:opacity-50
+                                transition-colors"
                             >
-                              {t('chooseSound')}
+                              {isRestoring ? t('restoring') : t('restore')}
                             </button>
-
-                            {selectedSound && (
-                              <>
-                                <span className="text-sm text-gray-500 dark:text-gray-400">
-                                  {selectedSound.name}
-                                </span>
-                                <button
-                                  type="button"
-                                  onClick={async () => {
-                                    const formData = new FormData()
-                                    formData.append('file', selectedSound)
-                                    formData.append('type', 'notification')
-
-                                    debugStore.log('Uploading sound: ' + selectedSound.name)
-
-                                    try {
-                                      const response = await fetch('/api/upload/sound', {
-                                        method: 'POST',
-                                        body: formData
-                                      })
-
-                                      const data = await response.json()
-
-                                      if (!response.ok) throw new Error('Upload failed')
-                                      
-                                      debugStore.log('Sound upload successful: ' + data.message)
-                                      toast.success(t('notificationSoundUpdated'))
-                                      setSelectedSound(null)
-                                    } catch (error) {
-                                      const errorMessage = error instanceof Error ? error.message : String(error)
-                                      debugStore.log('Sound upload failed: ' + errorMessage)
-                                      toast.error(t('uploadFailed'))
-                                    }
-                                  }}
-                                  className="px-3 py-2 text-sm font-medium
-                                    text-white bg-blue-500 dark:bg-blue-600
-                                    hover:bg-blue-600 dark:hover:bg-blue-700
-                                    rounded-md transition-colors"
-                                >
-                                  {t('upload')}
-                                </button>
-                              </>
-                            )}
-
                             <button
-                              type="button"
-                              onClick={() => {
-                                // Add timestamp to URL to prevent caching
-                                const timestamp = new Date().getTime()
-                                const audio = new Audio(`/sounds/notification.mp3?t=${timestamp}`)
-                                audio.play().catch(console.error)
-                              }}
-                              className="px-3 py-2 text-sm font-medium
-                                text-gray-700 dark:text-gray-300
-                                bg-white dark:bg-gray-800
-                                border border-gray-300 dark:border-gray-600
-                                hover:bg-gray-50 dark:hover:bg-gray-700
-                                rounded-md transition-colors"
+                              onClick={() => handleDownloadSnapshot(snapshot.id)}
+                              className="px-3 py-1 text-sm font-medium 
+                                text-blue-600 dark:text-blue-400
+                                hover:text-blue-700 dark:hover:text-blue-300
+                                transition-colors"
                             >
-                              {t('testSound')}
+                              {t('download')}
+                            </button>
+                            <button
+                              onClick={() => handleDeleteSnapshot(snapshot.id)}
+                              className="px-3 py-1 text-sm font-medium 
+                                text-red-600 dark:text-red-400
+                                hover:text-red-700 dark:hover:text-red-300
+                                transition-colors"
+                            >
+                              {t('delete')}
                             </button>
                           </div>
                         </div>
-                      </div>
-                  </div>
-
-                 {/* Public Access Toggle */}
-                 <div className="border dark:border-gray-700 rounded-lg overflow-hidden mt-8">
-                    <div className="bg-gray-50 dark:bg-gray-800/50 px-4 py-3">
-                      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                        {t('publicAccess')}
-                      </h3>
+                      ))}
                     </div>
-                    <div className="p-4 space-y-4 bg-white dark:bg-gray-800">
-                      <div className="flex items-center gap-3">
-                        <Toggle
-                          enabled={settings?.isPublic ?? false}
-                          onChange={(enabled) => handleSettingChange('isPublic', enabled)}
-                          label={t('isPublic')} 
-                        />                        
-                        <div>
-                          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                            {t('allowPublicViewing')}
-                          </label>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
-                            {t('publicViewingDescription')}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
 
-
-                  <div className="border-t border-gray-200 dark:border-gray-700 pt-0 mt-4"></div>
-                  <div className="mt-8 space-y-6">
-                    {/* Email Integration Toggle */}
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="text-base font-medium text-gray-900 dark:text-white">
-                          {t('emailFeature')}
-                        </h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {t('emailFeatureDescription')}
+                    {/* Restore Message */}
+                    {restoreMessage && (
+                      <div className={`mt-4 p-3 rounded-lg ${
+                        restoreMessage.type === 'success' 
+                          ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-900/30 text-green-800 dark:text-green-200'
+                          : 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/30 text-red-800 dark:text-red-200'
+                      }`}>
+                        <p className="text-sm">
+                          {restoreMessage.type === 'success' ? '✅' : '❌'} {restoreMessage.text}
                         </p>
                       </div>
+                    )}
+
+                    {/* Warning Notice */}
+                    <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 
+                      border border-yellow-200 dark:border-yellow-900/30 
+                      rounded-lg"
+                    >
+                      <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                        ⚠️ {t('snapshotWarning')}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* About Section */}
+                  <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
+                    <div className="flex flex-col gap-2">
+                      <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                        {t('about')}
+                      </h2>
+                      <p className="text-gray-600 dark:text-gray-400">
+                        Congeal, {t('version')} {settings?.version}
+                      </p>
+                      <p className="text-gray-600 dark:text-gray-400">
+                        {t('developers')}: <a href="/demo" className="text-blue-500 hover:text-blue-600">{t('sampleUI')} →</a>
+                      </p>
+                      <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <p className="text-gray-600 dark:text-gray-400">
+                          {t('openSourceNotice')}
+                        </p>
+                        <p className="text-gray-600 dark:text-gray-400">
+                          {t('viewSource')}
+                        </p>
+                        <p className="mt-2 text-sm text-gray-500 dark:text-gray-500">
+                          {t('rightsReserved')}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <br /><br /><br />
+                </div>
+
+                {/* Password confirmation modal */}
+                <Modal
+                  isOpen={isPasswordModalOpen}
+                  onClose={() => {
+                    setIsPasswordModalOpen(false)
+                    setPassword('')
+                    setError('')
+                  }}
+                  title={t('confirmPassword')}
+                >
+                  <form onSubmit={handlePasswordConfirm} className="space-y-4">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {t('enterPasswordForPrivateGroups')}
+                    </p>
+                    
+                    <div>
+                      <input
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="w-full px-3 py-2 
+                          bg-white dark:bg-gray-900
+                          border border-gray-300 dark:border-gray-600 
+                          text-gray-900 dark:text-gray-100
+                          placeholder-gray-500 dark:placeholder-gray-400
+                          rounded-md focus:ring-1 focus:ring-blue-500
+                          focus:border-blue-500
+                          transition-colors"
+                        placeholder={t('enterPassword')}
+                        required
+                      />
+                      {error && (
+                        <p className="mt-1 text-sm text-red-600 dark:text-red-400">{error}</p>
+                      )}
+                    </div>
+
+                    <div className="flex justify-end gap-2">
                       <button
                         type="button"
-                        onClick={() => handleToggleSetting('emailEnabled', !settings?.emailEnabled)}
-                        className={`
-                          relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full 
-                          border-2 border-transparent transition-colors duration-200 ease-in-out 
-                          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-                          ${settings?.emailEnabled ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-700'}
-                        `} >
-                        <span
-                          className={`
-                            pointer-events-none inline-block h-5 w-5 transform rounded-full 
-                            bg-white shadow ring-0 transition duration-200 ease-in-out
-                            ${settings?.emailEnabled ? 'translate-x-5' : 'translate-x-0'}
-                          `}
-                        />
+                        onClick={() => {
+                          setIsPasswordModalOpen(false)
+                          setPassword('')
+                          setError('')
+                        }}
+                        className="px-4 py-2 text-sm font-medium 
+                          text-gray-700 dark:text-gray-300 
+                          bg-white dark:bg-gray-800 
+                          border border-gray-300 dark:border-gray-600 
+                          hover:bg-gray-50 dark:hover:bg-gray-700
+                          rounded-md transition-colors"
+                      >
+                        {t('cancel')}
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={isVerifying}
+                        className="px-4 py-2 text-sm font-medium 
+                          text-white bg-blue-500 dark:bg-blue-600
+                          hover:bg-blue-600 dark:hover:bg-blue-700
+                          disabled:opacity-50 
+                          rounded-md transition-colors"
+                      >
+                        {isVerifying ? t('verifying') : t('confirm')}
                       </button>
                     </div>
-
-                    {settings?.emailEnabled && (
-                      <div className="mt-4 ml-6 space-y-4">
-                        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                          {t('serverOfferings')}
-                        </h3>
-                        
-                        <div className="space-y-4">
-                          {/* IMAP Server - Always enabled */}
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                                IMAP
-                              </h4>
-                              <p className="text-sm text-gray-500 dark:text-gray-400">
-                                {t('imapDescription')}
-                              </p>
-                            </div>
-                            <Switch
-                              enabled={true}
-                              onChange={() => {}}
-                              label="IMAP"
-                              disabled={true}
-                              className="bg-gray-500 dark:bg-gray-600"
-                            />
-                          </div>
-
-                          {/* Google Integration */}
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                                Google
-                              </h4>
-                              <p className="text-sm text-gray-500 dark:text-gray-400">
-                                {t('googleDescription')}
-                              </p>
-                            </div>
-                            <Switch
-                              enabled={settings?.google_enabled || false}
-                              onChange={(enabled) => handleSettingChange('google_enabled', enabled)}
-                              label="Google"
-                              className="dark:bg-gray-700"
-                            />
-                          </div>
-
-                          {/* Outlook Integration */}
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                                Outlook
-                              </h4>
-                              <p className="text-sm text-gray-500 dark:text-gray-400">
-                                {t('outlookDescription')}
-                              </p>
-                            </div>
-                            <Switch
-                              enabled={settings?.outlook_enabled || false}
-                              onChange={(enabled) => handleSettingChange('outlook_enabled', enabled)}
-                              label="Outlook"
-                              className="dark:bg-gray-700"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Debug Mode Toggle */}
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="text-base font-medium text-gray-900 dark:text-white">
-                          {t('debugMode')}
-                        </h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {t('debugModeHint')}
-                        </p>
-                      </div>
-                      <Toggle
-                        enabled={debugStore.isEnabled}
-                        onChange={handleDebugToggle}
-                        label={t('debugMode')} />
-                    </div>
-
-                    {/* Private Groups Toggle */}
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="text-base font-medium text-gray-900 dark:text-white">
-                          {t('showPrivateGroups')}
-                        </h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {t('privateGroupsHint')}
-                        </p>
-                      </div>
-                      <Toggle
-                        enabled={settings?.showPrivateGroups || false}
-                        onChange={handlePrivateGroupsToggle}
-                        label={t('showPrivateGroups')}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Language Selection Section */}
-                  <div className="mt-8">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="text-base font-medium text-gray-900 dark:text-white">
-                          {t('language')}
-                        </h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {t('selectLanguage')}
-                        </p>
-                      </div>
-                      <select
-                        value={language}
-                        onChange={(e) => handleLanguageChange(e.target.value as Language)}
-                        className="block w-40 px-3 py-2 text-sm 
-                          bg-white dark:bg-gray-900
-                          border border-gray-300 dark:border-gray-600 
-                          text-gray-900 dark:text-gray-100
-                          placeholder-gray-500 dark:placeholder-gray-400
-                          rounded-md focus:ring-1 focus:ring-blue-500
-                          focus:border-blue-500
-                          transition-colors"
-                      >
-                        <option value="en">English</option>
-                        <option value="ja">日本語</option>
-                        {/* <option value="tl">Tagalog</option> */}
-                      </select>
-                    </div>
-                  </div>
-
-
-
-                </div>
-
-                {/* Password Change Section */}
-                <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
-                  <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
-                    {t('changePasswordFor')} {username}
-                  </h2>
-                  <form onSubmit={handlePasswordChange} className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        {t('currentPassword')}
-                      </label>
-                      <input
-                        type="password"
-                        value={currentPassword}
-                        onChange={(e) => setCurrentPassword(e.target.value)}
-                        className="w-full px-3 py-2 
-                          bg-white dark:bg-gray-900
-                          border border-gray-300 dark:border-gray-600 
-                          text-gray-900 dark:text-gray-100
-                          placeholder-gray-500 dark:placeholder-gray-400
-                          rounded-md focus:ring-1 focus:ring-blue-500
-                          focus:border-blue-500
-                          transition-colors"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        {t('newPassword')}
-                      </label>
-                      <input
-                        type="password"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        className="w-full px-3 py-2 
-                          bg-white dark:bg-gray-900
-                          border border-gray-300 dark:border-gray-600 
-                          text-gray-900 dark:text-gray-100
-                          placeholder-gray-500 dark:placeholder-gray-400
-                          rounded-md focus:ring-1 focus:ring-blue-500
-                          focus:border-blue-500
-                          transition-colors"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        {t('confirmNewPassword')}
-                      </label>
-                      <input
-                        type="password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        className="w-full px-3 py-2 
-                          bg-white dark:bg-gray-900
-                          border border-gray-300 dark:border-gray-600 
-                          text-gray-900 dark:text-gray-100
-                          placeholder-gray-500 dark:placeholder-gray-400
-                          rounded-md focus:ring-1 focus:ring-blue-500
-                          focus:border-blue-500
-                          transition-colors"
-                        required
-                      />
-                    </div>
-                    {passwordError && (
-                      <p className="text-red-500 text-sm">{passwordError}</p>
-                    )}
-                    <button
-                      type="submit"
-                      className="px-4 py-2 text-sm font-medium 
-                        text-white bg-blue-500 dark:bg-blue-600
-                        hover:bg-blue-600 dark:hover:bg-blue-700
-                        rounded-md transition-colors"
-                    >
-                      {t('changePassword')}
-                    </button>
                   </form>
-                </div>
+                </Modal>
 
-                {/* Session Section */}
-                <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                        {t('session')}
-                      </h2>
-                      <p className="text-gray-600 dark:text-gray-400">
-                        {t('loggedInAs')} {username}
-                      </p>
-                    </div>
-                    <button
-                      onClick={handleLogout}
-                      className="px-4 py-2 text-sm font-medium 
-                        text-white bg-gray-500 dark:bg-gray-600
-                        hover:bg-gray-600 dark:hover:bg-gray-700
-                        rounded-md transition-colors"
-                    >
-                      {t('logout')}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Factory Reset Section */}
-                <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                        {t('factoryReset')}
-                      </h2>
-                      <p className="text-gray-600 dark:text-gray-400">
-                        {t('factoryResetHint')}
-                      </p>
-                    </div>
-                    <button
-                      onClick={handleFactoryReset}
-                      className="w-32 ml-5 px-4 py-2 text-sm font-medium 
-                        text-white bg-red-500 dark:bg-red-600
-                        hover:bg-red-600 dark:hover:bg-red-700
-                        rounded-md transition-colors"
-                    >
-                      {t('factoryReset')}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Snapshots Section */}
-                <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                        {t('snapshots')}
-                      </h2>
-                      <p className="text-gray-600 dark:text-gray-400">
-                        {t('snapshotsHint')}
-                      </p>
-                    </div>
-                    <button
-                      onClick={handleCreateSnapshot}
-                      disabled={isCreatingSnapshot}
-                      className="px-4 py-2 text-sm font-medium 
-                        text-white bg-blue-500 dark:bg-blue-600
-                        hover:bg-blue-600 dark:hover:bg-blue-700
-                        disabled:opacity-50 
-                        rounded-md transition-colors"
-                    >
-                      {isCreatingSnapshot ? t('creating') : t('createSnapshot')}
-                    </button>
-                  </div>
-
-                  {/* Snapshots List */}
-                  <div className="space-y-3">
-                    {snapshots.map((snapshot) => (
-                      <div 
-                        key={snapshot.id}
-                        className="flex items-center justify-between p-3 
-                          bg-gray-50 dark:bg-gray-900/50 
-                          border border-gray-200 dark:border-gray-700 
-                          rounded-lg"
-                      >
-                        <div className="text-sm text-gray-600 dark:text-gray-400">
-                          {new Date(snapshot.createdAt).toLocaleString()}
-                        </div>
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => handleRestoreSnapshot(snapshot.id)}
-                            disabled={isRestoring}
-                            className="px-3 py-1 text-sm font-medium 
-                              text-green-600 dark:text-green-400
-                              hover:text-green-700 dark:hover:text-green-300
-                              disabled:opacity-50
-                              transition-colors"
-                          >
-                            {isRestoring ? t('restoring') : t('restore')}
-                          </button>
-                          <button
-                            onClick={() => handleDownloadSnapshot(snapshot.id)}
-                            className="px-3 py-1 text-sm font-medium 
-                              text-blue-600 dark:text-blue-400
-                              hover:text-blue-700 dark:hover:text-blue-300
-                              transition-colors"
-                          >
-                            {t('download')}
-                          </button>
-                          <button
-                            onClick={() => handleDeleteSnapshot(snapshot.id)}
-                            className="px-3 py-1 text-sm font-medium 
-                              text-red-600 dark:text-red-400
-                              hover:text-red-700 dark:hover:text-red-300
-                              transition-colors"
-                          >
-                            {t('delete')}
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Restore Message */}
-                  {restoreMessage && (
-                    <div className={`mt-4 p-3 rounded-lg ${
-                      restoreMessage.type === 'success' 
-                        ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-900/30 text-green-800 dark:text-green-200'
-                        : 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/30 text-red-800 dark:text-red-200'
-                    }`}>
-                      <p className="text-sm">
-                        {restoreMessage.type === 'success' ? '✅' : '❌'} {restoreMessage.text}
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Warning Notice */}
-                  <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 
-                    border border-yellow-200 dark:border-yellow-900/30 
-                    rounded-lg"
-                  >
-                    <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                      ⚠️ {t('snapshotWarning')}
-                    </p>
-                  </div>
-                </div>
-
-                {/* About Section */}
-                <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
-                  <div className="flex flex-col gap-2">
-                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                      {t('about')}
+                {/* Factory Reset Password Modal */}
+                <Modal
+                  isOpen={isFactoryResetModalOpen}
+                  onClose={() => {
+                    setIsFactoryResetModalOpen(false)
+                    setFactoryResetPassword('')
+                    setFactoryResetError('')
+                  }}
+                >
+                  <div className="p-6">
+                    <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+                      {t('confirmFactoryReset')}
                     </h2>
-                    <p className="text-gray-600 dark:text-gray-400">
-                      Congeal, {t('version')} {settings?.version}
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                      {t('factoryResetWarning')}
                     </p>
-                    <p className="text-gray-600 dark:text-gray-400">
-                      {t('developers')}: <a href="/demo" className="text-blue-500 hover:text-blue-600">{t('sampleUI')} →</a>
-                    </p>
-                    <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                      <p className="text-gray-600 dark:text-gray-400">
-                        {t('openSourceNotice')}
-                      </p>
-                      <p className="text-gray-600 dark:text-gray-400">
-                        {t('viewSource')}
-                      </p>
-                      <p className="mt-2 text-sm text-gray-500 dark:text-gray-500">
-                        {t('rightsReserved')}
-                      </p>
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        {t('password')}
+                      </label>
+                      <input
+                        type="password"
+                        value={factoryResetPassword}
+                        onChange={(e) => setFactoryResetPassword(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 
+                          rounded-md dark:bg-gray-700"
+                        placeholder={t('enterPassword')}
+                        pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!#$%&_-])[A-Za-z\d!#$%&_-]{12,}$"
+                        title="Password must meet all requirements"
+                        required
+                      />
+                      {factoryResetError && (
+                        <p className="mt-1 text-sm text-red-500">{factoryResetError}</p>
+                      )}
+                    </div>
+                    <div className="flex justify-end gap-2">
+                      <button
+                        onClick={() => {
+                          setIsFactoryResetModalOpen(false)
+                          setFactoryResetPassword('')
+                          setFactoryResetError('')
+                        }}
+                        className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300
+                          bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600
+                          rounded-md hover:bg-gray-50 dark:hover:bg-gray-700"
+                      >
+                        {t('cancel')}
+                      </button>
+                      <button
+                        onClick={handleFactoryResetConfirm}
+                        disabled={isResetting}
+                        className="px-4 py-2 text-sm font-medium text-white
+                          bg-red-600 rounded-md hover:bg-red-700
+                          disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isResetting ? t('resetting') : t('confirmReset')}
+                      </button>
                     </div>
                   </div>
-                </div>
-                <br /><br /><br />
+                </Modal>
               </div>
-
-              {/* Password confirmation modal */}
-              <Modal
-                isOpen={isPasswordModalOpen}
-                onClose={() => {
-                  setIsPasswordModalOpen(false)
-                  setPassword('')
-                  setError('')
-                }}
-                title={t('confirmPassword')}
-              >
-                <form onSubmit={handlePasswordConfirm} className="space-y-4">
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {t('enterPasswordForPrivateGroups')}
-                  </p>
-                  
-                  <div>
-                    <input
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="w-full px-3 py-2 
-                        bg-white dark:bg-gray-900
-                        border border-gray-300 dark:border-gray-600 
-                        text-gray-900 dark:text-gray-100
-                        placeholder-gray-500 dark:placeholder-gray-400
-                        rounded-md focus:ring-1 focus:ring-blue-500
-                        focus:border-blue-500
-                        transition-colors"
-                      placeholder={t('enterPassword')}
-                      required
-                    />
-                    {error && (
-                      <p className="mt-1 text-sm text-red-600 dark:text-red-400">{error}</p>
-                    )}
-                  </div>
-
-                  <div className="flex justify-end gap-2">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsPasswordModalOpen(false)
-                        setPassword('')
-                        setError('')
-                      }}
-                      className="px-4 py-2 text-sm font-medium 
-                        text-gray-700 dark:text-gray-300 
-                        bg-white dark:bg-gray-800 
-                        border border-gray-300 dark:border-gray-600 
-                        hover:bg-gray-50 dark:hover:bg-gray-700
-                        rounded-md transition-colors"
-                    >
-                      {t('cancel')}
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={isVerifying}
-                      className="px-4 py-2 text-sm font-medium 
-                        text-white bg-blue-500 dark:bg-blue-600
-                        hover:bg-blue-600 dark:hover:bg-blue-700
-                        disabled:opacity-50 
-                        rounded-md transition-colors"
-                    >
-                      {isVerifying ? t('verifying') : t('confirm')}
-                    </button>
-                  </div>
-                </form>
-              </Modal>
-
-              {/* Factory Reset Password Modal */}
-              <Modal
-                isOpen={isFactoryResetModalOpen}
-                onClose={() => {
-                  setIsFactoryResetModalOpen(false)
-                  setFactoryResetPassword('')
-                  setFactoryResetError('')
-                }}
-              >
-                <div className="p-6">
-                  <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
-                    {t('confirmFactoryReset')}
-                  </h2>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                    {t('factoryResetWarning')}
-                  </p>
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      {t('password')}
-                    </label>
-                    <input
-                      type="password"
-                      value={factoryResetPassword}
-                      onChange={(e) => setFactoryResetPassword(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 
-                        rounded-md dark:bg-gray-700"
-                      placeholder={t('enterPassword')}
-                    />
-                    {factoryResetError && (
-                      <p className="mt-1 text-sm text-red-500">{factoryResetError}</p>
-                    )}
-                  </div>
-                  <div className="flex justify-end gap-2">
-                    <button
-                      onClick={() => {
-                        setIsFactoryResetModalOpen(false)
-                        setFactoryResetPassword('')
-                        setFactoryResetError('')
-                      }}
-                      className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300
-                        bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600
-                        rounded-md hover:bg-gray-50 dark:hover:bg-gray-700"
-                    >
-                      {t('cancel')}
-                    </button>
-                    <button
-                      onClick={handleFactoryResetConfirm}
-                      disabled={isResetting}
-                      className="px-4 py-2 text-sm font-medium text-white
-                        bg-red-600 rounded-md hover:bg-red-700
-                        disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {isResetting ? t('resetting') : t('confirmReset')}
-                    </button>
-                  </div>
-                </div>
-              </Modal>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 } 

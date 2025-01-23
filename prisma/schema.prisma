@@ -51,7 +51,7 @@ model Settings {
   all_view_mode       String   @default("grid")   @map("all_view_mode") /// @encrypted: false
   ungrouped_view_mode String   @default("grid")   @map("ungrouped_view_mode") /// @encrypted: false
   showPrivateGroups Boolean  @default(false)    @map("show_private_groups") /// @encrypted: false
-  version           String   @default("1.0.21")                        /// @encrypted: false
+  version           String   @default("1.0.22")                        /// @encrypted: false
   debugMode         Boolean  @default(false)    @map("debug_mode")   /// @encrypted: false
   isPublic          Boolean  @default(false)     @map("is_public")    /// @encrypted: false
   updatedAt         DateTime @updatedAt         @map("updated_at")   /// @encrypted: false
@@ -66,13 +66,15 @@ model Settings {
 }
 
 model User {
-  id            Int      @id @default(autoincrement())
-  username      String   @unique
-  password      String   
-  isAdmin       Boolean  @default(true)
-  encryptionSalt String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id                Int       @id @default(autoincrement())
+  username          String    @unique
+  password          String
+  isAdmin           Boolean   @default(false)
+  encryptionSalt    String?
+  resetToken        String?
+  resetTokenExpires DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 }
 
 model Quote {

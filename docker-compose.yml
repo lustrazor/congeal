@@ -1,13 +1,21 @@
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: congeal-app
     ports:
       - "3000:3000"
+      - "25:25"
     volumes:
       - ./prisma:/app/prisma
-      - ./snapshots:/app/snapshots
     environment:
-      - NODE_ENV=production
-      - DATABASE_URL=file:/app/prisma/dev.db
+      - POSTFIX_SERVER=${POSTFIX_SERVER}
+      - POSTFIX_PORT=${POSTFIX_PORT}
+      - POSTFIX_ACCOUNT=${POSTFIX_ACCOUNT}
+      - POSTFIX_PASSWORD=${POSTFIX_PASSWORD}
+      - MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS}
+      - MAIL_REPLY_TO=${MAIL_REPLY_TO}
+      - NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL}
     restart: unless-stopped
+    

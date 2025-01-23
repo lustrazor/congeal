@@ -1,6 +1,8 @@
 {
-  "id": "snapshot-2025-01-18T02:04:37.877Z",
-  "version": "1.1.0",
+  "version": "1.0",
+  "schema": {
+    "includesEmail": false
+  },
   "data": {
     "groups": [
       {
@@ -15,10 +17,7 @@
         "sortField": "order",
         "sortDirection": "asc",
         "createdAt": "2025-01-14T23:49:50.014Z",
-        "updatedAt": "2025-01-17T22:46:02.912Z",
-        "_count": {
-          "items": 8
-        }
+        "updatedAt": "2025-01-17T22:46:02.912Z"
       },
       {
         "id": 2,
@@ -32,10 +31,7 @@
         "sortField": "createdAt",
         "sortDirection": "asc",
         "createdAt": "2025-01-14T23:49:50.015Z",
-        "updatedAt": "2025-01-17T22:34:45.408Z",
-        "_count": {
-          "items": 3
-        }
+        "updatedAt": "2025-01-17T22:34:45.408Z"
       },
       {
         "id": 4,
@@ -49,10 +45,7 @@
         "sortField": "order",
         "sortDirection": "asc",
         "createdAt": "2025-01-14T23:49:50.017Z",
-        "updatedAt": "2025-01-17T22:49:01.347Z",
-        "_count": {
-          "items": 31
-        }
+        "updatedAt": "2025-01-17T22:49:01.347Z"
       },
       {
         "id": 5,
@@ -66,10 +59,7 @@
         "sortField": "order",
         "sortDirection": "asc",
         "createdAt": "2025-01-14T23:49:50.019Z",
-        "updatedAt": "2025-01-17T22:31:27.437Z",
-        "_count": {
-          "items": 4
-        }
+        "updatedAt": "2025-01-17T22:31:27.437Z"
       },
       {
         "id": 7,
@@ -83,10 +73,7 @@
         "sortField": "updatedAt",
         "sortDirection": "asc",
         "createdAt": "2025-01-14T23:49:50.021Z",
-        "updatedAt": "2025-01-17T22:31:27.437Z",
-        "_count": {
-          "items": 5
-        }
+        "updatedAt": "2025-01-17T22:31:27.437Z"
       },
       {
         "id": 28,
@@ -100,10 +87,7 @@
         "sortField": "order",
         "sortDirection": "asc",
         "createdAt": "2025-01-17T22:31:00.802Z",
-        "updatedAt": "2025-01-17T22:31:27.437Z",
-        "_count": {
-          "items": 0
-        }
+        "updatedAt": "2025-01-17T22:31:27.437Z"
       },
       {
         "id": 29,
@@ -117,10 +101,7 @@
         "sortField": "order",
         "sortDirection": "asc",
         "createdAt": "2025-01-17T22:31:04.746Z",
-        "updatedAt": "2025-01-17T22:31:27.437Z",
-        "_count": {
-          "items": 0
-        }
+        "updatedAt": "2025-01-17T22:31:27.437Z"
       }
     ],
     "items": [
@@ -135,548 +116,7 @@
         "dueAt": null,
         "groupId": 1,
         "createdAt": "2025-01-14T23:49:50.014Z",
-        "updatedAt": "2025-01-17T22:46:02.249Z",
-        "group": {
-          "id": 1,
-          "name": "Getting Started",
-          "order": 0,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "rocket",
-          "iconColor": "blue",
-          "viewMode": "expanded",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.014Z",
-          "updatedAt": "2025-01-17T22:46:02.912Z"
-        }
-      },
-      {
-        "id": 3,
-        "name": "Hidden Content",
-        "description": "This group is private. Its contents are hidden unless you enable \"Show Private Groups\" in Settings.",
-        "status": "purple",
-        "iconName": "shield",
-        "order": 0,
-        "useStatusColor": true,
-        "dueAt": null,
-        "groupId": 2,
-        "createdAt": "2025-01-14T23:49:50.015Z",
-        "updatedAt": "2025-01-14T23:49:50.015Z",
-        "group": {
-          "id": 2,
-          "name": "Private Group",
-          "order": 1,
-          "isDivider": false,
-          "isPrivate": true,
-          "iconName": "lock",
-          "iconColor": "gray",
-          "viewMode": "grid",
-          "sortField": "createdAt",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.015Z",
-          "updatedAt": "2025-01-17T22:34:45.408Z"
-        }
-      },
-      {
-        "id": 4,
-        "name": "Day 1",
-        "description": "Click to mark tasks for this day of every month. Example: Pay rent (1st), Check smoke alarms (15th), Review monthly budget (30th)",
-        "status": "green",
-        "iconName": "calendar",
-        "order": 0,
-        "useStatusColor": true,
-        "dueAt": null,
-        "groupId": 4,
-        "createdAt": "2025-01-14T23:49:50.017Z",
-        "updatedAt": "2025-01-17T21:47:05.979Z",
-        "group": {
-          "id": 4,
-          "name": "Monthly Reminders",
-          "order": 6,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "calendar",
-          "iconColor": "red",
-          "viewMode": "grid",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.017Z",
-          "updatedAt": "2025-01-17T22:49:01.347Z"
-        }
-      },
-      {
-        "id": 38,
-        "name": "SleepSwap",
-        "description": "A platform where people can \"trade\" napping spaces or quiet rooms. Think Airbnb but for daytime sleep. Offices, cafes, or private homes with underused spaces can list them for rent by the hour. A subscription plan could include curated nap spots for remote workers or urban dwellers who need a break from the chaos.\nWhy It’s Unique: It caters to the rising \"wellness\" trend, especially in cities where rest is hard to come by.",
-        "status": "gray",
-        "iconName": "bed",
-        "order": 0,
-        "useStatusColor": false,
-        "dueAt": null,
-        "groupId": 7,
-        "createdAt": "2025-01-14T23:49:50.021Z",
-        "updatedAt": "2025-01-17T22:19:27.800Z",
-        "group": {
-          "id": 7,
-          "name": "Project Ideas",
-          "order": 3,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "bulb",
-          "iconColor": "yellow",
-          "viewMode": "list",
-          "sortField": "updatedAt",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.021Z",
-          "updatedAt": "2025-01-17T22:31:27.437Z"
-        }
-      },
-      {
-        "id": 154,
-        "name": "💡  A Guide to Color Coding",
-        "description": "This is a weekly workout routine. When you finish each workout, change the item's color to Green 🟢\nThen at the end of the week, reset all of the item colors in preparation for next week's workouts. If you miss a workout, mark it in Red 🔴 so you know to punish yourself severely.",
-        "status": "blue",
-        "iconName": "bookmark",
-        "order": 0,
-        "useStatusColor": true,
-        "dueAt": null,
-        "groupId": 5,
-        "createdAt": "2025-01-17T22:00:31.108Z",
-        "updatedAt": "2025-01-17T22:43:52.470Z",
-        "group": {
-          "id": 5,
-          "name": "Workout Schedule",
-          "order": 4,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "dumbbell",
-          "iconColor": "blue",
-          "viewMode": "list",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.019Z",
-          "updatedAt": "2025-01-17T22:31:27.437Z"
-        }
-      },
-      {
-        "id": 156,
-        "name": "Emotion Emporium",
-        "description": "A physical and virtual marketplace for renting unique emotional experiences. Customers can pay for activities like laughing therapy, curated cry sessions, or even simulated adrenaline-pumping adventures (e.g., fake rescue missions). Each \"experience\" is tailored for emotional release or discovery.\nWhy It’s Unique: It taps into the need for emotional catharsis in a controlled, safe environment.",
-        "status": "gray",
-        "iconName": "heart",
-        "order": 0,
-        "useStatusColor": false,
-        "dueAt": null,
-        "groupId": 7,
-        "createdAt": "2025-01-17T22:11:55.875Z",
-        "updatedAt": "2025-01-17T22:13:21.398Z",
-        "group": {
-          "id": 7,
-          "name": "Project Ideas",
-          "order": 3,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "bulb",
-          "iconColor": "yellow",
-          "viewMode": "list",
-          "sortField": "updatedAt",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.021Z",
-          "updatedAt": "2025-01-17T22:31:27.437Z"
-        }
-      },
-      {
-        "id": 157,
-        "name": "Trash Treasure Trails",
-        "description": "A gamified recycling and litter collection service. Users sign up via an app, where they are assigned challenges like \"collect 5 coffee cups from a specific park\" in exchange for points redeemable for discounts, eco-friendly products, or even cash. Companies sponsor these “trails” to build their green credentials.\nWhy It’s Unique: Combines sustainability with fun, rewarding people for contributing to cleaner public spaces.",
-        "status": "gray",
-        "iconName": "leaf",
-        "order": 0,
-        "useStatusColor": false,
-        "dueAt": null,
-        "groupId": 7,
-        "createdAt": "2025-01-17T22:12:16.868Z",
-        "updatedAt": "2025-01-17T22:13:19.366Z",
-        "group": {
-          "id": 7,
-          "name": "Project Ideas",
-          "order": 3,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "bulb",
-          "iconColor": "yellow",
-          "viewMode": "list",
-          "sortField": "updatedAt",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.021Z",
-          "updatedAt": "2025-01-17T22:31:27.437Z"
-        }
-      },
-      {
-        "id": 158,
-        "name": "My AI Shadow",
-        "description": "A personal AI that mirrors your personality traits, knowledge, and habits to provide advice, brainstorm ideas, or even role-play challenging conversations. This AI companion can also assist with personal accountability by acting as a \"shadow\" version of yourself.\nWhy It’s Unique: It blends self-improvement with cutting-edge AI, creating a hyper-personalized tool for productivity and personal growth.",
-        "status": "gray",
-        "iconName": "user-pin",
-        "order": 0,
-        "useStatusColor": false,
-        "dueAt": null,
-        "groupId": 7,
-        "createdAt": "2025-01-17T22:12:33.524Z",
-        "updatedAt": "2025-01-17T22:13:24.525Z",
-        "group": {
-          "id": 7,
-          "name": "Project Ideas",
-          "order": 3,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "bulb",
-          "iconColor": "yellow",
-          "viewMode": "list",
-          "sortField": "updatedAt",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.021Z",
-          "updatedAt": "2025-01-17T22:31:27.437Z"
-        }
-      },
-      {
-        "id": 159,
-        "name": "Flavor Futures",
-        "description": "A speculative food investment platform where users can \"bet\" on new or emerging food trends (e.g., lab-grown meat, rare spices, or novel beverages). Revenue comes from connecting trend predictors with startups needing funding or testing markets.\nWhy It’s Unique: This idea merges the excitement of financial speculation with the rapidly evolving food-tech sector.",
-        "status": "gray",
-        "iconName": "bowl-rice",
-        "order": 0,
-        "useStatusColor": false,
-        "dueAt": null,
-        "groupId": 7,
-        "createdAt": "2025-01-17T22:12:55.388Z",
-        "updatedAt": "2025-01-17T22:15:27.084Z",
-        "group": {
-          "id": 7,
-          "name": "Project Ideas",
-          "order": 3,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "bulb",
-          "iconColor": "yellow",
-          "viewMode": "list",
-          "sortField": "updatedAt",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.021Z",
-          "updatedAt": "2025-01-17T22:31:27.437Z"
-        }
-      },
-      {
-        "id": 160,
-        "name": "Orphaned Item",
-        "description": "When a group is deleted, you have the choice to delete the corresponding items or not. If an item belongs to a group that doesn't exist, you can find it here in the 💾  Ungrouped section.",
-        "status": "purple",
-        "iconName": "folder",
-        "order": 0,
-        "useStatusColor": true,
-        "dueAt": null,
-        "groupId": null,
-        "createdAt": "2025-01-17T22:26:02.385Z",
-        "updatedAt": "2025-01-17T22:26:02.385Z",
-        "group": null
-      },
-      {
-        "id": 161,
-        "name": "Cheese",
-        "description": "Can you keep a secret?",
-        "status": "yellow",
-        "iconName": "cheese",
-        "order": 0,
-        "useStatusColor": true,
-        "dueAt": null,
-        "groupId": 2,
-        "createdAt": "2025-01-17T22:29:40.199Z",
-        "updatedAt": "2025-01-17T22:32:37.829Z",
-        "group": {
-          "id": 2,
-          "name": "Private Group",
-          "order": 1,
-          "isDivider": false,
-          "isPrivate": true,
-          "iconName": "lock",
-          "iconColor": "gray",
-          "viewMode": "grid",
-          "sortField": "createdAt",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.015Z",
-          "updatedAt": "2025-01-17T22:34:45.408Z"
-        }
-      },
-      {
-        "id": 162,
-        "name": "The Government",
-        "description": "I heard a knock at my door, but when I opened it there was no person, just an overwhelming sense of dread. It is THEM again. They are trying to make me loose my cool but it won't work.",
-        "status": "gray",
-        "iconName": "bank",
-        "order": 0,
-        "useStatusColor": false,
-        "dueAt": null,
-        "groupId": 2,
-        "createdAt": "2025-01-17T22:34:28.898Z",
-        "updatedAt": "2025-01-17T22:34:32.210Z",
-        "group": {
-          "id": 2,
-          "name": "Private Group",
-          "order": 1,
-          "isDivider": false,
-          "isPrivate": true,
-          "iconName": "lock",
-          "iconColor": "gray",
-          "viewMode": "grid",
-          "sortField": "createdAt",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.015Z",
-          "updatedAt": "2025-01-17T22:34:45.408Z"
-        }
-      },
-      {
-        "id": 5,
-        "name": "Day 2",
-        "description": "Click to mark tasks for this day of every month. Example: Pay rent (1st), Check smoke alarms (15th), Review monthly budget (30th)",
-        "status": "gray",
-        "iconName": "calendar",
-        "order": 1,
-        "useStatusColor": true,
-        "dueAt": null,
-        "groupId": 4,
-        "createdAt": "2025-01-14T23:49:50.017Z",
-        "updatedAt": "2025-01-14T23:49:50.017Z",
-        "group": {
-          "id": 4,
-          "name": "Monthly Reminders",
-          "order": 6,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "calendar",
-          "iconColor": "red",
-          "viewMode": "grid",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.017Z",
-          "updatedAt": "2025-01-17T22:49:01.347Z"
-        }
-      },
-      {
-        "id": 35,
-        "name": "Monday: Upper Body 💪",
-        "description": "Push-ups, Pull-ups, Shoulder Press",
-        "status": "green",
-        "iconName": "universal-access",
-        "order": 1,
-        "useStatusColor": false,
-        "dueAt": null,
-        "groupId": 5,
-        "createdAt": "2025-01-14T23:49:50.019Z",
-        "updatedAt": "2025-01-17T22:20:50.580Z",
-        "group": {
-          "id": 5,
-          "name": "Workout Schedule",
-          "order": 4,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "dumbbell",
-          "iconColor": "blue",
-          "viewMode": "list",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.019Z",
-          "updatedAt": "2025-01-17T22:31:27.437Z"
-        }
-      },
-      {
-        "id": 145,
-        "name": "Item Due Dates",
-        "description": "This item has a Due Date. After you delete it, you will see the \"Due Items\" menu on the upper-right become agitated. That menu shows the Top 3 upcoming due items.",
-        "status": "red",
-        "iconName": "check-square",
-        "order": 1,
-        "useStatusColor": false,
-        "dueAt": "2025-07-04T21:10:00.000Z",
-        "groupId": 1,
-        "createdAt": "2025-01-17T21:10:30.955Z",
-        "updatedAt": "2025-01-17T22:46:02.249Z",
-        "group": {
-          "id": 1,
-          "name": "Getting Started",
-          "order": 0,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "rocket",
-          "iconColor": "blue",
-          "viewMode": "expanded",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.014Z",
-          "updatedAt": "2025-01-17T22:46:02.912Z"
-        }
-      },
-      {
-        "id": 6,
-        "name": "Day 3",
-        "description": "Click to mark tasks for this day of every month. Example: Pay rent (1st), Check smoke alarms (15th), Review monthly budget (30th)",
-        "status": "gray",
-        "iconName": "calendar",
-        "order": 2,
-        "useStatusColor": true,
-        "dueAt": null,
-        "groupId": 4,
-        "createdAt": "2025-01-14T23:49:50.017Z",
-        "updatedAt": "2025-01-14T23:49:50.017Z",
-        "group": {
-          "id": 4,
-          "name": "Monthly Reminders",
-          "order": 6,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "calendar",
-          "iconColor": "red",
-          "viewMode": "grid",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.017Z",
-          "updatedAt": "2025-01-17T22:49:01.347Z"
-        }
-      },
-      {
-        "id": 36,
-        "name": "Wednesday: Core 🫃",
-        "description": "Planks, Crunches, Russian Twists",
-        "status": "gray",
-        "iconName": "universal-access",
-        "order": 2,
-        "useStatusColor": false,
-        "dueAt": null,
-        "groupId": 5,
-        "createdAt": "2025-01-14T23:49:50.019Z",
-        "updatedAt": "2025-01-17T22:20:59.552Z",
-        "group": {
-          "id": 5,
-          "name": "Workout Schedule",
-          "order": 4,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "dumbbell",
-          "iconColor": "blue",
-          "viewMode": "list",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.019Z",
-          "updatedAt": "2025-01-17T22:31:27.437Z"
-        }
-      },
-      {
-        "id": 151,
-        "name": "Fully Customize",
-        "description": "Each item card has a shortcut menu of buttons you can use to change edit the item's icon, color, name, and due date. Drag and drop items to change the order in the list. \n\nThere are also a variety of ways to sort and display items. Try it out!",
-        "status": "yellow",
-        "iconName": "star",
-        "order": 2,
-        "useStatusColor": true,
-        "dueAt": null,
-        "groupId": 1,
-        "createdAt": "2025-01-17T21:34:59.797Z",
-        "updatedAt": "2025-01-17T23:51:06.635Z",
-        "group": {
-          "id": 1,
-          "name": "Getting Started",
-          "order": 0,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "rocket",
-          "iconColor": "blue",
-          "viewMode": "expanded",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.014Z",
-          "updatedAt": "2025-01-17T22:46:02.912Z"
-        }
-      },
-      {
-        "id": 7,
-        "name": "Day 4",
-        "description": "Click to mark tasks for this day of every month. Example: Pay rent (1st), Check smoke alarms (15th), Review monthly budget (30th)",
-        "status": "gray",
-        "iconName": "calendar",
-        "order": 3,
-        "useStatusColor": true,
-        "dueAt": null,
-        "groupId": 4,
-        "createdAt": "2025-01-14T23:49:50.017Z",
-        "updatedAt": "2025-01-14T23:49:50.017Z",
-        "group": {
-          "id": 4,
-          "name": "Monthly Reminders",
-          "order": 6,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "calendar",
-          "iconColor": "red",
-          "viewMode": "grid",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.017Z",
-          "updatedAt": "2025-01-17T22:49:01.347Z"
-        }
-      },
-      {
-        "id": 37,
-        "name": "Friday: Lower Body 👟",
-        "description": "Squats, Lunges, Deadlifts",
-        "status": "gray",
-        "iconName": "universal-access",
-        "order": 3,
-        "useStatusColor": false,
-        "dueAt": null,
-        "groupId": 5,
-        "createdAt": "2025-01-14T23:49:50.019Z",
-        "updatedAt": "2025-01-17T22:21:03.793Z",
-        "group": {
-          "id": 5,
-          "name": "Workout Schedule",
-          "order": 4,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "dumbbell",
-          "iconColor": "blue",
-          "viewMode": "list",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.019Z",
-          "updatedAt": "2025-01-17T22:31:27.437Z"
-        }
-      },
-      {
-        "id": 153,
-        "name": "Notes & Quotes",
-        "description": "Also from the navigation menu, you can reach the Notes & Quotes page. You may have noticed that random quotes appear on this page. You can customize those. \n\nThere's also a dedicated notes manager for those longer ideas and card snippets that don't belong in an item card.",
-        "status": "gray",
-        "iconName": "archive",
-        "order": 3,
-        "useStatusColor": true,
-        "dueAt": null,
-        "groupId": 1,
-        "createdAt": "2025-01-17T21:40:32.392Z",
-        "updatedAt": "2025-01-17T23:49:43.116Z",
-        "group": {
-          "id": 1,
-          "name": "Getting Started",
-          "order": 0,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "rocket",
-          "iconColor": "blue",
-          "viewMode": "expanded",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.014Z",
-          "updatedAt": "2025-01-17T22:46:02.912Z"
-        }
+        "updatedAt": "2025-01-17T22:46:02.249Z"
       },
       {
         "id": 2,
@@ -689,21 +129,72 @@
         "dueAt": null,
         "groupId": 1,
         "createdAt": "2025-01-14T23:49:50.014Z",
-        "updatedAt": "2025-01-17T23:50:28.945Z",
-        "group": {
-          "id": 1,
-          "name": "Getting Started",
-          "order": 0,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "rocket",
-          "iconColor": "blue",
-          "viewMode": "expanded",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.014Z",
-          "updatedAt": "2025-01-17T22:46:02.912Z"
-        }
+        "updatedAt": "2025-01-17T23:50:28.945Z"
+      },
+      {
+        "id": 3,
+        "name": "Hidden Content",
+        "description": "This group is private. Its contents are hidden unless you enable \"Show Private Groups\" in Settings.",
+        "status": "purple",
+        "iconName": "shield",
+        "order": 0,
+        "useStatusColor": true,
+        "dueAt": null,
+        "groupId": 2,
+        "createdAt": "2025-01-14T23:49:50.015Z",
+        "updatedAt": "2025-01-14T23:49:50.015Z"
+      },
+      {
+        "id": 4,
+        "name": "Day 1",
+        "description": "Click to mark tasks for this day of every month. Example: Pay rent (1st), Check smoke alarms (15th), Review monthly budget (30th)",
+        "status": "green",
+        "iconName": "calendar",
+        "order": 0,
+        "useStatusColor": true,
+        "dueAt": null,
+        "groupId": 4,
+        "createdAt": "2025-01-14T23:49:50.017Z",
+        "updatedAt": "2025-01-17T21:47:05.979Z"
+      },
+      {
+        "id": 5,
+        "name": "Day 2",
+        "description": "Click to mark tasks for this day of every month. Example: Pay rent (1st), Check smoke alarms (15th), Review monthly budget (30th)",
+        "status": "gray",
+        "iconName": "calendar",
+        "order": 1,
+        "useStatusColor": true,
+        "dueAt": null,
+        "groupId": 4,
+        "createdAt": "2025-01-14T23:49:50.017Z",
+        "updatedAt": "2025-01-14T23:49:50.017Z"
+      },
+      {
+        "id": 6,
+        "name": "Day 3",
+        "description": "Click to mark tasks for this day of every month. Example: Pay rent (1st), Check smoke alarms (15th), Review monthly budget (30th)",
+        "status": "gray",
+        "iconName": "calendar",
+        "order": 2,
+        "useStatusColor": true,
+        "dueAt": null,
+        "groupId": 4,
+        "createdAt": "2025-01-14T23:49:50.017Z",
+        "updatedAt": "2025-01-14T23:49:50.017Z"
+      },
+      {
+        "id": 7,
+        "name": "Day 4",
+        "description": "Click to mark tasks for this day of every month. Example: Pay rent (1st), Check smoke alarms (15th), Review monthly budget (30th)",
+        "status": "gray",
+        "iconName": "calendar",
+        "order": 3,
+        "useStatusColor": true,
+        "dueAt": null,
+        "groupId": 4,
+        "createdAt": "2025-01-14T23:49:50.017Z",
+        "updatedAt": "2025-01-14T23:49:50.017Z"
       },
       {
         "id": 8,
@@ -716,21 +207,7 @@
         "dueAt": null,
         "groupId": 4,
         "createdAt": "2025-01-14T23:49:50.017Z",
-        "updatedAt": "2025-01-14T23:49:50.017Z",
-        "group": {
-          "id": 4,
-          "name": "Monthly Reminders",
-          "order": 6,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "calendar",
-          "iconColor": "red",
-          "viewMode": "grid",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.017Z",
-          "updatedAt": "2025-01-17T22:49:01.347Z"
-        }
+        "updatedAt": "2025-01-14T23:49:50.017Z"
       },
       {
         "id": 9,
@@ -743,48 +220,7 @@
         "dueAt": null,
         "groupId": 4,
         "createdAt": "2025-01-14T23:49:50.017Z",
-        "updatedAt": "2025-01-14T23:49:50.017Z",
-        "group": {
-          "id": 4,
-          "name": "Monthly Reminders",
-          "order": 6,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "calendar",
-          "iconColor": "red",
-          "viewMode": "grid",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.017Z",
-          "updatedAt": "2025-01-17T22:49:01.347Z"
-        }
-      },
-      {
-        "id": 152,
-        "name": "Private Groups",
-        "description": "Setting a group as \"Private\" will hide it's items and they won't appear in search results. To unlock private groups, go to the Settings page. \n\nSettings link is in the navigation menu (upper-right side of the page)",
-        "status": "gray",
-        "iconName": "ghost",
-        "order": 5,
-        "useStatusColor": false,
-        "dueAt": null,
-        "groupId": 1,
-        "createdAt": "2025-01-17T21:38:40.605Z",
-        "updatedAt": "2025-01-17T23:50:21.849Z",
-        "group": {
-          "id": 1,
-          "name": "Getting Started",
-          "order": 0,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "rocket",
-          "iconColor": "blue",
-          "viewMode": "expanded",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.014Z",
-          "updatedAt": "2025-01-17T22:46:02.912Z"
-        }
+        "updatedAt": "2025-01-14T23:49:50.017Z"
       },
       {
         "id": 10,
@@ -797,48 +233,7 @@
         "dueAt": null,
         "groupId": 4,
         "createdAt": "2025-01-14T23:49:50.017Z",
-        "updatedAt": "2025-01-14T23:49:50.017Z",
-        "group": {
-          "id": 4,
-          "name": "Monthly Reminders",
-          "order": 6,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "calendar",
-          "iconColor": "red",
-          "viewMode": "grid",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.017Z",
-          "updatedAt": "2025-01-17T22:49:01.347Z"
-        }
-      },
-      {
-        "id": 163,
-        "name": "Settings Galore",
-        "description": "Check out the settings page for more features and utilities.\n\n• Customize site title and tagline\n• Upload your own header image or disable the big header\n• Upload a notification sound for Due items\n• Enable email client [Experimental & Unfinished]\n• Debug mode adds a console footer\n• Show Private Groups\n• Language Selection (English or Japanese)\n• Logout & Factory Reset options\n• Data Snapshot Manager\n• UI Sample Page for developers",
-        "status": "purple",
-        "iconName": "pencil",
-        "order": 6,
-        "useStatusColor": true,
-        "dueAt": null,
-        "groupId": 1,
-        "createdAt": "2025-01-17T22:41:31.636Z",
-        "updatedAt": "2025-01-17T22:46:02.249Z",
-        "group": {
-          "id": 1,
-          "name": "Getting Started",
-          "order": 0,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "rocket",
-          "iconColor": "blue",
-          "viewMode": "expanded",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.014Z",
-          "updatedAt": "2025-01-17T22:46:02.912Z"
-        }
+        "updatedAt": "2025-01-14T23:49:50.017Z"
       },
       {
         "id": 11,
@@ -851,48 +246,7 @@
         "dueAt": null,
         "groupId": 4,
         "createdAt": "2025-01-14T23:49:50.017Z",
-        "updatedAt": "2025-01-14T23:49:50.017Z",
-        "group": {
-          "id": 4,
-          "name": "Monthly Reminders",
-          "order": 6,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "calendar",
-          "iconColor": "red",
-          "viewMode": "grid",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.017Z",
-          "updatedAt": "2025-01-17T22:49:01.347Z"
-        }
-      },
-      {
-        "id": 164,
-        "name": "Everything and Anything",
-        "description": "Using this simple, yet flexible system of groups and items, you can organize almost anything. You can reposition groups with drag & drop and create dividers to create logical separate between groups of groups.",
-        "status": "blue",
-        "iconName": "info-circle",
-        "order": 7,
-        "useStatusColor": false,
-        "dueAt": null,
-        "groupId": 1,
-        "createdAt": "2025-01-17T22:45:52.946Z",
-        "updatedAt": "2025-01-17T22:48:39.992Z",
-        "group": {
-          "id": 1,
-          "name": "Getting Started",
-          "order": 0,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "rocket",
-          "iconColor": "blue",
-          "viewMode": "expanded",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.014Z",
-          "updatedAt": "2025-01-17T22:46:02.912Z"
-        }
+        "updatedAt": "2025-01-14T23:49:50.017Z"
       },
       {
         "id": 12,
@@ -905,21 +259,7 @@
         "dueAt": null,
         "groupId": 4,
         "createdAt": "2025-01-14T23:49:50.017Z",
-        "updatedAt": "2025-01-14T23:49:50.017Z",
-        "group": {
-          "id": 4,
-          "name": "Monthly Reminders",
-          "order": 6,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "calendar",
-          "iconColor": "red",
-          "viewMode": "grid",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.017Z",
-          "updatedAt": "2025-01-17T22:49:01.347Z"
-        }
+        "updatedAt": "2025-01-14T23:49:50.017Z"
       },
       {
         "id": 13,
@@ -932,21 +272,7 @@
         "dueAt": null,
         "groupId": 4,
         "createdAt": "2025-01-14T23:49:50.017Z",
-        "updatedAt": "2025-01-14T23:49:50.017Z",
-        "group": {
-          "id": 4,
-          "name": "Monthly Reminders",
-          "order": 6,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "calendar",
-          "iconColor": "red",
-          "viewMode": "grid",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.017Z",
-          "updatedAt": "2025-01-17T22:49:01.347Z"
-        }
+        "updatedAt": "2025-01-14T23:49:50.017Z"
       },
       {
         "id": 14,
@@ -959,21 +285,7 @@
         "dueAt": null,
         "groupId": 4,
         "createdAt": "2025-01-14T23:49:50.017Z",
-        "updatedAt": "2025-01-14T23:49:50.017Z",
-        "group": {
-          "id": 4,
-          "name": "Monthly Reminders",
-          "order": 6,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "calendar",
-          "iconColor": "red",
-          "viewMode": "grid",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.017Z",
-          "updatedAt": "2025-01-17T22:49:01.347Z"
-        }
+        "updatedAt": "2025-01-14T23:49:50.017Z"
       },
       {
         "id": 15,
@@ -986,21 +298,7 @@
         "dueAt": null,
         "groupId": 4,
         "createdAt": "2025-01-14T23:49:50.017Z",
-        "updatedAt": "2025-01-14T23:49:50.017Z",
-        "group": {
-          "id": 4,
-          "name": "Monthly Reminders",
-          "order": 6,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "calendar",
-          "iconColor": "red",
-          "viewMode": "grid",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.017Z",
-          "updatedAt": "2025-01-17T22:49:01.347Z"
-        }
+        "updatedAt": "2025-01-14T23:49:50.017Z"
       },
       {
         "id": 16,
@@ -1013,21 +311,7 @@
         "dueAt": null,
         "groupId": 4,
         "createdAt": "2025-01-14T23:49:50.017Z",
-        "updatedAt": "2025-01-14T23:49:50.017Z",
-        "group": {
-          "id": 4,
-          "name": "Monthly Reminders",
-          "order": 6,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "calendar",
-          "iconColor": "red",
-          "viewMode": "grid",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.017Z",
-          "updatedAt": "2025-01-17T22:49:01.347Z"
-        }
+        "updatedAt": "2025-01-14T23:49:50.017Z"
       },
       {
         "id": 17,
@@ -1040,21 +324,7 @@
         "dueAt": null,
         "groupId": 4,
         "createdAt": "2025-01-14T23:49:50.017Z",
-        "updatedAt": "2025-01-14T23:49:50.017Z",
-        "group": {
-          "id": 4,
-          "name": "Monthly Reminders",
-          "order": 6,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "calendar",
-          "iconColor": "red",
-          "viewMode": "grid",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.017Z",
-          "updatedAt": "2025-01-17T22:49:01.347Z"
-        }
+        "updatedAt": "2025-01-14T23:49:50.017Z"
       },
       {
         "id": 18,
@@ -1067,21 +337,7 @@
         "dueAt": null,
         "groupId": 4,
         "createdAt": "2025-01-14T23:49:50.017Z",
-        "updatedAt": "2025-01-17T21:47:02.974Z",
-        "group": {
-          "id": 4,
-          "name": "Monthly Reminders",
-          "order": 6,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "calendar",
-          "iconColor": "red",
-          "viewMode": "grid",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.017Z",
-          "updatedAt": "2025-01-17T22:49:01.347Z"
-        }
+        "updatedAt": "2025-01-17T21:47:02.974Z"
       },
       {
         "id": 19,
@@ -1094,21 +350,7 @@
         "dueAt": null,
         "groupId": 4,
         "createdAt": "2025-01-14T23:49:50.017Z",
-        "updatedAt": "2025-01-14T23:49:50.017Z",
-        "group": {
-          "id": 4,
-          "name": "Monthly Reminders",
-          "order": 6,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "calendar",
-          "iconColor": "red",
-          "viewMode": "grid",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.017Z",
-          "updatedAt": "2025-01-17T22:49:01.347Z"
-        }
+        "updatedAt": "2025-01-14T23:49:50.017Z"
       },
       {
         "id": 20,
@@ -1121,21 +363,7 @@
         "dueAt": null,
         "groupId": 4,
         "createdAt": "2025-01-14T23:49:50.017Z",
-        "updatedAt": "2025-01-17T21:47:18.447Z",
-        "group": {
-          "id": 4,
-          "name": "Monthly Reminders",
-          "order": 6,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "calendar",
-          "iconColor": "red",
-          "viewMode": "grid",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.017Z",
-          "updatedAt": "2025-01-17T22:49:01.347Z"
-        }
+        "updatedAt": "2025-01-17T21:47:18.447Z"
       },
       {
         "id": 21,
@@ -1148,21 +376,7 @@
         "dueAt": null,
         "groupId": 4,
         "createdAt": "2025-01-14T23:49:50.017Z",
-        "updatedAt": "2025-01-14T23:49:50.017Z",
-        "group": {
-          "id": 4,
-          "name": "Monthly Reminders",
-          "order": 6,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "calendar",
-          "iconColor": "red",
-          "viewMode": "grid",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.017Z",
-          "updatedAt": "2025-01-17T22:49:01.347Z"
-        }
+        "updatedAt": "2025-01-14T23:49:50.017Z"
       },
       {
         "id": 22,
@@ -1175,21 +389,7 @@
         "dueAt": null,
         "groupId": 4,
         "createdAt": "2025-01-14T23:49:50.017Z",
-        "updatedAt": "2025-01-14T23:49:50.017Z",
-        "group": {
-          "id": 4,
-          "name": "Monthly Reminders",
-          "order": 6,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "calendar",
-          "iconColor": "red",
-          "viewMode": "grid",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.017Z",
-          "updatedAt": "2025-01-17T22:49:01.347Z"
-        }
+        "updatedAt": "2025-01-14T23:49:50.017Z"
       },
       {
         "id": 23,
@@ -1202,21 +402,7 @@
         "dueAt": null,
         "groupId": 4,
         "createdAt": "2025-01-14T23:49:50.017Z",
-        "updatedAt": "2025-01-14T23:49:50.017Z",
-        "group": {
-          "id": 4,
-          "name": "Monthly Reminders",
-          "order": 6,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "calendar",
-          "iconColor": "red",
-          "viewMode": "grid",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.017Z",
-          "updatedAt": "2025-01-17T22:49:01.347Z"
-        }
+        "updatedAt": "2025-01-14T23:49:50.017Z"
       },
       {
         "id": 24,
@@ -1229,21 +415,7 @@
         "dueAt": null,
         "groupId": 4,
         "createdAt": "2025-01-14T23:49:50.017Z",
-        "updatedAt": "2025-01-14T23:49:50.017Z",
-        "group": {
-          "id": 4,
-          "name": "Monthly Reminders",
-          "order": 6,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "calendar",
-          "iconColor": "red",
-          "viewMode": "grid",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.017Z",
-          "updatedAt": "2025-01-17T22:49:01.347Z"
-        }
+        "updatedAt": "2025-01-14T23:49:50.017Z"
       },
       {
         "id": 25,
@@ -1256,21 +428,7 @@
         "dueAt": null,
         "groupId": 4,
         "createdAt": "2025-01-14T23:49:50.017Z",
-        "updatedAt": "2025-01-14T23:49:50.017Z",
-        "group": {
-          "id": 4,
-          "name": "Monthly Reminders",
-          "order": 6,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "calendar",
-          "iconColor": "red",
-          "viewMode": "grid",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.017Z",
-          "updatedAt": "2025-01-17T22:49:01.347Z"
-        }
+        "updatedAt": "2025-01-14T23:49:50.017Z"
       },
       {
         "id": 26,
@@ -1283,21 +441,7 @@
         "dueAt": null,
         "groupId": 4,
         "createdAt": "2025-01-14T23:49:50.017Z",
-        "updatedAt": "2025-01-14T23:49:50.017Z",
-        "group": {
-          "id": 4,
-          "name": "Monthly Reminders",
-          "order": 6,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "calendar",
-          "iconColor": "red",
-          "viewMode": "grid",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.017Z",
-          "updatedAt": "2025-01-17T22:49:01.347Z"
-        }
+        "updatedAt": "2025-01-14T23:49:50.017Z"
       },
       {
         "id": 27,
@@ -1310,21 +454,7 @@
         "dueAt": null,
         "groupId": 4,
         "createdAt": "2025-01-14T23:49:50.017Z",
-        "updatedAt": "2025-01-14T23:49:50.017Z",
-        "group": {
-          "id": 4,
-          "name": "Monthly Reminders",
-          "order": 6,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "calendar",
-          "iconColor": "red",
-          "viewMode": "grid",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.017Z",
-          "updatedAt": "2025-01-17T22:49:01.347Z"
-        }
+        "updatedAt": "2025-01-14T23:49:50.017Z"
       },
       {
         "id": 28,
@@ -1337,21 +467,7 @@
         "dueAt": null,
         "groupId": 4,
         "createdAt": "2025-01-14T23:49:50.017Z",
-        "updatedAt": "2025-01-14T23:49:50.017Z",
-        "group": {
-          "id": 4,
-          "name": "Monthly Reminders",
-          "order": 6,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "calendar",
-          "iconColor": "red",
-          "viewMode": "grid",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.017Z",
-          "updatedAt": "2025-01-17T22:49:01.347Z"
-        }
+        "updatedAt": "2025-01-14T23:49:50.017Z"
       },
       {
         "id": 29,
@@ -1364,21 +480,7 @@
         "dueAt": null,
         "groupId": 4,
         "createdAt": "2025-01-14T23:49:50.017Z",
-        "updatedAt": "2025-01-14T23:49:50.017Z",
-        "group": {
-          "id": 4,
-          "name": "Monthly Reminders",
-          "order": 6,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "calendar",
-          "iconColor": "red",
-          "viewMode": "grid",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.017Z",
-          "updatedAt": "2025-01-17T22:49:01.347Z"
-        }
+        "updatedAt": "2025-01-14T23:49:50.017Z"
       },
       {
         "id": 30,
@@ -1391,21 +493,7 @@
         "dueAt": null,
         "groupId": 4,
         "createdAt": "2025-01-14T23:49:50.017Z",
-        "updatedAt": "2025-01-14T23:49:50.017Z",
-        "group": {
-          "id": 4,
-          "name": "Monthly Reminders",
-          "order": 6,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "calendar",
-          "iconColor": "red",
-          "viewMode": "grid",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.017Z",
-          "updatedAt": "2025-01-17T22:49:01.347Z"
-        }
+        "updatedAt": "2025-01-14T23:49:50.017Z"
       },
       {
         "id": 31,
@@ -1418,21 +506,7 @@
         "dueAt": null,
         "groupId": 4,
         "createdAt": "2025-01-14T23:49:50.017Z",
-        "updatedAt": "2025-01-14T23:49:50.017Z",
-        "group": {
-          "id": 4,
-          "name": "Monthly Reminders",
-          "order": 6,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "calendar",
-          "iconColor": "red",
-          "viewMode": "grid",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.017Z",
-          "updatedAt": "2025-01-17T22:49:01.347Z"
-        }
+        "updatedAt": "2025-01-14T23:49:50.017Z"
       },
       {
         "id": 32,
@@ -1445,21 +519,7 @@
         "dueAt": null,
         "groupId": 4,
         "createdAt": "2025-01-14T23:49:50.017Z",
-        "updatedAt": "2025-01-14T23:49:50.017Z",
-        "group": {
-          "id": 4,
-          "name": "Monthly Reminders",
-          "order": 6,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "calendar",
-          "iconColor": "red",
-          "viewMode": "grid",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.017Z",
-          "updatedAt": "2025-01-17T22:49:01.347Z"
-        }
+        "updatedAt": "2025-01-14T23:49:50.017Z"
       },
       {
         "id": 33,
@@ -1472,21 +532,7 @@
         "dueAt": null,
         "groupId": 4,
         "createdAt": "2025-01-14T23:49:50.017Z",
-        "updatedAt": "2025-01-14T23:49:50.017Z",
-        "group": {
-          "id": 4,
-          "name": "Monthly Reminders",
-          "order": 6,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "calendar",
-          "iconColor": "red",
-          "viewMode": "grid",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.017Z",
-          "updatedAt": "2025-01-17T22:49:01.347Z"
-        }
+        "updatedAt": "2025-01-14T23:49:50.017Z"
       },
       {
         "id": 34,
@@ -1499,21 +545,241 @@
         "dueAt": null,
         "groupId": 4,
         "createdAt": "2025-01-14T23:49:50.017Z",
-        "updatedAt": "2025-01-14T23:49:50.017Z",
-        "group": {
-          "id": 4,
-          "name": "Monthly Reminders",
-          "order": 6,
-          "isDivider": false,
-          "isPrivate": false,
-          "iconName": "calendar",
-          "iconColor": "red",
-          "viewMode": "grid",
-          "sortField": "order",
-          "sortDirection": "asc",
-          "createdAt": "2025-01-14T23:49:50.017Z",
-          "updatedAt": "2025-01-17T22:49:01.347Z"
-        }
+        "updatedAt": "2025-01-14T23:49:50.017Z"
+      },
+      {
+        "id": 35,
+        "name": "Monday: Upper Body 💪",
+        "description": "Push-ups, Pull-ups, Shoulder Press",
+        "status": "green",
+        "iconName": "universal-access",
+        "order": 1,
+        "useStatusColor": false,
+        "dueAt": null,
+        "groupId": 5,
+        "createdAt": "2025-01-14T23:49:50.019Z",
+        "updatedAt": "2025-01-17T22:20:50.580Z"
+      },
+      {
+        "id": 36,
+        "name": "Wednesday: Core 🫃",
+        "description": "Planks, Crunches, Russian Twists",
+        "status": "gray",
+        "iconName": "universal-access",
+        "order": 2,
+        "useStatusColor": false,
+        "dueAt": null,
+        "groupId": 5,
+        "createdAt": "2025-01-14T23:49:50.019Z",
+        "updatedAt": "2025-01-17T22:20:59.552Z"
+      },
+      {
+        "id": 37,
+        "name": "Friday: Lower Body 👟",
+        "description": "Squats, Lunges, Deadlifts",
+        "status": "gray",
+        "iconName": "universal-access",
+        "order": 3,
+        "useStatusColor": false,
+        "dueAt": null,
+        "groupId": 5,
+        "createdAt": "2025-01-14T23:49:50.019Z",
+        "updatedAt": "2025-01-17T22:21:03.793Z"
+      },
+      {
+        "id": 38,
+        "name": "SleepSwap",
+        "description": "A platform where people can \"trade\" napping spaces or quiet rooms. Think Airbnb but for daytime sleep. Offices, cafes, or private homes with underused spaces can list them for rent by the hour. A subscription plan could include curated nap spots for remote workers or urban dwellers who need a break from the chaos.\nWhy It’s Unique: It caters to the rising \"wellness\" trend, especially in cities where rest is hard to come by.",
+        "status": "gray",
+        "iconName": "bed",
+        "order": 0,
+        "useStatusColor": false,
+        "dueAt": null,
+        "groupId": 7,
+        "createdAt": "2025-01-14T23:49:50.021Z",
+        "updatedAt": "2025-01-17T22:19:27.800Z"
+      },
+      {
+        "id": 145,
+        "name": "Item Due Dates",
+        "description": "This item has a Due Date. After you delete it, you will see the \"Due Items\" menu on the upper-right become agitated. That menu shows the Top 3 upcoming due items.",
+        "status": "red",
+        "iconName": "check-square",
+        "order": 1,
+        "useStatusColor": false,
+        "dueAt": "2025-07-04T21:10:00.000Z",
+        "groupId": 1,
+        "createdAt": "2025-01-17T21:10:30.955Z",
+        "updatedAt": "2025-01-17T22:46:02.249Z"
+      },
+      {
+        "id": 151,
+        "name": "Fully Customize",
+        "description": "Each item card has a shortcut menu of buttons you can use to change edit the item's icon, color, name, and due date. Drag and drop items to change the order in the list. \n\nThere are also a variety of ways to sort and display items. Try it out!",
+        "status": "yellow",
+        "iconName": "star",
+        "order": 2,
+        "useStatusColor": true,
+        "dueAt": null,
+        "groupId": 1,
+        "createdAt": "2025-01-17T21:34:59.797Z",
+        "updatedAt": "2025-01-17T23:51:06.635Z"
+      },
+      {
+        "id": 152,
+        "name": "Private Groups",
+        "description": "Setting a group as \"Private\" will hide it's items and they won't appear in search results. To unlock private groups, go to the Settings page. \n\nSettings link is in the navigation menu (upper-right side of the page)",
+        "status": "gray",
+        "iconName": "ghost",
+        "order": 5,
+        "useStatusColor": false,
+        "dueAt": null,
+        "groupId": 1,
+        "createdAt": "2025-01-17T21:38:40.605Z",
+        "updatedAt": "2025-01-17T23:50:21.849Z"
+      },
+      {
+        "id": 153,
+        "name": "Notes & Quotes",
+        "description": "Also from the navigation menu, you can reach the Notes & Quotes page. You may have noticed that random quotes appear on this page. You can customize those. \n\nThere's also a dedicated notes manager for those longer ideas and card snippets that don't belong in an item card.",
+        "status": "gray",
+        "iconName": "archive",
+        "order": 3,
+        "useStatusColor": true,
+        "dueAt": null,
+        "groupId": 1,
+        "createdAt": "2025-01-17T21:40:32.392Z",
+        "updatedAt": "2025-01-17T23:49:43.116Z"
+      },
+      {
+        "id": 154,
+        "name": "💡  A Guide to Color Coding",
+        "description": "This is a weekly workout routine. When you finish each workout, change the item's color to Green 🟢\nThen at the end of the week, reset all of the item colors in preparation for next week's workouts. If you miss a workout, mark it in Red 🔴 so you know to punish yourself severely.",
+        "status": "blue",
+        "iconName": "bookmark",
+        "order": 0,
+        "useStatusColor": true,
+        "dueAt": null,
+        "groupId": 5,
+        "createdAt": "2025-01-17T22:00:31.108Z",
+        "updatedAt": "2025-01-17T22:43:52.470Z"
+      },
+      {
+        "id": 156,
+        "name": "Emotion Emporium",
+        "description": "A physical and virtual marketplace for renting unique emotional experiences. Customers can pay for activities like laughing therapy, curated cry sessions, or even simulated adrenaline-pumping adventures (e.g., fake rescue missions). Each \"experience\" is tailored for emotional release or discovery.\nWhy It’s Unique: It taps into the need for emotional catharsis in a controlled, safe environment.",
+        "status": "gray",
+        "iconName": "heart",
+        "order": 0,
+        "useStatusColor": false,
+        "dueAt": null,
+        "groupId": 7,
+        "createdAt": "2025-01-17T22:11:55.875Z",
+        "updatedAt": "2025-01-17T22:13:21.398Z"
+      },
+      {
+        "id": 157,
+        "name": "Trash Treasure Trails",
+        "description": "A gamified recycling and litter collection service. Users sign up via an app, where they are assigned challenges like \"collect 5 coffee cups from a specific park\" in exchange for points redeemable for discounts, eco-friendly products, or even cash. Companies sponsor these “trails” to build their green credentials.\nWhy It’s Unique: Combines sustainability with fun, rewarding people for contributing to cleaner public spaces.",
+        "status": "gray",
+        "iconName": "leaf",
+        "order": 0,
+        "useStatusColor": false,
+        "dueAt": null,
+        "groupId": 7,
+        "createdAt": "2025-01-17T22:12:16.868Z",
+        "updatedAt": "2025-01-17T22:13:19.366Z"
+      },
+      {
+        "id": 158,
+        "name": "My AI Shadow",
+        "description": "A personal AI that mirrors your personality traits, knowledge, and habits to provide advice, brainstorm ideas, or even role-play challenging conversations. This AI companion can also assist with personal accountability by acting as a \"shadow\" version of yourself.\nWhy It’s Unique: It blends self-improvement with cutting-edge AI, creating a hyper-personalized tool for productivity and personal growth.",
+        "status": "gray",
+        "iconName": "user-pin",
+        "order": 0,
+        "useStatusColor": false,
+        "dueAt": null,
+        "groupId": 7,
+        "createdAt": "2025-01-17T22:12:33.524Z",
+        "updatedAt": "2025-01-17T22:13:24.525Z"
+      },
+      {
+        "id": 159,
+        "name": "Flavor Futures",
+        "description": "A speculative food investment platform where users can \"bet\" on new or emerging food trends (e.g., lab-grown meat, rare spices, or novel beverages). Revenue comes from connecting trend predictors with startups needing funding or testing markets.\nWhy It’s Unique: This idea merges the excitement of financial speculation with the rapidly evolving food-tech sector.",
+        "status": "gray",
+        "iconName": "bowl-rice",
+        "order": 0,
+        "useStatusColor": false,
+        "dueAt": null,
+        "groupId": 7,
+        "createdAt": "2025-01-17T22:12:55.388Z",
+        "updatedAt": "2025-01-17T22:15:27.084Z"
+      },
+      {
+        "id": 160,
+        "name": "Orphaned Item",
+        "description": "When a group is deleted, you have the choice to delete the corresponding items or not. If an item belongs to a group that doesn't exist, you can find it here in the 💾  Ungrouped section.",
+        "status": "purple",
+        "iconName": "folder",
+        "order": 0,
+        "useStatusColor": true,
+        "dueAt": null,
+        "groupId": null,
+        "createdAt": "2025-01-17T22:26:02.385Z",
+        "updatedAt": "2025-01-17T22:26:02.385Z"
+      },
+      {
+        "id": 161,
+        "name": "Cheese",
+        "description": "Can you keep a secret?",
+        "status": "yellow",
+        "iconName": "cheese",
+        "order": 0,
+        "useStatusColor": true,
+        "dueAt": null,
+        "groupId": 2,
+        "createdAt": "2025-01-17T22:29:40.199Z",
+        "updatedAt": "2025-01-17T22:32:37.829Z"
+      },
+      {
+        "id": 162,
+        "name": "The Government",
+        "description": "I heard a knock at my door, but when I opened it there was no person, just an overwhelming sense of dread. It is THEM again. They are trying to make me loose my cool but it won't work.",
+        "status": "gray",
+        "iconName": "bank",
+        "order": 0,
+        "useStatusColor": false,
+        "dueAt": null,
+        "groupId": 2,
+        "createdAt": "2025-01-17T22:34:28.898Z",
+        "updatedAt": "2025-01-17T22:34:32.210Z"
+      },
+      {
+        "id": 163,
+        "name": "Settings Galore",
+        "description": "Check out the settings page for more features and utilities.\n\n• Customize site title and tagline\n• Upload your own header image or disable the big header\n• Upload a notification sound for Due items\n• Enable email client [Experimental & Unfinished]\n• Debug mode adds a console footer\n• Show Private Groups\n• Language Selection (English or Japanese)\n• Logout & Factory Reset options\n• Data Snapshot Manager\n• UI Sample Page for developers",
+        "status": "purple",
+        "iconName": "pencil",
+        "order": 6,
+        "useStatusColor": true,
+        "dueAt": null,
+        "groupId": 1,
+        "createdAt": "2025-01-17T22:41:31.636Z",
+        "updatedAt": "2025-01-17T22:46:02.249Z"
+      },
+      {
+        "id": 164,
+        "name": "Everything and Anything",
+        "description": "Using this simple, yet flexible system of groups and items, you can organize almost anything. You can reposition groups with drag & drop and create dividers to create logical separate between groups of groups.",
+        "status": "blue",
+        "iconName": "info-circle",
+        "order": 7,
+        "useStatusColor": false,
+        "dueAt": null,
+        "groupId": 1,
+        "createdAt": "2025-01-17T22:45:52.946Z",
+        "updatedAt": "2025-01-17T22:48:39.992Z"
       }
     ],
     "settings": {
@@ -1529,7 +795,7 @@
       "version": "1.0.21",
       "debugMode": false,
       "isPublic": false,
-      "updatedAt": "2025-01-18T01:49:38.915Z",
+      "updatedAt": "2025-01-22T21:33:23.257Z",
       "language": "en",
       "emailEnabled": false,
       "google_enabled": false,
@@ -1541,39 +807,11 @@
     },
     "quotes": [
       {
-        "id": 15,
-        "quote": "I don't have delusions of grandeur. I am grandeur.",
-        "thinker": "Loki",
-        "createdAt": "2025-01-18T00:05:33.093Z",
-        "updatedAt": "2025-01-18T00:05:33.093Z"
-      },
-      {
-        "id": 14,
-        "quote": "Your childlike mind cannot appreciate the time-worn wisdom of my words.",
-        "thinker": "Commander Data",
-        "createdAt": "2025-01-18T00:05:23.238Z",
-        "updatedAt": "2025-01-18T00:05:23.238Z"
-      },
-      {
-        "id": 13,
-        "quote": "Abandoning my post would be a dereliction of duty.",
-        "thinker": "Jeeves",
-        "createdAt": "2025-01-18T00:05:11.666Z",
-        "updatedAt": "2025-01-18T00:05:11.666Z"
-      },
-      {
-        "id": 12,
-        "quote": "Between impulse and action, there is a realm of good taste begging for your acquaintance.",
-        "thinker": "The Doctor (Voyager)",
-        "createdAt": "2025-01-18T00:04:19.397Z",
-        "updatedAt": "2025-01-18T00:04:19.397Z"
-      },
-      {
-        "id": 11,
-        "quote": "When I want your opinion, I'll give it to you.",
-        "thinker": "Dr. Leonard McCoy",
-        "createdAt": "2025-01-18T00:04:07.127Z",
-        "updatedAt": "2025-01-18T00:04:07.127Z"
+        "id": 9,
+        "quote": "I can resist anything except temptation.",
+        "thinker": "Oscar Wilde",
+        "createdAt": "2025-01-18T00:03:43.428Z",
+        "updatedAt": "2025-01-18T00:03:43.428Z"
       },
       {
         "id": 10,
@@ -1583,77 +821,49 @@
         "updatedAt": "2025-01-18T00:03:54.575Z"
       },
       {
-        "id": 9,
-        "quote": "I can resist anything except temptation.",
-        "thinker": "Oscar Wilde",
-        "createdAt": "2025-01-18T00:03:43.428Z",
-        "updatedAt": "2025-01-18T00:03:43.428Z"
+        "id": 11,
+        "quote": "When I want your opinion, I'll give it to you.",
+        "thinker": "Dr. Leonard McCoy",
+        "createdAt": "2025-01-18T00:04:07.127Z",
+        "updatedAt": "2025-01-18T00:04:07.127Z"
+      },
+      {
+        "id": 12,
+        "quote": "Between impulse and action, there is a realm of good taste begging for your acquaintance.",
+        "thinker": "The Doctor (Voyager)",
+        "createdAt": "2025-01-18T00:04:19.397Z",
+        "updatedAt": "2025-01-18T00:04:19.397Z"
+      },
+      {
+        "id": 13,
+        "quote": "Abandoning my post would be a dereliction of duty.",
+        "thinker": "Jeeves",
+        "createdAt": "2025-01-18T00:05:11.666Z",
+        "updatedAt": "2025-01-18T00:05:11.666Z"
+      },
+      {
+        "id": 14,
+        "quote": "Your childlike mind cannot appreciate the time-worn wisdom of my words.",
+        "thinker": "Commander Data",
+        "createdAt": "2025-01-18T00:05:23.238Z",
+        "updatedAt": "2025-01-18T00:05:23.238Z"
+      },
+      {
+        "id": 15,
+        "quote": "I don't have delusions of grandeur. I am grandeur.",
+        "thinker": "Loki",
+        "createdAt": "2025-01-18T00:05:33.093Z",
+        "updatedAt": "2025-01-18T00:05:33.093Z"
       }
     ],
     "notes": [
       {
-        "id": 12,
-        "title": "Passing the Torch",
-        "content": "Today, I gave Ellie her first pocketknife. It’s a tradition in our family—a symbol of growing independence and responsibility. Her eyes lit up as I handed it to her, and I could see the mix of excitement and determination on her face.\n\nWe spent the afternoon by the lake, carving small sticks into shapes. I taught her the basics of knife safety, and she listened intently, her little hands careful and precise. Watching her work reminded me of when my dad first handed me a pocketknife, and the pride I felt in that moment. As we packed up for the day, Ellie hugged me and said, “I’ll take good care of it, Daddy.” It was a bittersweet reminder that she’s growing up, but I couldn’t be prouder of the person she’s becoming.",
-        "tags": "",
-        "createdAt": "2025-01-17T23:05:25.212Z",
-        "updatedAt": "2025-01-18T00:51:05.571Z"
-      },
-      {
-        "id": 10,
-        "title": "Stargazing Surprise",
-        "content": "The night sky was clear at the cabin, so I brought out the telescope and blankets for an impromptu stargazing session. Ellie was mesmerized by the sight of the Milky Way, her face glowing with wonder as I pointed out constellations. Jake, of course, insisted he saw a UFO and spent half the time scanning the skies for “aliens.”\n\nWe talked about the vastness of the universe and how the stars we see are light from millions of years ago. Ellie asked if the stars ever go out, and Jake wondered if other planets had families like ours. They eventually fell asleep wrapped in blankets by the fire, their faces still lit with awe. I sat there for a while, watching the stars and feeling profoundly grateful for these fleeting, magical moments.",
-        "tags": "",
-        "createdAt": "2025-01-17T23:04:26.384Z",
-        "updatedAt": "2025-01-18T00:50:57.593Z"
-      },
-      {
-        "id": 9,
-        "title": "Snowy Lessons",
-        "content": "Winter brought fresh snow to the mountains, and Jake and I decided to brave the cold for a winter hike. About halfway through, we stopped to build a snow shelter, something I hadn’t done since I was a kid. I showed Jake how to pack the snow and carve out a hollow space, explaining how early humans used similar techniques to survive harsh winters.\n\nJake was full of questions: “How long would this take to build for a whole family?” “Wouldn’t the snow melt?” His curiosity was boundless, and I loved seeing his imagination come alive. Once the shelter was finished, we crawled inside and admired our work. Jake declared, “I feel like a real explorer!” It was a reminder that even in the coldest conditions, the warmth of shared experiences can make all the difference.",
-        "tags": "",
-        "createdAt": "2025-01-17T23:04:07.783Z",
-        "updatedAt": "2025-01-18T00:50:46.963Z"
-      },
-      {
-        "id": 8,
-        "title": "The Silent Hunt",
-        "content": "Ellie joined me for her first bow-hunting trip today. We didn’t have any intention of taking a shot—this trip was more about teaching her the patience and respect that hunting requires. We spent hours moving quietly through the woods, stopping to observe deer tracks and listen to the sounds of the forest.\n\nEllie was surprisingly good at staying silent, though her wide eyes and whispered questions revealed her excitement. She was fascinated by the process, from identifying animal signs to understanding wind direction. When the day was over, she told me it was her “most peaceful day ever.” I couldn’t help but feel proud, not just because she enjoyed it, but because she understood the deeper lessons—about connection, responsibility, and gratitude.",
-        "tags": "hunting",
-        "createdAt": "2025-01-17T23:03:51.197Z",
-        "updatedAt": "2025-01-18T00:50:38.888Z"
-      },
-      {
-        "id": 7,
-        "title": "Jake’s First Trail Map",
-        "content": "Today, Jake took the lead on our hike, map in hand. I had been teaching him how to read trail maps for a few weeks, and he was eager to put his skills to the test. As we set out, he studied the map intently, pointing out landmarks and checking the trail markers along the way.\n\nAt one point, we came to a fork in the path, and Jake confidently chose the correct direction. I pretended to be unsure, just to see if he’d catch on, and he did, laughing as he pointed to the map to prove his choice. When we reached the end of the trail, he looked up at me and said, “That was awesome. I feel like a real explorer!” Watching him take charge and grow more confident reminded me how important it is to give kids the tools—and the trust—to navigate their own paths.",
-        "tags": "hiking",
-        "createdAt": "2025-01-17T23:03:23.884Z",
-        "updatedAt": "2025-01-18T00:50:30.765Z"
-      },
-      {
-        "id": 6,
-        "title": "Berry Picking Success",
-        "content": "Ellie’s squeal of excitement echoed through the woods when she stumbled upon her first wild blackberry bush. We were on one of our favorite summer trails, and I had been pointing out different plants and flowers along the way. Ellie had been half-listening, more interested in chasing butterflies, until she spotted the berries.\n\nWe spent the next hour carefully picking the ripest ones, her little hands stained purple by the end of it. She insisted we save enough to make a pie, so when we got home, we rolled up our sleeves and got to work. Ellie was in charge of washing the berries and mixing the filling, while I handled the crust. When the pie finally came out of the oven, the whole house smelled like summer. As we sat down to eat, Ellie beamed with pride, declaring, “We’re the best team ever!”",
-        "tags": "cooking",
-        "createdAt": "2025-01-17T23:03:02.999Z",
-        "updatedAt": "2025-01-18T00:50:04.297Z"
-      },
-      {
-        "id": 5,
-        "title": "Rainy Day Shelter",
-        "content": "What started as a sunny hike quickly turned into a lesson in improvisation when dark clouds rolled in. Jake and I had been on the trail for about an hour when the rain began to pour. Luckily, I had packed a tarp and some rope, so we quickly found a spot to set up a shelter. Jake watched intently as I showed him how to secure the tarp between two trees, creating a dry spot for us to sit and wait out the storm.\n\nWhile the rain pattered against the tarp, we shared a few snacks and talked about survival skills. Jake asked if this was what “real adventurers” do, and I smiled, telling him that being prepared is half the adventure. When the rain finally stopped, we emerged from our little hideout, damp but exhilarated. Jake called it “the coolest fort ever,” and I couldn’t help but agree—it wasn’t just the shelter that made it special, but the memory of building it together.",
-        "tags": "",
-        "createdAt": "2025-01-17T22:28:55.273Z",
-        "updatedAt": "2025-01-18T00:49:54.878Z"
-      },
-      {
-        "id": 4,
-        "title": "Campfire Stories",
-        "content": "The campsite was buzzing with activity today as Ellie and Jake helped set up our tents. It was our first family camping trip of the year, and the kids couldn’t contain their excitement. Jake insisted on hammering in the stakes, while Ellie claimed the role of “firewood scout.” Once everything was ready, we lit the campfire and settled in for the evening.\n\nThe highlight of the night was Ellie’s story about the “Glow Bear,” a mythical creature she invented on the spot. According to her, the Glow Bear only appears when children are kind to nature, and its glowing fur lights up the forest. Jake tried to one-up her with a spooky story about forest spirits, but Ellie was too busy adding details to her bear lore to pay him much attention. As the fire crackled and the stars twinkled above, I realized these simple moments—sharing stories, roasting marshmallows, laughing together—are the memories that will last long after the tents are packed away.",
-        "tags": "camping",
-        "createdAt": "2025-01-17T22:28:40.529Z",
-        "updatedAt": "2025-01-18T00:49:44.863Z"
+        "id": 1,
+        "title": "The First Cast",
+        "content": "Today, I took Ellie fishing for the first time. The weather was perfect—clear skies, warm sunlight, and just enough of a breeze to keep the mosquitoes at bay. Ellie was bouncing with excitement the whole drive to the pond, clutching the pink fishing rod I’d given her for her birthday. She insisted on carrying the tackle box herself, though it was nearly half her size.\n\nAs we sat by the water, I taught her how to thread the line, bait the hook, and cast. Her first attempt ended with the lure landing just a few feet in front of us, but she giggled and kept trying until she got the hang of it. We didn’t catch anything, but we didn’t mind. Ellie spent most of the afternoon skipping stones and asking questions about the fish—what they eat, where they sleep, and if they have families, too. Driving home, she declared, “Next time, Daddy, I’m going to catch a big one!” I smiled, thinking of all the \"next times\" I hope we’ll share.",
+        "tags": "fishing",
+        "createdAt": "2025-01-14T23:50:18.824Z",
+        "updatedAt": "2025-01-18T00:49:18.405Z"
       },
       {
         "id": 3,
@@ -1664,37 +874,69 @@
         "updatedAt": "2025-01-18T00:49:32.719Z"
       },
       {
-        "id": 1,
-        "title": "The First Cast",
-        "content": "Today, I took Ellie fishing for the first time. The weather was perfect—clear skies, warm sunlight, and just enough of a breeze to keep the mosquitoes at bay. Ellie was bouncing with excitement the whole drive to the pond, clutching the pink fishing rod I’d given her for her birthday. She insisted on carrying the tackle box herself, though it was nearly half her size.\n\nAs we sat by the water, I taught her how to thread the line, bait the hook, and cast. Her first attempt ended with the lure landing just a few feet in front of us, but she giggled and kept trying until she got the hang of it. We didn’t catch anything, but we didn’t mind. Ellie spent most of the afternoon skipping stones and asking questions about the fish—what they eat, where they sleep, and if they have families, too. Driving home, she declared, “Next time, Daddy, I’m going to catch a big one!” I smiled, thinking of all the \"next times\" I hope we’ll share.",
-        "tags": "fishing",
-        "createdAt": "2025-01-14T23:50:18.824Z",
-        "updatedAt": "2025-01-18T00:49:18.405Z"
+        "id": 4,
+        "title": "Campfire Stories",
+        "content": "The campsite was buzzing with activity today as Ellie and Jake helped set up our tents. It was our first family camping trip of the year, and the kids couldn’t contain their excitement. Jake insisted on hammering in the stakes, while Ellie claimed the role of “firewood scout.” Once everything was ready, we lit the campfire and settled in for the evening.\n\nThe highlight of the night was Ellie’s story about the “Glow Bear,” a mythical creature she invented on the spot. According to her, the Glow Bear only appears when children are kind to nature, and its glowing fur lights up the forest. Jake tried to one-up her with a spooky story about forest spirits, but Ellie was too busy adding details to her bear lore to pay him much attention. As the fire crackled and the stars twinkled above, I realized these simple moments—sharing stories, roasting marshmallows, laughing together—are the memories that will last long after the tents are packed away.",
+        "tags": "camping",
+        "createdAt": "2025-01-17T22:28:40.529Z",
+        "updatedAt": "2025-01-18T00:49:44.863Z"
+      },
+      {
+        "id": 5,
+        "title": "Rainy Day Shelter",
+        "content": "What started as a sunny hike quickly turned into a lesson in improvisation when dark clouds rolled in. Jake and I had been on the trail for about an hour when the rain began to pour. Luckily, I had packed a tarp and some rope, so we quickly found a spot to set up a shelter. Jake watched intently as I showed him how to secure the tarp between two trees, creating a dry spot for us to sit and wait out the storm.\n\nWhile the rain pattered against the tarp, we shared a few snacks and talked about survival skills. Jake asked if this was what “real adventurers” do, and I smiled, telling him that being prepared is half the adventure. When the rain finally stopped, we emerged from our little hideout, damp but exhilarated. Jake called it “the coolest fort ever,” and I couldn’t help but agree—it wasn’t just the shelter that made it special, but the memory of building it together.",
+        "tags": "",
+        "createdAt": "2025-01-17T22:28:55.273Z",
+        "updatedAt": "2025-01-18T00:49:54.878Z"
+      },
+      {
+        "id": 6,
+        "title": "Berry Picking Success",
+        "content": "Ellie’s squeal of excitement echoed through the woods when she stumbled upon her first wild blackberry bush. We were on one of our favorite summer trails, and I had been pointing out different plants and flowers along the way. Ellie had been half-listening, more interested in chasing butterflies, until she spotted the berries.\n\nWe spent the next hour carefully picking the ripest ones, her little hands stained purple by the end of it. She insisted we save enough to make a pie, so when we got home, we rolled up our sleeves and got to work. Ellie was in charge of washing the berries and mixing the filling, while I handled the crust. When the pie finally came out of the oven, the whole house smelled like summer. As we sat down to eat, Ellie beamed with pride, declaring, “We’re the best team ever!”",
+        "tags": "cooking",
+        "createdAt": "2025-01-17T23:03:02.999Z",
+        "updatedAt": "2025-01-18T00:50:04.297Z"
+      },
+      {
+        "id": 7,
+        "title": "Jake’s First Trail Map",
+        "content": "Today, Jake took the lead on our hike, map in hand. I had been teaching him how to read trail maps for a few weeks, and he was eager to put his skills to the test. As we set out, he studied the map intently, pointing out landmarks and checking the trail markers along the way.\n\nAt one point, we came to a fork in the path, and Jake confidently chose the correct direction. I pretended to be unsure, just to see if he’d catch on, and he did, laughing as he pointed to the map to prove his choice. When we reached the end of the trail, he looked up at me and said, “That was awesome. I feel like a real explorer!” Watching him take charge and grow more confident reminded me how important it is to give kids the tools—and the trust—to navigate their own paths.",
+        "tags": "hiking",
+        "createdAt": "2025-01-17T23:03:23.884Z",
+        "updatedAt": "2025-01-18T00:50:30.765Z"
+      },
+      {
+        "id": 8,
+        "title": "The Silent Hunt",
+        "content": "Ellie joined me for her first bow-hunting trip today. We didn’t have any intention of taking a shot—this trip was more about teaching her the patience and respect that hunting requires. We spent hours moving quietly through the woods, stopping to observe deer tracks and listen to the sounds of the forest.\n\nEllie was surprisingly good at staying silent, though her wide eyes and whispered questions revealed her excitement. She was fascinated by the process, from identifying animal signs to understanding wind direction. When the day was over, she told me it was her “most peaceful day ever.” I couldn’t help but feel proud, not just because she enjoyed it, but because she understood the deeper lessons—about connection, responsibility, and gratitude.",
+        "tags": "hunting",
+        "createdAt": "2025-01-17T23:03:51.197Z",
+        "updatedAt": "2025-01-18T00:50:38.888Z"
+      },
+      {
+        "id": 9,
+        "title": "Snowy Lessons",
+        "content": "Winter brought fresh snow to the mountains, and Jake and I decided to brave the cold for a winter hike. About halfway through, we stopped to build a snow shelter, something I hadn’t done since I was a kid. I showed Jake how to pack the snow and carve out a hollow space, explaining how early humans used similar techniques to survive harsh winters.\n\nJake was full of questions: “How long would this take to build for a whole family?” “Wouldn’t the snow melt?” His curiosity was boundless, and I loved seeing his imagination come alive. Once the shelter was finished, we crawled inside and admired our work. Jake declared, “I feel like a real explorer!” It was a reminder that even in the coldest conditions, the warmth of shared experiences can make all the difference.",
+        "tags": "",
+        "createdAt": "2025-01-17T23:04:07.783Z",
+        "updatedAt": "2025-01-18T00:50:46.963Z"
+      },
+      {
+        "id": 10,
+        "title": "Stargazing Surprise",
+        "content": "The night sky was clear at the cabin, so I brought out the telescope and blankets for an impromptu stargazing session. Ellie was mesmerized by the sight of the Milky Way, her face glowing with wonder as I pointed out constellations. Jake, of course, insisted he saw a UFO and spent half the time scanning the skies for “aliens.”\n\nWe talked about the vastness of the universe and how the stars we see are light from millions of years ago. Ellie asked if the stars ever go out, and Jake wondered if other planets had families like ours. They eventually fell asleep wrapped in blankets by the fire, their faces still lit with awe. I sat there for a while, watching the stars and feeling profoundly grateful for these fleeting, magical moments.",
+        "tags": "",
+        "createdAt": "2025-01-17T23:04:26.384Z",
+        "updatedAt": "2025-01-18T00:50:57.593Z"
+      },
+      {
+        "id": 12,
+        "title": "Passing the Torch",
+        "content": "Today, I gave Ellie her first pocketknife. It’s a tradition in our family—a symbol of growing independence and responsibility. Her eyes lit up as I handed it to her, and I could see the mix of excitement and determination on her face.\n\nWe spent the afternoon by the lake, carving small sticks into shapes. I taught her the basics of knife safety, and she listened intently, her little hands careful and precise. Watching her work reminded me of when my dad first handed me a pocketknife, and the pride I felt in that moment. As we packed up for the day, Ellie hugged me and said, “I’ll take good care of it, Daddy.” It was a bittersweet reminder that she’s growing up, but I couldn’t be prouder of the person she’s becoming.",
+        "tags": "",
+        "createdAt": "2025-01-17T23:05:25.212Z",
+        "updatedAt": "2025-01-18T00:51:05.571Z"
       }
-    ],
-    "mailboxes": {
-      "data": [],
-      "debug": {
-        "duration": "3ms",
-        "query": "SELECT main.Mailbox.*, COALESCE(aggr_selection_0_Message._aggr_count_messages, 0) AS _aggr_count_messages \n               FROM main.Mailbox \n               LEFT JOIN (\n                 SELECT mailboxId, COUNT(*) AS _aggr_count_messages \n                 FROM main.Message \n                 GROUP BY mailboxId\n               ) AS aggr_selection_0_Message \n               ON main.Mailbox.id = aggr_selection_0_Message.mailboxId \n               ORDER BY main.Mailbox.order ASC",
-        "rowCount": 0,
-        "method": "GET",
-        "path": "/api/mailboxes"
-      }
-    },
-    "messages": {
-      "data": [],
-      "debug": {
-        "duration": "5ms",
-        "query": "SELECT * FROM messages",
-        "rowCount": 0
-      }
-    }
-  },
-  "createdAt": "2025-01-18T02:04:37.877Z",
-  "schema": {
-    "includesNotes": true,
-    "includesQuotes": true,
-    "includesEmail": true
+    ]
   }
 }

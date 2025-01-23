@@ -7,8 +7,9 @@ Thumbs.db
 
 # Environment variables
 .env
-.env.local
+.env*.local
 .env.*.local
+.env.local
 
 # Next.js build and cache artifacts
 .next/
@@ -52,3 +53,6 @@ yarn-error.log*
 *.temp
 *.bak
 *.orig
+
+# Keep example file
+!.env.example

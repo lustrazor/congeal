@@ -10,12 +10,17 @@ export default function Footer() {
   const { settings } = useSettings()
   const pathname = usePathname()
 
-  // Early return if debug mode disabled or on special pages
-  if (!debugStore.isEnabled || ['/denied', '/public', '/login', '/landing'].includes(pathname)) {
+  //////////////////////////////////////////////////////////////
+  // Do not show on public pages
+  // Do not show on if debug mode disabled
+  //////////////////////////////////////////////////////////////
+  if (!debugStore.isEnabled || ['/denied', '/public', '/login', '/landing', '/resetpw'].includes(pathname)) {
     return null
   }
 
+  //////////////////////////////////////////////////////////////
   // Expanded view
+  //////////////////////////////////////////////////////////////
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-gray-900 text-white z-50 max-h-[50vh] overflow-hidden">
       {/* Header bar */}
