@@ -35,3 +35,108 @@
 .animate-wiggle {
   animation: wiggle 0.3s ease-in-out;
 }
+
+@media print {
+  /* Hide non-printable elements */
+  .no-print {
+    display: none !important;
+  }
+
+  /* Optimize for printing */
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 12pt !important;
+    line-height: 1.5 !important;
+  }
+
+  /* Adjust margins */
+  @page {
+    margin: 0.25in 0.5in;  /* Tighter top/bottom margins */
+  }
+
+  /* Document spacing */
+  .print\:document {
+    max-width: 8.5in !important;
+    padding: 0 !important;
+  }
+
+  /* Typography refinements */
+  h3 {
+    font-size: 12pt !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+  }
+
+  .prose {
+    font-size: 9pt !important;
+    line-height: 1.2 !important;
+    margin-top: 0em !important;
+  }
+
+  /* Metadata styling */
+  .text-xs {
+    font-size: 6pt !important;
+  }
+
+  /* Spacing adjustments */
+  .mb-2 {
+    margin-bottom: 0.25rem !important;
+  }
+
+  .space-y-2 > * + * {
+    margin-top: 0.25rem !important;
+  }
+
+  .pt-2 {
+    padding-top: 0.1rem !important;
+  }
+
+  /* Status badge */
+  .rounded-full {
+    padding: 0.125rem 0.5rem !important;
+  }
+
+  /* Icon sizing */
+  .w-5 {
+    width: 1rem !important;
+    height: 1rem !important;
+  }
+
+  /* Ensure proper page breaks */
+  .print\:break-inside-avoid {
+    break-inside: avoid;
+  }
+
+  /* Clean borders */
+  .print\:border {
+    border: 1px solid #e5e7eb !important;
+  }
+
+  /* Remove shadows and backgrounds */
+  .print\:shadow-none {
+    box-shadow: none !important;
+  }
+
+  .print\:bg-white {
+    background: white !important;
+  }
+
+  /* Hide interactive elements */
+  button, 
+  .group-hover\:opacity-100,
+  .hover\:bg-gray-100 {
+    display: none !important;
+  }
+
+  /* Adjust flex gap for header items */
+  .gap-2 {
+    gap: 0.25rem !important;
+  }
+
+  /* Adjust bottom margin of header container */
+  .mb-2 {
+    margin-bottom: 0.25rem !important;
+  }
+}

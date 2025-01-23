@@ -1,20 +1,12 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { Item, Status } from '@/types'
-import { useDebugStore } from '@/stores/debugStore'
-import { useItems } from '@/hooks/useItems'
-import { getStatusColor } from '@/lib/utils'
-import FormattedDescription from './FormattedDescription'
-import Modal from './ui/Modal'
-import ItemForm from './forms/ItemForm'
 import { useTranslations } from '@/hooks/useTranslations'
-import DeleteConfirmation from '@/components/ui/DeleteConfirmation'
-import { toast } from 'react-hot-toast'
-import { mutate as globalMutate } from 'swr'
+
 
 interface CardPublicProps {
   item: Item
-  viewMode?: 'grid' | 'list' | 'expanded'
+  viewMode?: 'grid' | 'list' | 'expanded' | 'print'
   showFooter?: boolean
 }
 
@@ -37,34 +29,60 @@ export default function CardPublic({
       })
   }, [])
 
-  // If this is a private item, show a placeholder instead
-  if (item.isPrivate && !item.showPrivateContent) {
+  // Add print view mode handling
+  if (viewMode === 'print') {
     return (
-      <div 
-        className={`
-          relative bg-white dark:bg-gray-500/10
-          rounded-lg
-          border border-gray-100 dark:border-gray-700/50
-          p-4
-          opacity-75
-          transition-all duration-200
-          hover:opacity-90
-        `}
-      >
-        <div className="flex items-center gap-3">
-          <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700/30
-            flex items-center justify-center"
-          >
-            <i className="bx bx-lock-alt text-gray-300 dark:text-gray-600" />
+      <div className="print:break-inside-avoid mb-2 mx-auto">
+        {/* Header with status and icon */}
+        <div className="flex items-center gap-2 mb-2">
+          {item.iconName && (
+            <div className={`
+              w-5 h-5 rounded flex items-center justify-center print:border
+              ${item.useStatusColor ? `bg-${item.status}-500` : 'bg-gray-100'}
+            `}>
+              <i className={`
+                bx bxs-${item.iconName} 
+                ${item.useStatusColor ? 'text-white' : 'text-gray-500'}
+              `} style={{ fontSize: '0.875rem' }} />
+            </div>
+          )}
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-300 print:text-black my-0 py-0 leading-none">
+            {item.name}
+          </h3>
+          <div className={`
+            no-print ml-auto px-2 py-0 rounded-full text-xs
+            bg-${item.status}-100 text-${item.status}-800
+            print:border print:border-${item.status}-200
+          `}>
+            {t(item.status + 'Status')}
           </div>
-          <div className="flex-1">
-            <div className="h-4 bg-gray-100 dark:bg-gray-700/30 rounded w-2/3 mb-2" />
-            <div className="h-3 bg-gray-100 dark:bg-gray-700/30 rounded w-1/2" />
+        </div>
+
+        {/* Main content */}
+        <div className="px-0 pt-1 print:text-black">
+          {item.description && (
+            <div className="prose prose-sm max-w-none whitespace-pre-wrap pb-2 text-gray-500 dark:text-gray-400">
+              {item.description}
+            </div>
+          )}
+          
+          {/* Metadata footer - now inline */}
+          <div className="text-xs text-gray-500 border-t border-gray-200 dark:border-gray-500 pt-0.5 pb-3 flex flex-wrap gap-x-4">
+            {item.createdAt && (
+              <div>Created: {new Date(item.createdAt).toLocaleDateString()}</div>
+            )}
+            {item.updatedAt && item.updatedAt !== item.createdAt && (
+              <div>Updated: {new Date(item.updatedAt).toLocaleDateString()}</div>
+            )}
+            {item.dueAt && (
+              <div>Due: {new Date(item.dueAt).toLocaleDateString()}</div>
+            )}
           </div>
         </div>
       </div>
     )
   }
+
 
   if (!mounted) return null
 

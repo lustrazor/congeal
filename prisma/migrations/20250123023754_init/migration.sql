@@ -41,7 +41,7 @@ CREATE TABLE "Settings" (
     "all_view_mode" TEXT NOT NULL DEFAULT 'grid',
     "ungrouped_view_mode" TEXT NOT NULL DEFAULT 'grid',
     "show_private_groups" BOOLEAN NOT NULL DEFAULT false,
-    "version" TEXT NOT NULL DEFAULT '1.0.22',
+    "version" TEXT NOT NULL DEFAULT '1.0.23',
     "debug_mode" BOOLEAN NOT NULL DEFAULT false,
     "is_public" BOOLEAN NOT NULL DEFAULT false,
     "updated_at" DATETIME NOT NULL,

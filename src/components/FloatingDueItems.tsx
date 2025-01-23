@@ -72,7 +72,7 @@ const FloatingDueItems = memo(function FloatingDueItems({
       absolute right-4 z-50 
       ${settings?.headerEnabled ? 'top-80' : 'top-20'}
       bg-white/90 dark:bg-gray-800/90 
-      mt-0.5 pt-0.5 pb-1 pl-2 pr-4 min-w-[160px]
+      mt-0 pt-0.5 pb-1 pl-2 pr-4 min-w-[160px]
       rounded-sm shadow-md 
       border transition-all duration-200
       ${isHighlighted 

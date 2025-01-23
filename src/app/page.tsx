@@ -151,7 +151,7 @@ export default function Home() {
   }, [selectedGroupId, currentGroup, settings])
 
   // Update the view mode toggle to handle all cases
-  const handleViewModeChange = async (newMode: 'grid' | 'list' | 'expanded') => {
+  const handleViewModeChange = async (newMode: 'grid' | 'list' | 'expanded' | 'print') => {
     setViewMode(newMode)
     debugStore.log('View mode changed', {
       type: 'VIEW_MODE_CHANGE',
@@ -235,7 +235,7 @@ export default function Home() {
       })
     : []
 
-  // Add placeholder items for private groups in "Show All" view
+  // Update the placeholder items creation
   const placeholderItems = selectedGroupId === undefined 
     ? (Array.isArray(groups) ? groups : [])
         .filter(g => g.isPrivate && !settings?.showPrivateGroups)
@@ -246,7 +246,7 @@ export default function Home() {
           status: 'gray' as Status,
           groupId: group.id,
           iconName: 'lock' as IconName,
-          isPlaceholder: true
+          isPlaceholder: true // Explicitly mark as placeholder
         }))
     : []
 
@@ -712,11 +712,17 @@ const getTimeStatus = (dueDate: Date) => {
     return fields[(currentIndex + 1) % fields.length]
   }
 
+  // Add a check for private group with hidden content
+  const isPrivateGroupHidden = currentGroup?.isPrivate && !settings?.showPrivateGroups
+
   return (
     <div className="flex-1 flex flex-col">
-      <Header />
+      <div className="no-print">
+        <Header />
+      </div>
 
       {/* Floating Due Items Container */}
+      <div className="no-print">
       <FloatingDueItems 
       items={allItems || []}
       settings={settings}
@@ -726,8 +732,10 @@ const getTimeStatus = (dueDate: Date) => {
       }}
       mutateItems={mutateAllItems} // Pass SWR's mutate function
       />
+      </div>
 
       <div className="flex-1 flex overflow-hidden">
+      <div className="flex no-print">
         <Sidebar
           selectedGroupId={selectedGroupId}
           onGroupSelect={handleGroupSelect}
@@ -736,6 +744,7 @@ const getTimeStatus = (dueDate: Date) => {
           isAnyDragging={isAnyDragging}
           onDragStateChange={handleDragStateChange}
         />
+        </div>
 
         <main className="flex-1 overflow-auto bg-white dark:bg-gray-800">
           <div className="relative">
@@ -747,7 +756,7 @@ const getTimeStatus = (dueDate: Date) => {
 
                 {/* Featured Quote */}
                 {featuredQuote && (
-                  <div className="mb-8">
+                  <div className="mb-8 no-print">
                     <div className="relative flex flex-col gap-1 text-gray-500 dark:text-gray-400">
                       <div className="flex items-center gap-3">
                         <span className="font-figtree font-medium text-base
@@ -796,127 +805,173 @@ const getTimeStatus = (dueDate: Date) => {
                 </div>
 
                 {/* Controls Bar */}
-                <div className="mb-4 p-1 flex items-center justify-between gap-4 bg-gray-200/30 
+                <div className="no-print mb-4 p-1.5 flex items-center justify-between gap-4 bg-gray-200/30 
                 dark:bg-gray-900/50 border border-gray-200/50 dark:border-gray-600/50 rounded-lg
-                max-h-[52px] overflow-y-none">
+                max-h-[52px] overflow-y-none no-print">
                   
                   {/* Left side - View Mode Controls */}
                   <div className="flex items-center gap-1">
                     {/* View Mode Buttons */}
                     <div className="bg-gray-200 flex items-center gap-0 rounded-md p-0.5 bg-gray-200 
                     dark:bg-gray-600 border border-gray-400/35 dark:border-gray-500
-                    max-h-[42px] overflow-y-none">
-                      {/* Grid View - Compact 3-column layout */}
+                    max-h-[42px] overflow-y-none py-1">
+                      {/* Grid View */}
                       <button
                         onClick={() => handleViewModeChange('grid')}
+                        disabled={isPrivateGroupHidden}
                         className={`
                           flex items-center justify-center w-8 rounded-md
-                          m-0.5 p-2 pb-1 pt-1
+                          ml-0.5 p-1
                           ${viewMode === 'grid' 
                             ? 'bg-white dark:bg-gray-400 text-blue-600 dark:text-blue-200' 
-                            : 'text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-300'
+                            : isPrivateGroupHidden
+                              ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed'
+                              : 'text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-500'
                           }
                         `}
-                        title={t('gridView')}
+                        title={isPrivateGroupHidden ? t('privateGroupHidden') : t('gridView')}
                       >
-                        <box-icon type="solid" name="grid-alt" size="1.25rem"></box-icon>
+                        <box-icon type="solid" name="grid-alt" size="1.1rem"></box-icon>
                       </button>
 
-                      {/* List View - Single column with more details */}
+                      {/* List View */}
                       <button
                         onClick={() => handleViewModeChange('list')}
+                        disabled={isPrivateGroupHidden}
                         className={`
                           flex items-center justify-center w-8 rounded-md
                           m-0 p-2 pb-1 pt-1
                           ${viewMode === 'list' 
                             ? 'bg-white dark:bg-gray-400 text-blue-600 dark:text-blue-200' 
-                            : 'text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-300'
+                            : isPrivateGroupHidden
+                              ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed'
+                              : 'text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-500'
                           }
                         `}
-                        title={t('listView')}
+                        title={isPrivateGroupHidden ? t('privateGroupHidden') : t('listView')}
                       >
-                        <box-icon name="list-ul" size="1.25rem"></box-icon>
+                        <box-icon name="list-ul" size="1.1rem"></box-icon>
                       </button>
 
-                      {/* Expanded View - Two-column layout with larger cards */}
+                      {/* Expanded View */}
                       <button
                         onClick={() => handleViewModeChange('expanded')}
+                        disabled={isPrivateGroupHidden}
                         className={`
                           flex items-center justify-center w-8 rounded-md
-                          m-0.5 p-2 pb-1 pt-1
+                          p-2 py-1
                           ${viewMode === 'expanded' 
                             ? 'bg-white dark:bg-gray-400 text-blue-600 dark:text-blue-200' 
-                            : 'text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-300'
+                            : isPrivateGroupHidden
+                              ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed'
+                              : 'text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-500'
                           }
                         `}
-                        title={t('expandedView')}
+                        title={isPrivateGroupHidden ? t('privateGroupHidden') : t('expandedView')}
                       >
-                        <box-icon name="expand-alt" size="1.25rem"></box-icon>
+                        <box-icon name="expand-alt" size="1.1rem"></box-icon>
                       </button>
+
+                      {/* Print View */}
+                      <button
+                        onClick={() => handleViewModeChange('print')}
+                        disabled={isPrivateGroupHidden}
+                        className={`
+                          flex items-center justify-center w-8 rounded-md
+                          mr-0.5 p-1
+                          ${viewMode === 'print' 
+                            ? 'bg-white dark:bg-gray-400 text-blue-600 dark:text-blue-200' 
+                            : isPrivateGroupHidden
+                              ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed'
+                              : 'text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-500'
+                          }
+                        `}
+                        title={isPrivateGroupHidden ? t('privateGroupHidden') : t('printView')}
+                      >
+                        <box-icon name="printer" type="solid" size="1.1rem"></box-icon>
+                      </button>
+
                     </div>
 
                     {/* Sort by User/Date Created/Date Updated/Due Date */}
                     <div className="bg-gray-200 flex items-center gap-0 py-0.5 px-1 rounded-md 
                     bg-gray-200 dark:bg-gray-600 border border-gray-400/35 dark:border-gray-500
-                     max-h-[42px] overflow-y-none">
-                      <div className="flex items-center gap-1">
+                     max-h-[42px] overflow-y-none py-0">
+                      <div className="flex items-center gap-1 max-h-[42px] leading-snug pb-0.5">
                         <button
                           onClick={() => handleSortFieldChange(getNextSortField(sortField))}
-                          className="flex items-center gap-0 text-sm text-gray-600 dark:text-gray-300
-                            hover:text-blue-600 dark:hover:text-blue-200 transition-colors p-1.5 leading-tight"
-                          title={t('toggleSortField')}
+                          disabled={isPrivateGroupHidden}
+                          className={`flex items-center gap-0 text-sm
+                            ${isPrivateGroupHidden 
+                              ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed'
+                              : 'text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-200'
+                            } transition-colors pl-1 leading-none`}
+                          title={isPrivateGroupHidden ? t('privateGroupHidden') : t('toggleSortField')}
                         >
                           {(sortField === 'order' ? t('userSort') :
                            sortField === 'createdAt' ? t('dateCreated') : 
                            sortField === 'updatedAt' ? t('dateUpdated') : 
                            t('dueDate')) + ':'}
                         </button>
-                        <div className="flex items-center gap-0.5 py-0">
+
+                        <div className="flex items-center gap-0.5 max-h-[31px]">
                           {/* Sort Ascending Button */}
                           <button 
                             onClick={() => handleSortDirectionChange('asc')}
-                            className={`px-1 p-0 pt-1 rounded transition-colors ${
+                            disabled={isPrivateGroupHidden}
+                            className={`p-1 rounded transition-colors ${
                               sortDirection === 'asc'
                                 ? 'bg-white dark:bg-gray-400 text-blue-600 dark:text-blue-200 pb-0 h-7'
-                                : 'text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-300 pb-0 h-7'
+                                : isPrivateGroupHidden
+                                  ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed pb-0 h-7'
+                                  : 'text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-300 pb-0 h-7'
                             }`}
-                            title={sortField === 'dueAt' ? "Show Earlier Items First" : "Sort Ascending"}
+                            title={isPrivateGroupHidden ? t('privateGroupHidden') : 
+                              sortField === 'dueAt' ? "Show Earlier Items First" : "Sort Ascending"}
                           >
-                            <box-icon name="sort-up" size="1.25rem"></box-icon>
+                            <box-icon name="sort-up" size="1.1rem"></box-icon>
                           </button>
 
                           {/* Sort Descending Button */}
                           <button 
                             onClick={() => handleSortDirectionChange('desc')}
+                            disabled={isPrivateGroupHidden}
                             className={`p-1 rounded transition-colors ${
                               sortDirection === 'desc'
                                 ? 'bg-white dark:bg-gray-400 text-blue-600 dark:text-blue-200 pb-0 h-7'
-                                : 'text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-300 pb-0 h-7'
+                                : isPrivateGroupHidden
+                                  ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed pb-0 h-7'
+                                  : 'text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-500 pb-0 h-7'
                             }`}
-                            title={sortField === 'dueAt' ? "Show Later Items First" : "Sort Descending"}
+                            title={isPrivateGroupHidden ? t('privateGroupHidden') :
+                              sortField === 'dueAt' ? "Show Later Items First" : "Sort Descending"}
                           >
-                            <box-icon name="sort-down" size="1.25rem"></box-icon>
+                            <box-icon name="sort-down" size="1.1rem"></box-icon>
                           </button>
                         </div>
                       </div>
-                    <button
-                      onClick={() => setShowFooter(prev => !prev)}
-                      className={`
-                        w-7 h-7 ml-1 rounded-md
-                        flex items-center justify-center
-                        ${showFooter 
-                          ? 'bg-white dark:bg-gray-400 text-blue-600 dark:text-blue-200' 
-                          : 'text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-300'
-                        }
-                        transition-colors
-                      `}
-                      title={showFooter ? "Show Details" : "Hide Details"} >
-                      <box-icon name="info-circle" size="20px" />
-                    </button>
+
+                      {/* Show/Hide Details Button */}
+                      <button
+                        onClick={() => setShowFooter(prev => !prev)}
+                        disabled={isPrivateGroupHidden}
+                        className={`
+                          w-7 h-7 ml-1 rounded-md
+                          flex items-center justify-center
+                          ${showFooter 
+                            ? 'bg-white dark:bg-gray-400 text-blue-600 dark:text-blue-200' 
+                            : isPrivateGroupHidden
+                              ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed'
+                              : 'text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-500'
+                          }
+                          transition-colors
+                        `}
+                        title={isPrivateGroupHidden ? t('privateGroupHidden') : (showFooter ? t('hideDetails') : t('showDetails'))}
+                      >
+                        <box-icon name="info-circle" size="1.1rem" />
+                      </button>
+
                     </div>
-
-
-
                   </div>
 
                   {/* Center - Status Filters */}
@@ -925,14 +980,19 @@ const getTimeStatus = (dueDate: Date) => {
                       <button
                         key={status}
                         onClick={() => toggleStatus(status)}
+                        disabled={isPrivateGroupHidden}
                         className={`w-6 h-5 rounded-md transition-all duration-200
                           ${selectedStatuses.has(status) 
                             ? 'ring-2 ring-offset-2 ring-blue-500 scale-110' 
-                            : 'opacity-50 hover:opacity-100 hover:scale-105'
+                            : isPrivateGroupHidden
+                              ? 'opacity-25 cursor-not-allowed'
+                              : 'opacity-50 hover:opacity-100 hover:scale-105'
                           }
                           bg-${status}-500`}
-                        aria-label={t(`filter${status.charAt(0).toUpperCase() + status.slice(1)}`)}
-                        title={t(`filter${status.charAt(0).toUpperCase() + status.slice(1)}`)}
+                        aria-label={isPrivateGroupHidden ? t('privateGroupHidden') : 
+                          t(`filter${status.charAt(0).toUpperCase() + status.slice(1)}`)}
+                        title={isPrivateGroupHidden ? t('privateGroupHidden') : 
+                          t(`filter${status.charAt(0).toUpperCase() + status.slice(1)}`)}
                       />
                     ))}
                   </div>
@@ -983,8 +1043,10 @@ const getTimeStatus = (dueDate: Date) => {
                                 ? 'space-y-0'
                                 : viewMode === 'expanded'
                                   ? 'grid grid-cols-1 sm:grid-cols-2 gap-2'
-                                  : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2'
-                              }
+                                  : viewMode === 'print'
+                                    ? 'max-w-4xl space-y-2 p-2 text-gray-400 dark:text-gray-500'
+                                    : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2'
+                                }
                             `}
                           >
                             {filteredAndSortedItems?.map((item, index) => (
@@ -1012,7 +1074,7 @@ const getTimeStatus = (dueDate: Date) => {
                                       }}
                                       isDragging={snapshot.isDragging}
                                       isDeleting={deletingItems.has(item.id as number)}
-                                      isPlaceholder={(item as any).isPlaceholder}
+                                      isPlaceholder={Boolean(item.isPlaceholder)}
                                       viewMode={viewMode}
                                       showFooter={showFooter}
                                     />

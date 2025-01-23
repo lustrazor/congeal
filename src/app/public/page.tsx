@@ -22,7 +22,7 @@ export default function PublicPage() {
   const [selectedGroupId, setSelectedGroupId] = useState<number | null | undefined>(undefined)
   
   // Initialize view mode from localStorage with group-specific keys
-  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'expanded'>(() => {
+  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'expanded' | 'print'>(() => {
     if (typeof window === 'undefined') return settings?.allViewMode || 'grid'
     const key = `publicViewMode_${selectedGroupId ?? 'all'}`
     return localStorage.getItem(key) as 'grid' | 'list' | 'expanded' || 
@@ -282,15 +282,20 @@ export default function PublicPage() {
 
   return (
     <div className="flex-1 flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Header />
+      <div className="no-print">
+        <Header />
+      </div>
+
       
       <div className="flex flex-1 overflow-hidden">
+      <div className="no-print">
         <Sidebar
           selectedGroupId={selectedGroupId}
           onGroupSelect={setSelectedGroupId}
           searchQuery={searchQuery}
           onSearch={setSearchQuery}
         />
+        </div>
 
         <main className="flex-1 overflow-auto bg-white dark:bg-gray-800">
           <div className="relative">
@@ -302,7 +307,7 @@ export default function PublicPage() {
 
                 {/* Featured Quote */}
                 {featuredQuote && (
-                  <div className="mb-8">
+                  <div className="mb-8 no-print">
                     <div className="relative flex flex-col gap-1 text-gray-500 dark:text-gray-400">
                       <div className="flex items-center gap-3">
                         <span className="font-figtree font-medium text-base
@@ -349,31 +354,31 @@ export default function PublicPage() {
                     )}
                   </div>
                 </div>
-                {/* Controls Bar */}
-                <div className="mb-4 p-1 flex items-center justify-between gap-4 bg-gray-200/30 
-                dark:bg-gray-900/50 border border-gray-200/50 dark:border-gray-600/50 rounded-lg
-                max-h-[52px] overflow-y-none">
 
+                {/* Controls Bar */}
+                <div className="mb-4 p-1.5 flex items-center justify-between gap-4 bg-gray-200/30 
+                dark:bg-gray-900/50 border border-gray-200/50 dark:border-gray-600/50 rounded-lg
+                max-h-[52px] overflow-y-none no-print ">
 
                   {/* Left side - View Mode Controls */}
                   <div className="flex items-center gap-1">
                     {/* View Mode Buttons */}
                     <div className="bg-gray-200 flex items-center gap-0 py-0.5 px-1 rounded-md 
                     bg-gray-200 dark:bg-gray-600 border border-gray-400/35 dark:border-gray-500
-                     max-h-[42px] overflow-y-none">
-                      {/* Grid View - Compact 3-column layout */}
+                     max-h-[42px] overflow-y-none py-1">
+                      {/* Grid View - Compact 3/4 column layout */}
                       <button
                         onClick={() => handleViewModeChange('grid')}
                         className={`
                           flex items-center justify-center w-8 rounded-md
-                          m-0.5 p-2 pb-1 pt-1 
+                          ml-0.5 p-1
                           ${viewMode === 'grid' 
                             ? 'bg-white dark:bg-gray-400 text-blue-600 dark:text-blue-200' 
-                            : 'text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-300'
+                            : 'text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-500'
                           }
                         `}
                         title={t('gridView')} >
-                        <box-icon type="solid" name="grid-alt" size="1.25rem"></box-icon>
+                        <box-icon type="solid" name="grid-alt" size="1.1rem"></box-icon>
                       </button>
 
                       {/* List View - Single column with more details */}
@@ -381,14 +386,14 @@ export default function PublicPage() {
                         onClick={() => handleViewModeChange('list')}
                         className={`
                           flex items-center justify-center w-8 rounded-md
-                          m-0 p-2 pb-1 pt-1
+                          m-0 p-2 py-1
                           ${viewMode === 'list' 
                             ? 'bg-white dark:bg-gray-400 text-blue-600 dark:text-blue-200' 
-                            : 'text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-300'
+                            : 'text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-500'
                           }
                         `}
                         title={t('listView')} >
-                        <box-icon name="list-ul" size="1.25rem"></box-icon>
+                        <box-icon name="list-ul" size="1.1rem"></box-icon>
                       </button>
 
                       {/* Expanded View - Two-column layout with larger cards */}
@@ -396,58 +401,78 @@ export default function PublicPage() {
                         onClick={() => handleViewModeChange('expanded')}
                         className={`
                           flex items-center justify-center w-8 rounded-md
-                          m-0.5 p-2 pb-1 pt-1
+                          p-2 pb-1 pt-1
                           ${viewMode === 'expanded' 
                             ? 'bg-white dark:bg-gray-400 text-blue-600 dark:text-blue-200' 
-                            : 'text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-300'
+                            : 'text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-500'
                           }
                         `}
                         title={t('expandedView')} >
-                        <box-icon name="expand-alt" size="1.25rem"></box-icon>
+                        <box-icon name="expand-alt" size="1.1rem"></box-icon>
                       </button>
+
+                        {/* Print View */}
+                        <button
+                          onClick={() => handleViewModeChange('print')}
+                          className={`
+                            flex items-center justify-center w-8 rounded-md
+                            mr-0.5 p-1
+                            ${viewMode === 'print' 
+                              ? 'bg-white dark:bg-gray-400 text-blue-600 dark:text-blue-200' 
+                              : 'text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-500'
+                            }
+                          `}
+                          title={t('printView')}
+                        >
+                          <box-icon name="printer" type="solid" size="1.1rem"></box-icon>
+                        </button>
+
                     </div>
 
                     {/* Sort by User/Date Created/Date Updated/Due Date */}
                     <div className="bg-gray-200 flex items-center gap-0 py-0.5 px-1 rounded-md 
                     bg-gray-200 dark:bg-gray-600 border border-gray-400/35 dark:border-gray-500
-                     max-h-[42px] overflow-y-none">
-                      <div className="flex items-center gap-1 max-h-[42px]">
+                     max-h-[42px] overflow-y-none py-0">
+                      <div className="flex items-center gap-1 max-h-[42px] leading-snug pb-0.5">
                         <button
                           onClick={() => handleSortFieldChange(getNextSortField(sortField))}
-                          className="flex items-center gap-0 text-sm text-gray-600 dark:text-gray-300
-                            hover:text-blue-600 dark:hover:text-blue-200 transition-colors p-1.5 leading-tight"
+                          className="flex items-center gap-0 text-sm text-gray-600 dark:text-gray-300 
+                            hover:text-blue-600 dark:hover:text-blue-200 transition-colors pl-1 leading-none"
                           title={t('toggleSortField')} >
                           {(sortField === 'order' ? t('userSort') :
                            sortField === 'createdAt' ? t('dateCreated') : 
                            sortField === 'updatedAt' ? t('dateUpdated') : 
                            t('dueDate')) + ':'}
                         </button>
-                        <div className="flex items-center gap-0.5 py-0">
+
+                        <div className="flex items-center gap-0.5 max-h-[31px]">
                           {/* Sort Ascending Button */}
                           <button 
                             onClick={() => handleSortDirectionChange('asc')}
-                            className={`px-1 p-0 pt-1 rounded transition-colors ${
+                            className={`p-1 rounded transition-colors ${
                               sortDirection === 'asc'
                                 ? 'bg-white dark:bg-gray-400 text-blue-600 dark:text-blue-200 pb-0 h-7'
                                 : 'text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-300 pb-0 h-7'
                             }`}
                             title={sortField === 'dueAt' ? "Show Earlier Items First" : "Sort Ascending"} >
-                            <box-icon name="sort-up" size="1.25rem"></box-icon>
+                            <box-icon name="sort-up" size="1.1rem"></box-icon>
                           </button>
-
+                          
                           {/* Sort Descending Button */}
                           <button 
                             onClick={() => handleSortDirectionChange('desc')}
                             className={`p-1 rounded transition-colors ${
                               sortDirection === 'desc'
                                 ? 'bg-white dark:bg-gray-400 text-blue-600 dark:text-blue-200 pb-0 h-7'
-                                : 'text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-300 pb-0 h-7'
+                                : 'text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-500 pb-0 h-7'
                             }`}
                             title={sortField === 'dueAt' ? "Show Later Items First" : "Sort Descending"} >
-                            <box-icon name="sort-down" size="1.25rem"></box-icon>
+                            <box-icon name="sort-down" size="1.1rem"></box-icon>
                           </button>
                         </div>
                       </div>
+
+                    {/* Show/Hide Details Button */}
                     <button
                       onClick={() => handleShowFooterChange(!showFooter)}
                       className={`
@@ -455,7 +480,7 @@ export default function PublicPage() {
                         flex items-center justify-center
                         ${showFooter 
                           ? 'bg-white dark:bg-gray-400 text-blue-600 dark:text-blue-200' 
-                          : 'text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-300'
+                          : 'text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-500'
                         }
                         transition-colors
                       `}
@@ -491,7 +516,9 @@ export default function PublicPage() {
                     ? 'space-y-2'
                     : viewMode === 'expanded'
                       ? 'grid grid-cols-1 sm:grid-cols-2 gap-2'
-                      : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2'
+                      : viewMode === 'print'
+                          ? 'max-w-4xl space-y-2 p-2 text-gray-400 dark:text-gray-500'
+                          : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2'
                   }
                 `}>
                   {filteredAndSortedItems.map((item) => (
@@ -508,11 +535,12 @@ export default function PublicPage() {
           </div>
         </main>
       </div>
-
+      <div className="flex no-print">
       <FloatingDueItems 
         items={items || []}
         settings={settings}
       />
+      </div>
     </div>
   )
 }

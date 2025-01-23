@@ -38,6 +38,7 @@ export const translations = {
     gridView: 'Grid View',
     listView: 'List View',
     expandedView: 'Expanded View',
+    printView: 'Printer-Friendly View',
     
     siteTitle: 'Site Title',
     tagline: 'Tagline',
@@ -316,6 +317,9 @@ export const translations = {
     enterNewPasswordSubtitle: 'Please enter your new password',
     passwordChanged: 'Password successfully changed',
     passwordChangeFailed: 'Failed to change password. Please try again.',
+    privateGroupHidden: 'Private group content is hidden',
+    showDetails: 'Show Details',
+    hideDetails: 'Hide Details',
   },
   ja: {
     // General
@@ -356,6 +360,7 @@ export const translations = {
     gridView: 'グリッド表示',
     listView: 'リスト表示',
     expandedView: '展開表示',
+    printView: '印刷用表示',
     
     siteTitle: 'サイトタイトル',
     tagline: 'タグライン',
@@ -498,6 +503,9 @@ export const translations = {
     enterNewPasswordSubtitle: '新しいパスワードを入力してください',
     passwordChanged: 'Contraseña cambiada exitosamente',
     passwordChangeFailed: 'No se pudo cambiar la contraseña. Por favor, inténtalo de nuevo.',
+    privateGroupHidden: 'プライベートグループのコンテンツは非表示です',
+    showDetails: '詳細を表示',
+    hideDetails: '詳細を非表示',
   }
 } as const
 
