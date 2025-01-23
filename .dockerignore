@@ -3,7 +3,6 @@ node_modules/
 
 # Ignore Prisma client
 prisma/client/
-prisma/migrations/
 
 # Ignore build and cache directories
 .next/

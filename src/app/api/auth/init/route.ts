@@ -4,6 +4,7 @@ import { hash } from 'bcryptjs'
 import { PrismaClient } from '@prisma/client'
 import { Encryption } from '@/lib/encryption'
 import initialData from '@/../../prisma/initial-data.json'
+import { execSync } from 'child_process'
 
 // Create initial content from JSON file
 const createInitialContent = async (prisma: PrismaClient, includeSeedData: boolean) => {
@@ -113,6 +114,19 @@ export async function POST(request: Request) {
   try {
     const { username, password, includeSeedData } = await request.json()
     console.log('Init request:', { username, includeSeedData })
+
+    // Run migrations first
+    try {
+      console.log('Running database migrations...')
+      execSync('npx prisma migrate deploy', { stdio: 'inherit' })
+    } catch (error) {
+      console.error('Migration failed:', error)
+      return NextResponse.json({ 
+        error: 'Failed to initialize database schema' 
+      }, { 
+        status: 500 
+      })
+    }
 
     rawPrisma = new PrismaClient()
 
