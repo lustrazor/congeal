@@ -48,6 +48,9 @@ const Sidebar = memo(function Sidebar({
   const [deletingGroup, setDeletingGroup] = useState<number | null>(null);
   const [deleteItems, setDeleteItems] = useState(false);
 
+  // Add new state for search
+  const [isGlobalSearch, setIsGlobalSearch] = useState(true);
+
   // Calculate item counts using useMemo
   const groupItemCounts = useMemo(() => {
     if (!items) return new Map<number, number>();
@@ -151,13 +154,25 @@ const Sidebar = memo(function Sidebar({
     })
   }
 
+  // Update the filtered groups logic
   const filteredGroups = groups?.filter((group) => {
     const query = searchQuery.toLowerCase();
+    
+    // Always show group if its name matches
     const groupNameMatches = group.name.toLowerCase().includes(query);
-    const hasMatchingItems = items?.some(
-      (item) => item.groupId === group.id && item.name.toLowerCase().includes(query)
+    if (groupNameMatches) return true;
+    
+    // For global search, show group if any item matches (regardless of group)
+    if (isGlobalSearch) {
+      return items?.some(item => item.name.toLowerCase().includes(query));
+    }
+    
+    // For group search, only show group if its items match
+    return items?.some(
+      item => 
+        item.groupId === group.id && 
+        item.name.toLowerCase().includes(query)
     );
-    return groupNameMatches || hasMatchingItems;
   });
 
   const handleGroupFormClose = async (newGroupId?: number) => {
@@ -181,6 +196,24 @@ const Sidebar = memo(function Sidebar({
     hasGroups: !!groups,
     isError 
   })
+
+  // Update the search toggle handler
+  const handleSearchScopeToggle = () => {
+    setIsGlobalSearch(!isGlobalSearch);
+    // When switching to global search, select "Show All"
+    if (!isGlobalSearch) {
+      onGroupSelect(undefined);
+    }
+  };
+
+  // Add search handler that considers global search mode
+  const handleSearch = (query: string) => {
+    onSearch(query);
+    // When typing in global search mode, switch to "Show All"
+    if (isGlobalSearch && query.length > 0) {
+      onGroupSelect(undefined);
+    }
+  };
 
   if (groupsLoading) {
     return (
@@ -219,17 +252,27 @@ const Sidebar = memo(function Sidebar({
         onMouseLeave={() => setHoveredGroupId(null)}
       >
         {/* Search input - adjust padding/font size for smaller width */}
-        <div className="mb-2">
+        <div className="mb-2 relative">
           <input
             type="text"
             value={searchQuery}
-            onChange={(e) => onSearch(e.target.value)}
+            onChange={(e) => handleSearch(e.target.value)}
             placeholder={t('searchPlaceholder')}
             className="w-full px-3 py-1.5 xl:py-2 text-sm xl:text-base
               bg-white dark:bg-gray-800 
               border border-gray-300 dark:border-gray-600
-              rounded-md"
+              rounded-md
+              pl-10"
           />
+          <button
+            onClick={handleSearchScopeToggle}
+            className="absolute left-3 top-1/2 -translate-y-1/2
+              text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300
+              transition-colors duration-200"
+            title={isGlobalSearch ? t('searchInGroup') : t('searchGlobally')}
+          >
+            <i className={`bx ${isGlobalSearch ? 'bx-globe' : 'bx-folder'} text-lg`} />
+          </button>
         </div>
 
         {/* Navigation section */}

@@ -27,6 +27,9 @@ const SidebarPublic = memo(function SidebarPublic({
   const { settings, mutate } = useSettings();
   const router = useRouter();
 
+  // Add new state for search scope
+  const [isGlobalSearch, setIsGlobalSearch] = useState(true);
+
   // Calculate item counts using useMemo
   const groupItemCounts = useMemo(() => {
     if (!items) return new Map<number, number>();
@@ -100,26 +103,57 @@ const SidebarPublic = memo(function SidebarPublic({
   // Handle group selection with localStorage
   const handleGroupSelect = (groupId: number | null | undefined) => {
     onGroupSelect(groupId);
-    // Store 'undefined' string for Show All
     localStorage.setItem('publicSelectedGroupId', groupId === undefined ? 'undefined' : String(groupId));
   };
 
-  // Return null after all hooks are called
-  if (!settings?.isPublic) {
-    return null;
-  }
+  // Update the search toggle handler
+  const handleSearchScopeToggle = () => {
+    setIsGlobalSearch(!isGlobalSearch);
+    if (!isGlobalSearch) {
+      handleGroupSelect(undefined);
+    }
+  };
 
+  // Add search handler that considers global search mode
+  const handleSearch = (query: string) => {
+    onSearch(query);
+    if (isGlobalSearch && query.length > 0) {
+      handleGroupSelect(undefined);
+    }
+  };
+
+  // Update the filtered groups logic
   const filteredGroups = groups?.filter((group) => {
     // Hide private groups in public view
     if (group.isPrivate) return false;
 
     const query = searchQuery.toLowerCase();
+    
+    // Always show group if its name matches
     const groupNameMatches = group.name.toLowerCase().includes(query);
-    const hasMatchingItems = items?.some(
-      (item) => item.groupId === group.id && item.name.toLowerCase().includes(query)
+    if (groupNameMatches) return true;
+    
+    // For global search, show group if any public item matches
+    if (isGlobalSearch) {
+      return items?.some(item => 
+        // Only check items in public groups
+        !groups?.find(g => g.id === item.groupId)?.isPrivate &&
+        item.name.toLowerCase().includes(query)
+      );
+    }
+    
+    // For group search, only show group if its items match
+    return items?.some(
+      item => 
+        item.groupId === group.id && 
+        item.name.toLowerCase().includes(query)
     );
-    return groupNameMatches || hasMatchingItems;
   });
+
+  // Return null after all hooks are called
+  if (!settings?.isPublic) {
+    return null;
+  }
 
   if (groupsLoading) {
     return (
@@ -133,107 +167,97 @@ const SidebarPublic = memo(function SidebarPublic({
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   if (isError) {
-    console.error('Error loading groups:', isError)
     return (
       <div className="w-60 lg:w-72 xl:w-80 flex-shrink-0 border-r border-gray-200 dark:border-gray-700 p-4">
         <div className="text-red-500">Failed to load groups</div>
       </div>
-    )
+    );
   }
 
   return (
-    <div 
-      className="w-60 lg:w-72 xl:w-80 flex-shrink-0 border-r border-gray-200 dark:border-gray-700 
-        bg-gray-50 dark:bg-gray-900 p-4 overflow-y-auto
-        bg-[url('/images/dropshadow-sidebar-light.png')] dark:bg-[url('/images/dropshadow-sidebar-dark.png')] 
-        bg-top bg-repeat-x transition-all duration-0"
-    >
-      {/* Search input - adjust padding/font size for smaller width */}
-      <div className="mb-2">
+    <div className="w-60 lg:w-72 xl:w-80 flex-shrink-0 border-r border-gray-200 dark:border-gray-700 
+      bg-gray-50 dark:bg-gray-900 p-4 overflow-y-auto
+      bg-[url('/images/dropshadow-sidebar-light.png')] dark:bg-[url('/images/dropshadow-sidebar-dark.png')] 
+      bg-top bg-repeat-x transition-all duration-0">
+      <div className="mb-2 relative">
         <input
           type="text"
           value={searchQuery}
-          onChange={(e) => onSearch(e.target.value)}
+          onChange={(e) => handleSearch(e.target.value)}
           placeholder={t('searchPlaceholder')}
           className="w-full px-3 py-1.5 xl:py-2 text-sm xl:text-base
             bg-white dark:bg-gray-800 
             border border-gray-300 dark:border-gray-600
-            rounded-md"
+            rounded-md pl-10"
         />
+        <button
+          onClick={handleSearchScopeToggle}
+          className="absolute left-3 top-1/2 -translate-y-1/2
+            text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300
+            transition-colors duration-200"
+          title={isGlobalSearch ? t('searchInGroup') : t('searchGlobally')}
+        >
+          <i className={`bx ${isGlobalSearch ? 'bx-globe' : 'bx-folder'} text-lg`} />
+        </button>
       </div>
 
-      {/* Navigation section */}
       <nav className="space-y-0 mb-4 tracking-normal text-md font-normal leading-tight">
-        {/* "Show All" button */}
         <button
           onClick={() => handleGroupSelect(undefined)}
-          className={`
-            w-full text-left px-3 pt-1 rounded-lg flex items-center justify-between
+          className={`w-full text-left px-3 pt-1 rounded-lg flex items-center justify-between
             ${selectedGroupId === undefined 
               ? 'bg-gray-200 dark:bg-gray-700/50 text-gray-900 dark:text-gray-100' 
               : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/30'
-            }
-          `}
+            }`}
         >
           {t('showAll')}
         </button>
 
-        {/* "Ungrouped" button */}
         <button
           onClick={() => handleGroupSelect(null)}
-          className={`
-            w-full text-left px-3 pt-1 rounded-lg flex items-center justify-between
+          className={`w-full text-left px-3 pt-1 rounded-lg flex items-center justify-between
             ${selectedGroupId === null 
               ? 'bg-gray-200 dark:bg-gray-700/50 text-gray-900 dark:text-gray-100' 
               : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/30'
-            }
-          `}
+            }`}
         >
           {t('ungrouped')}
         </button>
 
-        {/* Spacer div */}
         <div className="h-4"></div>
 
-        {/* Groups list (non-draggable) */}
         <div className="space-y-1">
           {filteredGroups?.map((group) => (
             <button
               key={group.id}
               onClick={() => handleGroupSelect(group.id)}
-              className={`
-                w-full text-left p-2 rounded-lg flex items-center justify-between
+              className={`w-full text-left p-2 rounded-lg flex items-center justify-between
                 ${group.isDivider ? 'py-0 cursor-default' : 'cursor-pointer'}
                 ${selectedGroupId === group.id 
                   ? 'bg-gray-200 dark:bg-gray-700/50 text-gray-900 dark:text-gray-100' 
                   : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/30'
                 }
                 ${group.isPrivate ? 'italic' : ''}
-                relative
-              `}
+                relative`}
             >
               <div className="flex items-center gap-2 flex-1">
-                {/* Render divider or group content */}
                 {group.isDivider ? (
                   <div className="h-0.5 bg-gray-200 dark:bg-gray-700 rounded-full w-full" />
                 ) : (
                   <>
-                    {/* Group icon */}
                     {group.iconName && (
                       <i 
                         className={`bx bxs-${group.iconName} text-${group.iconColor}-500`}
                         style={{ fontSize: '1.25rem' }}
                       />
                     )}
-                    {/* Group name */}
                     <span className="text-gray-900 dark:text-gray-100">
                       {group.name}
                     </span>
-                    {/* Item count */}
                     {groupItemCounts.get(group.id) > 0 && (
                       <span className="text-sm text-gray-500 dark:text-gray-400">
                         ({groupItemCounts.get(group.id)})
@@ -247,11 +271,10 @@ const SidebarPublic = memo(function SidebarPublic({
         </div>
       </nav>
 
-      {/* Spacer divs */}
       <div className="h-0.5 mt-4 flex bg-gray-100 dark:bg-gray-800 rounded-full"></div>
       <div className="h-0.5 mt-1 flex bg-gray-100 dark:bg-gray-800 rounded-full"></div>
     </div>
-  )
-})
+  );
+});
 
-export default SidebarPublic 
+export default SidebarPublic;

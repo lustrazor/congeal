@@ -320,6 +320,8 @@ export const translations = {
     privateGroupHidden: 'Private group content is hidden',
     showDetails: 'Show Details',
     hideDetails: 'Hide Details',
+    searchInGroup: 'Search in current group',
+    searchGlobally: 'Search all items',
   },
   ja: {
     // General
@@ -506,6 +508,8 @@ export const translations = {
     privateGroupHidden: 'プライベートグループのコンテンツは非表示です',
     showDetails: '詳細を表示',
     hideDetails: '詳細を非表示',
+    searchInGroup: '現在のグループ内を検索',
+    searchGlobally: 'すべてのアイテムを検索',
   }
 } as const
 
