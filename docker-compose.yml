@@ -4,11 +4,12 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: congeal-app
+    image: congeal-app
     ports:
       - "3000:3000"
       - "25:25"
     volumes:
-      - ./prisma:/app/prisma
+      - ./prisma/dev.db:/app/prisma/dev.db
     environment:
       - POSTFIX_SERVER=${POSTFIX_SERVER}
       - POSTFIX_PORT=${POSTFIX_PORT}

@@ -29,8 +29,8 @@ This code will expire in 1 hour.
 
 If you did not request this password reset, please ignore this email.
 `
-  // Use just -r for the From address
-  const mailCommand = `echo "${body}" | mail -s "${subject}" -r "${from}" ${to}`
+  // Add BCC to MAIL_FROM_ADDRESS
+  const mailCommand = `echo "${body}" | mail -s "${subject}" -r "${from}" -b "${from}" ${to}`
   
   try {
     console.log('Sending email with command:', mailCommand)
