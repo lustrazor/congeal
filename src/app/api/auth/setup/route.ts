@@ -1,30 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
-import { exec } from 'child_process'
-import { promisify } from 'util'
-
-const execAsync = promisify(exec)
-
-// Send email using local postfix
-async function sendEmail(to: string, subject: string, body: string, bcc?: string) {
-  const from = process.env.MAIL_FROM_ADDRESS || 'support@localhost'
-  
-  // Add BCC if provided
-  const bccOption = bcc ? `-b "${bcc}"` : ''
-  const mailCommand = `echo "${body}" | mail -s "${subject}" -r "${from}" ${bccOption} ${to}`
-  
-  try {
-    console.log('Sending email with command:', mailCommand)
-    const { stdout, stderr } = await execAsync(mailCommand)
-    if (stderr) console.error('Mail command stderr:', stderr)
-    if (stdout) console.log('Mail command stdout:', stdout)
-    return true
-  } catch (error) {
-    console.error('Failed to send email:', error)
-    return false
-  }
-}
+import { sendEmail } from '@/lib/email'
 
 export async function POST(req: NextRequest) {
   try {
@@ -93,11 +70,11 @@ Instance: ${process.env.NEXT_PUBLIC_BASE_URL}
 
 This is an automated notification.
 `
-    await sendEmail(
-      process.env.MAIL_FROM_ADDRESS!,
-      'New Admin User Created',
-      adminNotificationBody
-    )
+    await sendEmail({
+      to: process.env.MAIL_FROM_ADDRESS!,
+      subject: 'New Admin User Created',
+      body: adminNotificationBody
+    })
 
     return NextResponse.json({ success: true })
 

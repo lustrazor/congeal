@@ -1557,9 +1557,6 @@ export default function SettingsPage() {
                         <p className="text-gray-600 dark:text-gray-400">
                           {t('openSourceNotice')}
                         </p>
-                        <p className="text-gray-600 dark:text-gray-400">
-                          {t('viewSource')}
-                        </p>
                         <p className="mt-2 text-sm text-gray-500 dark:text-gray-500">
                           {t('rightsReserved')}
                         </p>

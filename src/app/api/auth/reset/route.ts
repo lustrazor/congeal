@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { exec } from 'child_process'
 import { promisify } from 'util'
 import crypto from 'crypto'
+import { sendEmail } from '@/lib/email'
 
 const execAsync = promisify(exec)
 
@@ -16,11 +17,9 @@ function generateResetCode(): string {
   return code
 }
 
-// Send email using local postfix
+// Send email
 async function sendResetEmail(to: string, resetCode: string) {
   const subject = 'Password Reset Code'
-  const from = process.env.MAIL_FROM_ADDRESS || 'support@localhost'
-  
   const body = `
 Your password reset code is: ${resetCode}
 
@@ -29,24 +28,12 @@ This code will expire in 1 hour.
 
 If you did not request this password reset, please ignore this email.
 `
-  // Add BCC to MAIL_FROM_ADDRESS
-  const mailCommand = `echo "${body}" | mail -s "${subject}" -r "${from}" -b "${from}" ${to}`
-  
-  try {
-    console.log('Sending email with command:', mailCommand)
-    const { stdout, stderr } = await execAsync(mailCommand)
-    if (stderr) {
-      console.error('Mail command stderr:', stderr)
-    }
-    if (stdout) {
-      console.log('Mail command stdout:', stdout)
-    }
-    return true
-  } catch (error) {
-    console.error('Failed to send email. Error:', error)
-    console.error('Command output:', error.stdout, error.stderr)
-    return false
-  }
+  return sendEmail({
+    to,
+    subject,
+    body,
+    bcc: process.env.MAIL_FROM_ADDRESS
+  })
 }
 
 export async function POST(req: NextRequest) {
@@ -54,9 +41,14 @@ export async function POST(req: NextRequest) {
     const { username } = await req.json()
     console.log('Processing reset request for:', username)
 
-    // Check if user exists
-    const user = await prisma.user.findUnique({
-      where: { username }
+    // Check if user exists - use simple case-insensitive search
+    const user = await prisma.user.findFirst({
+      where: {
+        username: {
+          startsWith: username,
+          endsWith: username
+        }
+      }
     })
 
     if (!user) {

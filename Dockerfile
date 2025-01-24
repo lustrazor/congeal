@@ -1,14 +1,5 @@
 # Use Node.js base image
-FROM node:20-bookworm-slim
-
-# Install Postfix and required packages
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    postfix \
-    mailutils \
-    libsasl2-modules \
-    ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
+FROM node:23
 
 # Set working directory
 WORKDIR /app
@@ -29,19 +20,14 @@ RUN npx prisma generate
 # Build the application
 RUN npm run build
 
-# Expose ports
+# Expose port
 EXPOSE 3000
-EXPOSE 25
-
-# Create startup script
-COPY docker-entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
-
-# Set entrypoint
-ENTRYPOINT ["docker-entrypoint.sh"]
 
 # Create volume for SQLite database
 VOLUME ["/app/prisma"]
+
+# Create volume for snapshots
+VOLUME ["/app/snapshots"]
 
 # Start the application
 CMD ["npm", "start"]
