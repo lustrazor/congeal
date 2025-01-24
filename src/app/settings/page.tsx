@@ -589,15 +589,15 @@ export default function SettingsPage() {
         debugStore.log('Email data not available')
       }
 
-      // Create snapshot ID with timestamp
-      const timestamp = new Date().toISOString()
-      const snapshotId = `snapshot-${timestamp}`
+      // Create snapshot ID with timestamp - include .json here
+      const timestamp = new Date().toISOString().replace(/:/g, '_')
+      const snapshotId = `snapshot-${timestamp}.json`
 
       const snapshotData = {
         id: snapshotId,
         version: '1.1.0',
         data,
-        createdAt: timestamp,
+        createdAt: new Date().toISOString(),
         schema: {
           includesNotes: true,
           includesQuotes: true,
@@ -642,12 +642,12 @@ export default function SettingsPage() {
       const response = await fetch(`/api/snapshots/${id}`)
       const data = await response.json()
       
-      // Create and download file
+      // Create and download file using the original ID which already includes .json
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = `snapshot-${id}.json`
+      a.download = id  // Use the original ID which already has .json
       document.body.appendChild(a)
       a.click()
       window.URL.revokeObjectURL(url)
@@ -1548,7 +1548,7 @@ export default function SettingsPage() {
                         {t('about')}
                       </h2>
                       <p className="text-gray-600 dark:text-gray-400">
-                        Congeal, {t('version')} {settings?.version}
+                        Congeal, {t('version')} 1.0.23
                       </p>
                       <p className="text-gray-600 dark:text-gray-400">
                         {t('developers')}: <a href="/demo" className="text-blue-500 hover:text-blue-600">{t('sampleUI')} →</a>
