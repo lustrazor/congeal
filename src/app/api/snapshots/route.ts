@@ -53,7 +53,7 @@ export async function POST(request: Request) {
 
     // Create new snapshot
     const timestamp = new Date().toISOString()
-    const filename = `snapshot-${timestamp}.json`
+    const filename = `snapshot-${timestamp.replace(/[:]/g, '_')}.json`
     const path = join(snapshotsDir, filename)
 
     // Write snapshot
@@ -79,10 +79,15 @@ export async function GET() {
     const files = await readdir(snapshotsDir)
     const snapshots = files
       .filter(f => f.endsWith('.json'))
-      .map(f => ({
-        id: f,
-        createdAt: f.replace('snapshot-', '').replace('.json', '')
-      }))
+      .map(f => {
+        // Extract timestamp and convert underscores back to colons for proper date parsing
+        const timestamp = f.replace('snapshot-', '').replace('.json', '')
+          .replace(/_/g, ':')
+        return {
+          id: f,
+          createdAt: timestamp
+        }
+      })
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
 
     return NextResponse.json(snapshots)

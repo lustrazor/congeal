@@ -322,6 +322,13 @@ export const translations = {
     hideDetails: 'Hide Details',
     searchInGroup: 'Search in current group',
     searchGlobally: 'Search all items',
+    uploadSnapshot: 'Upload Snapshot',
+    uploading: 'Uploading...',
+    snapshotUploaded: 'Snapshot uploaded successfully',
+    snapshotUploadError: 'Failed to upload snapshot',
+    snapshotUploadTypeError: 'Please select a .json file',
+    snapshotUploadFormatError: 'Invalid JSON format',
+    snapshotUploadInvalidError: 'Invalid snapshot format',
   },
   ja: {
     // General
@@ -510,6 +517,13 @@ export const translations = {
     hideDetails: '詳細を非表示',
     searchInGroup: '現在のグループ内を検索',
     searchGlobally: 'すべてのアイテムを検索',
+    uploadSnapshot: 'スナップショットをアップロード',
+    uploading: 'アップロード中...',
+    snapshotUploaded: 'スナップショットのアップロードが完了しました',
+    snapshotUploadError: 'スナップショットのアップロードに失敗しました',
+    snapshotUploadTypeError: '.jsonファイルを選択してください',
+    snapshotUploadFormatError: '無効なJSONフォーマットです',
+    snapshotUploadInvalidError: '無効なスナップショット形式です',
   }
 } as const
 

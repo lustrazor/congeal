@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
+///
+/// Restores database from snapshots stored in the /snapshots directory
+/// This is different from upload/route.ts which handles user-uploaded files
+///
 export async function POST(req: NextRequest) {
   try {
     const snapshot = await req.json()

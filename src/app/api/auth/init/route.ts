@@ -28,7 +28,7 @@ const createInitialContent = async (prisma: PrismaClient, includeSeedData: boole
             all_view_mode: 'grid',
             ungrouped_view_mode: 'grid',
             showPrivateGroups: false,
-            version: '1.0.23',
+            version: '1.0.24',
             debugMode: false,
             isPublic: false,
             language: 'en',

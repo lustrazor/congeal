@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useDebugStore } from '@/stores/debugStore'
 import { useSettings } from '@/hooks/useSettings'
 import Header from '@/components/Header'
@@ -58,6 +58,9 @@ export default function SettingsPage() {
   const [factoryResetError, setFactoryResetError] = useState('')
   const [isResetting, setIsResetting] = useState(false)
   const [passwordSuccess, setPasswordSuccess] = useState(false)
+  const [uploadError, setUploadError] = useState<string>('')
+  const [isUploading, setIsUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Initialize form state when settings load
   useEffect(() => {
@@ -804,6 +807,55 @@ export default function SettingsPage() {
     }
   }
 
+  const handleUploadSnapshot = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setIsUploading(true)
+    setUploadError('')
+
+    try {
+      // Read and parse file
+      const content = await file.text()
+      let snapshot
+      
+      try {
+        snapshot = JSON.parse(content)
+        debugStore.log('Parsed snapshot:', snapshot)
+      } catch (error) {
+        debugStore.log('JSON parse error:', error)
+        throw new Error(t('snapshotUploadFormatError'))
+      }
+
+      // Send to API
+      const response = await fetch('/api/snapshots/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(snapshot)
+      })
+
+      const data = await response.json()
+      debugStore.log('Upload response:', data)
+
+      if (!response.ok) {
+        throw new Error(data.error || t('snapshotUploadError'))
+      }
+
+      // Success handling...
+      await loadSnapshots()
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+      toast.success(t('snapshotUploaded'))
+    } catch (error) {
+      debugStore.log('Upload error:', error)
+      setUploadError(error instanceof Error ? error.message : String(error))
+      toast.error(error instanceof Error ? error.message : t('snapshotUploadError'))
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
   return (
     <>
       <Toaster
@@ -1294,9 +1346,124 @@ export default function SettingsPage() {
                         </select>
                       </div>
                     </div>
+                  </div>
 
+                  {/* Snapshots Section */}
+                  <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
+                    <div className="flex items-center justify-between mb-4">
+                      <div>
+                        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                          {t('snapshots')}
+                        </h2>
+                        <p className="text-gray-600 dark:text-gray-400">
+                          {t('snapshotsHint')}
+                        </p>
+                      </div>
+                      <div className="space-y-4">
+                        <div className="flex gap-4">
+                          <button
+                            onClick={handleCreateSnapshot}
+                            disabled={isCreatingSnapshot}
+                            className="px-4 py-2 text-sm font-medium text-white bg-blue-500 
+                              hover:bg-blue-600 rounded-lg disabled:opacity-50"
+                          >
+                            {isCreatingSnapshot ? t('creating') : t('createSnapshot')}
+                          </button>
 
+                          <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleUploadSnapshot}
+                            accept=".json"
+                            className="hidden"
+                          />
+                          <button
+                            onClick={() => fileInputRef.current?.click()}
+                            disabled={isUploading}
+                            className="px-4 py-2 text-sm font-medium text-blue-600 
+                              bg-blue-50 hover:bg-blue-100 rounded-lg 
+                              disabled:opacity-50 dark:bg-blue-900/20 
+                              dark:hover:bg-blue-900/30 dark:text-blue-400"
+                          >
+                            {isUploading ? t('uploading') : t('uploadSnapshot')}
+                          </button>
+                        </div>
 
+                        {uploadError && (
+                          <div className="text-sm text-red-600 dark:text-red-400">
+                            {uploadError}
+                          </div>
+                        )}
+
+                        {snapshots.map((snapshot) => (
+                          <div 
+                            key={snapshot.id}
+                            className="flex items-center justify-between p-3 
+                              bg-gray-50 dark:bg-gray-900/50 
+                              border border-gray-200 dark:border-gray-700 
+                              rounded-lg"
+                          >
+                            <div className="text-sm text-gray-600 dark:text-gray-400">
+                              {new Date(snapshot.createdAt).toLocaleString()}
+                            </div>
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => handleRestoreSnapshot(snapshot.id)}
+                                disabled={isRestoring}
+                                className="px-3 py-1 text-sm font-medium 
+                                  text-green-600 dark:text-green-400
+                                  hover:text-green-700 dark:hover:text-green-300
+                                  disabled:opacity-50
+                                  transition-colors"
+                              >
+                                {isRestoring ? t('restoring') : t('restore')}
+                              </button>
+                              <button
+                                onClick={() => handleDownloadSnapshot(snapshot.id)}
+                                className="px-3 py-1 text-sm font-medium 
+                                  text-blue-600 dark:text-blue-400
+                                  hover:text-blue-700 dark:hover:text-blue-300
+                                  transition-colors"
+                              >
+                                {t('download')}
+                              </button>
+                              <button
+                                onClick={() => handleDeleteSnapshot(snapshot.id)}
+                                className="px-3 py-1 text-sm font-medium 
+                                  text-red-600 dark:text-red-400
+                                  hover:text-red-700 dark:hover:text-red-300
+                                  transition-colors"
+                              >
+                                {t('delete')}
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Restore Message */}
+                    {restoreMessage && (
+                      <div className={`mt-4 p-3 rounded-lg ${
+                        restoreMessage.type === 'success' 
+                          ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-900/30 text-green-800 dark:text-green-200'
+                          : 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/30 text-red-800 dark:text-red-200'
+                      }`}>
+                        <p className="text-sm">
+                          {restoreMessage.type === 'success' ? '✅' : '❌'} {restoreMessage.text}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Warning Notice */}
+                    <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 
+                      border border-yellow-200 dark:border-yellow-900/30 
+                      rounded-lg"
+                    >
+                      <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                        ⚠️ {t('snapshotWarning')}
+                      </p>
+                    </div>
                   </div>
 
                   {/* Password Change Section */}
@@ -1445,102 +1612,6 @@ export default function SettingsPage() {
                     </div>
                   </div>
 
-                  {/* Snapshots Section */}
-                  <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
-                    <div className="flex items-center justify-between mb-4">
-                      <div>
-                        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                          {t('snapshots')}
-                        </h2>
-                        <p className="text-gray-600 dark:text-gray-400">
-                          {t('snapshotsHint')}
-                        </p>
-                      </div>
-                      <button
-                        onClick={handleCreateSnapshot}
-                        disabled={isCreatingSnapshot}
-                        className="px-4 py-2 text-sm font-medium 
-                          text-white bg-blue-500 dark:bg-blue-600
-                          hover:bg-blue-600 dark:hover:bg-blue-700
-                          disabled:opacity-50 
-                          rounded-md transition-colors"
-                      >
-                        {isCreatingSnapshot ? t('creating') : t('createSnapshot')}
-                      </button>
-                    </div>
-
-                    {/* Snapshots List */}
-                    <div className="space-y-3">
-                      {snapshots.map((snapshot) => (
-                        <div 
-                          key={snapshot.id}
-                          className="flex items-center justify-between p-3 
-                            bg-gray-50 dark:bg-gray-900/50 
-                            border border-gray-200 dark:border-gray-700 
-                            rounded-lg"
-                        >
-                          <div className="text-sm text-gray-600 dark:text-gray-400">
-                            {new Date(snapshot.createdAt).toLocaleString()}
-                          </div>
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => handleRestoreSnapshot(snapshot.id)}
-                              disabled={isRestoring}
-                              className="px-3 py-1 text-sm font-medium 
-                                text-green-600 dark:text-green-400
-                                hover:text-green-700 dark:hover:text-green-300
-                                disabled:opacity-50
-                                transition-colors"
-                            >
-                              {isRestoring ? t('restoring') : t('restore')}
-                            </button>
-                            <button
-                              onClick={() => handleDownloadSnapshot(snapshot.id)}
-                              className="px-3 py-1 text-sm font-medium 
-                                text-blue-600 dark:text-blue-400
-                                hover:text-blue-700 dark:hover:text-blue-300
-                                transition-colors"
-                            >
-                              {t('download')}
-                            </button>
-                            <button
-                              onClick={() => handleDeleteSnapshot(snapshot.id)}
-                              className="px-3 py-1 text-sm font-medium 
-                                text-red-600 dark:text-red-400
-                                hover:text-red-700 dark:hover:text-red-300
-                                transition-colors"
-                            >
-                              {t('delete')}
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Restore Message */}
-                    {restoreMessage && (
-                      <div className={`mt-4 p-3 rounded-lg ${
-                        restoreMessage.type === 'success' 
-                          ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-900/30 text-green-800 dark:text-green-200'
-                          : 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/30 text-red-800 dark:text-red-200'
-                      }`}>
-                        <p className="text-sm">
-                          {restoreMessage.type === 'success' ? '✅' : '❌'} {restoreMessage.text}
-                        </p>
-                      </div>
-                    )}
-
-                    {/* Warning Notice */}
-                    <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 
-                      border border-yellow-200 dark:border-yellow-900/30 
-                      rounded-lg"
-                    >
-                      <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                        ⚠️ {t('snapshotWarning')}
-                      </p>
-                    </div>
-                  </div>
-
                   {/* About Section */}
                   <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
                     <div className="flex flex-col gap-2">
@@ -1548,7 +1619,7 @@ export default function SettingsPage() {
                         {t('about')}
                       </h2>
                       <p className="text-gray-600 dark:text-gray-400">
-                        Congeal, {t('version')} 1.0.23
+                        Congeal, {t('version')} 1.0.24
                       </p>
                       <p className="text-gray-600 dark:text-gray-400">
                         {t('developers')}: <a href="/demo" className="text-blue-500 hover:text-blue-600">{t('sampleUI')} →</a>

@@ -70,10 +70,13 @@ export async function GET(req: NextRequest) {
       }
     }
 
+    const timestamp = new Date().toISOString()
+    const filename = `snapshot-${timestamp.replace(/[:]/g, '_')}.json`
+
     return new NextResponse(JSON.stringify(snapshot, null, 2), {
       headers: {
         'Content-Type': 'application/json',
-        'Content-Disposition': `attachment; filename="snapshot-${new Date().toISOString()}.json"`
+        'Content-Disposition': `attachment; filename="${filename}"`
       }
     })
   } catch (error) {
