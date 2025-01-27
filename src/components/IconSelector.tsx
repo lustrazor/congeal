@@ -17,7 +17,6 @@ const commonIcons: IconName[] = [
   'star',
   'folder',
   'leaf',
-  'flag',
   'bell',
   'bookmark',
   'heart',

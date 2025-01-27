@@ -1,11 +1,13 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useGroups } from '@/hooks/useGroups'
 import { useDebugStore } from '@/stores/debugStore'
 import IconSelector, { IconName } from '@/components/IconSelector'
 import { clientLogger } from '@/lib/clientLogger'
 import { useTranslations } from '@/hooks/useTranslations'
 import { Switch } from '@/components/ui/Switch'
+import { validateBoxIcon, validBoxIcons } from '@/lib/iconValidator'
+import ComboBox from '@/components/ui/ComboBox'
 
 interface GroupFormProps {
   onClose: (groupId?: number) => void
@@ -58,6 +60,20 @@ const GroupForm: React.FC<GroupFormProps> = ({ onClose, editGroup, onItemsChange
     seedItemName: '',
     seedItemCount: 10
   })
+
+  // Add state for custom icon handling
+  const [isCustomIcon, setIsCustomIcon] = useState(false)
+  const [customIconName, setCustomIconName] = useState('')
+  const [customIconError, setCustomIconError] = useState<string>('')
+
+  // Add handleCustomIconSelect callback
+  const handleCustomIconSelect = useCallback(() => {
+    setIsCustomIcon(true)
+    // Only initialize if there's a valid icon name
+    if (formData.iconName && formData.iconName !== 'undefined') {
+      setCustomIconName(formData.iconName)
+    }
+  }, [formData.iconName])
 
   // Add validation function
   const validateForm = (): boolean => {
@@ -268,10 +284,72 @@ const GroupForm: React.FC<GroupFormProps> = ({ onClose, editGroup, onItemsChange
       )}
 
       <div className="mb-4">
-        <IconSelector
-          selectedIcon={formData.iconName}
-          onSelect={(iconName) => setFormData({ ...formData, iconName })}
-        />
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          {t('icon')}
+        </label>
+        
+        {isCustomIcon ? (
+          <div className="space-y-2">
+            <div className="flex gap-2">
+              <div className="flex-1">
+                <ComboBox
+                  value={customIconName}
+                  onChange={(value) => {
+                    setCustomIconName(value)
+                    if (value && !validateBoxIcon(value)) {
+                      setCustomIconError(t('invalidIconName'))
+                    } else {
+                      setCustomIconError('')
+                      setFormData(prev => ({ 
+                        ...prev, 
+                        iconName: value as IconName 
+                      }))
+                    }
+                  }}
+                  options={validBoxIcons}
+                  placeholder="Enter boxicon name (e.g. 'heart' or 'star')"
+                  error={customIconError}
+                  autoFocus={true}
+                />
+                {customIconError && (
+                  <p className="mt-1 text-sm text-red-500">{customIconError}</p>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsCustomIcon(false)
+                  setCustomIconError('')
+                }}
+                className="px-3 py-2 text-gray-600 hover:text-gray-800 
+                  dark:text-gray-400 dark:hover:text-gray-200"
+              >
+                <i className="bx bx-x text-xl" />
+              </button>
+            </div>
+            <div className="text-sm text-gray-500">
+              {t('customIconHint')}{' '}
+              <a 
+                href="https://boxicons.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 hover:underline"
+              >
+                boxicons.com
+              </a>
+            </div>
+          </div>
+        ) : (
+          <IconSelector
+            selectedIcon={formData.iconName}
+            onSelect={(iconName) => {
+              setIsCustomIcon(false)
+              setFormData({ ...formData, iconName })
+            }}
+            onCustomSelect={handleCustomIconSelect}
+            isCustom={isCustomIcon}
+          />
+        )}
       </div>
 
       <div>

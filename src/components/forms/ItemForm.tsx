@@ -7,6 +7,8 @@ import IconSelector from '@/components/IconSelector'
 import type { IconName } from '@/types'
 import { Switch } from '@/components/ui/Switch'
 import { mutate as globalMutate } from 'swr'
+import { validateBoxIcon, validBoxIcons } from '@/lib/iconValidator'
+import ComboBox from '@/components/ui/ComboBox'
 
 interface ItemFormData {
   name: string
@@ -37,6 +39,7 @@ const ItemForm: React.FC<ItemFormProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isCustomIcon, setIsCustomIcon] = useState(false)
   const [customIconName, setCustomIconName] = useState('')
+  const [customIconError, setCustomIconError] = useState<string>('')
 
   // Initialize form data with properly formatted dueAt
   const [formData, setFormData] = useState<ItemFormData>(() => {
@@ -68,8 +71,11 @@ const ItemForm: React.FC<ItemFormProps> = ({
 
   const handleCustomIconSelect = useCallback(() => {
     setIsCustomIcon(true)
-    setFormData(prev => ({ ...prev, iconName: undefined }))
-  }, [])
+    // Only initialize if there's a valid icon name
+    if (formData.iconName && formData.iconName !== 'undefined') {
+      setCustomIconName(formData.iconName)
+    }
+  }, [formData.iconName])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -167,26 +173,36 @@ const ItemForm: React.FC<ItemFormProps> = ({
         {isCustomIcon ? (
           <div className="space-y-2">
             <div className="flex gap-2">
-              <input
-                type="text"
-                value={customIconName}
-                onChange={(e) => {
-                  setCustomIconName(e.target.value)
-                  setFormData(prev => ({ 
-                    ...prev, 
-                    iconName: e.target.value as IconName 
-                  }))
-                }}
-                placeholder="Enter boxicon name (e.g. 'heart' or 'star')"
-                className="flex-1 px-3 py-2 
-                  bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100
-                  rounded-md focus:ring-1 focus:ring-blue-500 border border-gray-300 
-                  shadow-sm focus:border-blue-500 focus:ring-blue-500 
-                  dark:bg-gray-800 dark:border-gray-600"
-              />
+              <div className="flex-1">
+                <ComboBox
+                  value={customIconName}
+                  onChange={(value) => {
+                    setCustomIconName(value)
+                    if (value && !validateBoxIcon(value)) {
+                      setCustomIconError(t('invalidIconName'))
+                    } else {
+                      setCustomIconError('')
+                      setFormData(prev => ({ 
+                        ...prev, 
+                        iconName: value as IconName 
+                      }))
+                    }
+                  }}
+                  options={validBoxIcons}
+                  placeholder="Enter boxicon name (e.g. 'heart' or 'star')"
+                  error={customIconError}
+                  autoFocus={true}
+                />
+                {customIconError && (
+                  <p className="mt-1 text-sm text-red-500">{customIconError}</p>
+                )}
+              </div>
               <button
                 type="button"
-                onClick={() => setIsCustomIcon(false)}
+                onClick={() => {
+                  setIsCustomIcon(false)
+                  setCustomIconError('')
+                }}
                 className="px-3 py-2 text-gray-600 hover:text-gray-800 
                   dark:text-gray-400 dark:hover:text-gray-200"
               >
@@ -194,7 +210,7 @@ const ItemForm: React.FC<ItemFormProps> = ({
               </button>
             </div>
             <div className="text-sm text-gray-500">
-              Browse available icons at{' '}
+              {t('customIconHint')}{' '}
               <a 
                 href="https://boxicons.com/"
                 target="_blank"

@@ -329,6 +329,8 @@ export const translations = {
     snapshotUploadTypeError: 'Please select a .json file',
     snapshotUploadFormatError: 'Invalid JSON format',
     snapshotUploadInvalidError: 'Invalid snapshot format',
+    invalidIconName: 'Please check boxicons.com for available icons.',
+    customIconHint: 'You can enter the name of any solid boxicon from',
   },
   ja: {
     // General
@@ -524,6 +526,8 @@ export const translations = {
     snapshotUploadTypeError: '.jsonファイルを選択してください',
     snapshotUploadFormatError: '無効なJSONフォーマットです',
     snapshotUploadInvalidError: '無効なスナップショット形式です',
+    invalidIconName: '無効なアイコン名です。利用可能なアイコンはboxicons.comで確認してください。',
+    customIconHint: 'boxiconsの任意のソリッドアイコン名を入力できます：',
   }
 } as const
 
