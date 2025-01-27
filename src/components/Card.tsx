@@ -304,7 +304,7 @@ export default function Card({
               className={`
                 mt-1 text-sm text-gray-500 dark:text-gray-400
                 whitespace-pre-wrap break-words
-                ${viewMode === 'expanded' ? '' : 'line-clamp-2'}
+                ${viewMode === 'expanded' || viewMode === 'list' ? '' : 'line-clamp-2'}
               `}
             >
               {item.description}
