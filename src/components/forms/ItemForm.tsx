@@ -131,7 +131,7 @@ const ItemForm: React.FC<ItemFormProps> = ({
           required
           minLength={1}
           className="mt-1 w-full px-3 py-2 
-            bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100
+            bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-300
             rounded-md focus:ring-1 focus:ring-blue-500 border border-gray-300 
             shadow-sm focus:border-blue-500 focus:ring-blue-500 
             dark:bg-gray-800 dark:border-gray-600

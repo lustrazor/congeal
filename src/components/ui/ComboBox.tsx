@@ -128,7 +128,7 @@ export default function ComboBox({
       
       {isOpen && filteredOptions.length > 0 && value.trim() && (
         <ul className="absolute z-10 w-full mt-1 max-h-60 overflow-auto
-          bg-white dark:bg-gray-800 
+          bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-300
           border border-gray-300 dark:border-gray-600
           rounded-md shadow-lg">
           {filteredOptions.map((option, index) => (
