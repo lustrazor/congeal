@@ -345,11 +345,10 @@ export default function Card({
           )}
         </div>
 
-        {/* Actions */}
+        {/* Hover Menu Buttons */}
         <div className="absolute bottom-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity">
           <div className="flex gap-1 bg-white dark:bg-gray-700 rounded-md shadow-md px-3 py-1 
           border border-1 border-b-2 border-b-gray-400 border-gray-300 dark:border-gray-600">
-
 
             {/* Icon color toggle button */}
             {item.iconName && (
@@ -414,19 +413,6 @@ export default function Card({
               <i className="bx bx-palette text-base" />
             </button>
 
-            {/* Mark as Done */}
-            <button
-              onClick={handleClearDueDate}
-              disabled={isUpdating || !item.dueAt}
-              className={`p-1 ${
-                item.dueAt 
-                  ? 'text-gray-400 hover:text-gray-500 dark:text-gray-400 dark:hover:text-gray-300' 
-                  : 'text-gray-300 dark:text-gray-600 cursor-not-allowed'
-              } rounded flex items-center justify-center`}
-              title={item.dueAt ? t('removeDueDate') : t('noDueDate')}
-            >
-              <i className="bx bx-check-square text-base" />
-            </button>
 
             {/* Edit button */}
             {onEdit && (
@@ -442,6 +428,19 @@ export default function Card({
               </button>
             )}
 
+            {/* Mark as Done */}
+            <button
+              onClick={handleClearDueDate}
+              disabled={isUpdating || !item.dueAt}
+              className={`p-1 ${
+                item.dueAt 
+                  ? 'text-gray-400 hover:text-gray-500 dark:text-gray-400 dark:hover:text-gray-300' 
+                  : 'text-gray-300 dark:text-gray-600 cursor-not-allowed'
+              } rounded flex items-center justify-center`}
+              title={item.dueAt ? t('removeDueDate') : t('noDueDate')} >
+              <i className="bx bx-check-square text-base" />
+            </button>
+
             {/* Delete button */}
             <button
               onClick={(e) => {
@@ -454,8 +453,8 @@ export default function Card({
                 })
                 setShowDeleteConfirm(true)
               }}
-              className="p-1 text-gray-400 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 rounded flex items-center justify-center"
-            >
+              className="p-1 text-gray-400 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 
+              rounded flex items-center justify-center" >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
                   d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" 
