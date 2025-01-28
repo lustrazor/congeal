@@ -30,6 +30,9 @@ const SidebarPublic = memo(function SidebarPublic({
   // Add new state for search scope
   const [isGlobalSearch, setIsGlobalSearch] = useState(true);
 
+  // Add state for animating icons
+  const [animatingIcon, setAnimatingIcon] = useState<number | null>(null)
+
   // Calculate item counts using useMemo
   const groupItemCounts = useMemo(() => {
     if (!items) return new Map<number, number>();
@@ -121,6 +124,11 @@ const SidebarPublic = memo(function SidebarPublic({
       handleGroupSelect(undefined);
     }
   };
+
+  // Add animation end handler
+  const handleAnimationEnd = () => {
+    setAnimatingIcon(null)
+  }
 
   // Update the filtered groups logic
   const filteredGroups = groups?.filter((group) => {
@@ -234,15 +242,21 @@ const SidebarPublic = memo(function SidebarPublic({
           {filteredGroups?.map((group) => (
             <button
               key={group.id}
-              onClick={() => handleGroupSelect(group.id)}
-              className={`w-full text-left p-2 rounded-lg flex items-center justify-between
-                ${group.isDivider ? 'py-0 cursor-default' : 'cursor-pointer'}
-                ${selectedGroupId === group.id 
+              onClick={() => {
+                // Only select non-divider groups
+                if (!group.isDivider) {
+                  onGroupSelect(group.id)
+                  setAnimatingIcon(group.id)
+                }
+              }}
+              className={`
+                w-full text-left p-2 rounded-lg flex items-center justify-between
+                ${group.isDivider ? 'py-0 pointer-events-none' : 'cursor-pointer'}
+                ${selectedGroupId === group.id && !group.isDivider
                   ? 'bg-gray-200 dark:bg-gray-700/50 text-gray-900 dark:text-gray-100' 
                   : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/30'
                 }
-                ${group.isPrivate ? 'italic' : ''}
-                relative`}
+              `}
             >
               <div className="flex items-center gap-2 flex-1">
                 {group.isDivider ? (
@@ -251,8 +265,13 @@ const SidebarPublic = memo(function SidebarPublic({
                   <>
                     {group.iconName && (
                       <i 
-                        className={`bx bxs-${group.iconName} text-${group.iconColor}-500`}
+                        className={`
+                          bx bxs-${group.iconName} 
+                          text-${group.iconColor}-500
+                          ${animatingIcon === group.id ? 'animate-bump' : ''}
+                        `}
                         style={{ fontSize: '1.25rem' }}
+                        onAnimationEnd={handleAnimationEnd}
                       />
                     )}
                     <span className="text-gray-900 dark:text-gray-100">

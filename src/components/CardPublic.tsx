@@ -42,8 +42,14 @@ export default function CardPublic({
             `}>
               <i className={`
                 bx bxs-${item.iconName} 
-                ${item.useStatusColor ? 'text-white' : 'text-gray-500'}
-              `} style={{ fontSize: '0.875rem' }} />
+                ${item.useStatusColor 
+                  ? 'text-white' 
+                  : 'text-gray-500 dark:text-gray-400'
+                }
+                group-hover:animate-bump
+              `} 
+              style={{ fontSize: '0.875rem' }} 
+              />
             </div>
           )}
           <h3 className="text-lg font-medium text-gray-900 dark:text-gray-300 print:text-black my-0 py-0 leading-none">
@@ -87,9 +93,10 @@ export default function CardPublic({
   if (!mounted) return null
 
   const cardClasses = `
-    relative bg-white dark:bg-gray-800 
-    rounded-lg p-4 shadow-sm
+    relative group bg-white dark:bg-gray-800 
+    rounded-lg p-4 shadow-sm hover:shadow-md
     border border-gray-200 dark:border-gray-700
+    hover:border-gray-300 hover:dark:border-gray-600 hover:border-b-1
     transition-all duration-200 ease-in-out
   `
 
@@ -111,7 +118,14 @@ export default function CardPublic({
       <div className={`
         absolute top-0 left-0 right-0 h-1 
         rounded-t-lg transition-colors
+        bg-black/0 group-hover:bg-black/20 dark:group-hover:bg-white/30
         bg-${item.status}-500
+      `} />
+
+      {/* Hover overlay */}
+      <div className={`
+        absolute inset-0 rounded-lg transition-colors
+        'bg-black/0' : 'bg-black/0 group-hover:bg-gray-500/5 dark:group-hover:bg-black/40'}
       `} />
 
       <div className="relative flex gap-3">
@@ -131,6 +145,7 @@ export default function CardPublic({
                   ? 'text-white' 
                   : 'text-gray-500 dark:text-gray-400'
                 }
+                group-hover:animate-bump
               `}
               style={{ fontSize: '1.25rem' }}
             />

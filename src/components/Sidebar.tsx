@@ -51,6 +51,9 @@ const Sidebar = memo(function Sidebar({
   // Add new state for search
   const [isGlobalSearch, setIsGlobalSearch] = useState(true);
 
+  // Add this state to track which group icon is animating
+  const [animatingIcon, setAnimatingIcon] = useState<number | null>(null)
+
   // Calculate item counts using useMemo
   const groupItemCounts = useMemo(() => {
     if (!items) return new Map<number, number>();
@@ -215,6 +218,11 @@ const Sidebar = memo(function Sidebar({
     }
   };
 
+  // Add this handler for animation end
+  const handleAnimationEnd = () => {
+    setAnimatingIcon(null)
+  }
+
   if (groupsLoading) {
     return (
       <div className="w-60 lg:w-72 xl:w-80 flex-shrink-0 border-r border-gray-200 dark:border-gray-700 p-4">
@@ -334,8 +342,8 @@ const Sidebar = memo(function Sidebar({
                           {...provided.dragHandleProps}
                           className={`
                             p-0 rounded cursor-pointer
-                            ${group.isDivider ? 'py-0' : ''}
-                            ${selectedGroupId === group.id 
+                            ${group.isDivider ? 'py-0 cursor-grab' : ''}
+                            ${selectedGroupId === group.id && !group.isDivider
                               ? 'bg-gray-200 dark:bg-gray-700/50 text-gray-900 dark:text-gray-100' 
                               : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/30'
                             }
@@ -343,7 +351,13 @@ const Sidebar = memo(function Sidebar({
                             ${group.isPrivate ? 'italic' : ''}
                             relative group/item
                           `}
-                          onClick={() => !group.isDivider && onGroupSelect(group.id)}
+                          onClick={() => {
+                            // Only select and animate if not a divider
+                            if (!group.isDivider) {
+                              onGroupSelect(group.id)
+                              setAnimatingIcon(group.id)
+                            }
+                          }}
                           onMouseEnter={() => setHoveredGroupId(group.id)}
                           onMouseLeave={() => setHoveredGroupId(null)}
                         >
@@ -372,8 +386,13 @@ const Sidebar = memo(function Sidebar({
                                   {/* Group icon */}
                                   {group.iconName && (
                                     <i 
-                                      className={`bx bxs-${group.iconName} text-${group.iconColor}-500`}
+                                      className={`
+                                        bx bxs-${group.iconName} 
+                                        text-${group.iconColor}-500
+                                        ${animatingIcon === group.id ? 'animate-bump' : ''}
+                                      `}
                                       style={{ fontSize: '1.25rem' }}
+                                      onAnimationEnd={handleAnimationEnd}
                                     />
                                   )}
                                   {/* Group name */}

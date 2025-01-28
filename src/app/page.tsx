@@ -903,7 +903,7 @@ const getTimeStatus = (dueDate: Date) => {
                           disabled={isPrivateGroupHidden}
                           className={`flex items-center gap-0 text-sm
                             ${isPrivateGroupHidden 
-                              ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed'
+                              ? 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
                               : 'text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-200'
                             } transition-colors pl-1 leading-none`}
                           title={isPrivateGroupHidden ? t('privateGroupHidden') : t('toggleSortField')}

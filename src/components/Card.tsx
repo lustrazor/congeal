@@ -232,8 +232,9 @@ export default function Card({
 
   const cardClasses = `
     relative group bg-white dark:bg-gray-800 
-    rounded-lg p-4 shadow-sm
+    rounded-lg p-4 shadow-sm hover:shadow-md
     border border-gray-200 dark:border-gray-700
+    hover:border-gray-300 hover:dark:border-gray-600 hover:border-b-1
     transition-all duration-200 ease-in-out
     ${isDragging ? 'shadow-lg' : ''}
     ${isPlaceholder ? 'opacity-50 pointer-events-none' : ''}
@@ -252,6 +253,36 @@ export default function Card({
     }).format(new Date(date))
   }
 
+  // Add this helper function at the top of the file
+  const renderTextWithLinks = (text: string) => {
+    // URL regex pattern
+    const urlPattern = /(https?:\/\/[^\s]+)/g
+
+    // Split text by URLs and map each part
+    const parts = text.split(urlPattern)
+    
+    return parts.map((part, i) => {
+      // Check if this part matches URL pattern
+      if (part.match(urlPattern)) {
+        return (
+          <a
+            key={i}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="text-blue-500 hover:text-blue-600 dark:text-blue-400 
+              dark:hover:text-blue-300 hover:underline"
+          >
+            {part}
+          </a>
+        )
+      }
+      // Return regular text
+      return part
+    })
+  }
+
   return (
     <div className={cardClasses}>
       {/* Status stripe */}
@@ -259,12 +290,13 @@ export default function Card({
         absolute top-0 left-0 right-0 h-1 
         rounded-t-lg transition-colors
         bg-${item.status}-500
+        bg-black/0 group-hover:bg-black/20 dark:group-hover:bg-white/30
       `} />
 
       {/* Hover overlay */}
       <div className={`
         absolute inset-0 rounded-lg transition-colors
-        ${isDragging ? 'bg-black/0' : 'bg-black/0 group-hover:bg-black/5 dark:group-hover:bg-black/40'}
+        ${isDragging ? 'bg-black/0' : 'bg-black/0 group-hover:bg-black/5 dark:group-hover:bg-black/10'}
       `} />
 
       <div className="relative flex gap-3">
@@ -284,6 +316,7 @@ export default function Card({
                   ? 'text-white' 
                   : 'text-gray-500 dark:text-gray-400'
                 }
+                group-hover:animate-bump
               `}
               style={{ fontSize: '1.25rem' }}
             />
@@ -307,14 +340,15 @@ export default function Card({
                 ${viewMode === 'expanded' || viewMode === 'list' ? '' : 'line-clamp-2'}
               `}
             >
-              {item.description}
+              {renderTextWithLinks(item.description)}
             </div>
           )}
         </div>
 
         {/* Actions */}
-        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-          <div className="flex gap-1 bg-white dark:bg-gray-700 rounded-md shadow-sm px-3 py-1">
+        <div className="absolute bottom-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="flex gap-1 bg-white dark:bg-gray-700 rounded-md shadow-md px-3 py-1 
+          border border-1 border-b-2 border-b-gray-400 border-gray-300 dark:border-gray-600">
 
 
             {/* Icon color toggle button */}
