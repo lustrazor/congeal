@@ -1,69 +1,51 @@
-import { NextResponse } from 'next/server'
-import { writeFile, readdir } from 'fs/promises'
-import { join } from 'path'
-import { prisma } from '@/lib/prisma'
+import { NextRequest, NextResponse } from 'next/server'
+import { prisma } from '@/lib/db'
+import path from 'path'
+import fs from 'fs'
 
-const SNAPSHOT_LIMIT = 10 // Maximum number of snapshots to keep
-
-// Helper to clean data for snapshot
-const prepareDataForSnapshot = (data: any) => {
-  // Remove any computed fields or unnecessary data
-  const { _count, ...cleanData } = data
-  return cleanData
-}
-
-export async function POST(request: Request) {
+export async function POST(req: NextRequest) {
   try {
-    // Get existing snapshots
-    const snapshotsDir = join(process.cwd(), 'snapshots')
-    const files = await readdir(snapshotsDir)
-    const snapshots = files.filter(f => f.endsWith('.json'))
-
-    // Check if we've hit the limit
-    if (snapshots.length >= SNAPSHOT_LIMIT) {
-      return NextResponse.json(
-        { error: 'Snapshot limit reached' },
-        { status: 400 }
-      )
+    // Create snapshots directory if it doesn't exist
+    const snapshotsDir = path.join(process.cwd(), 'snapshots')
+    if (!fs.existsSync(snapshotsDir)) {
+      fs.mkdirSync(snapshotsDir, { recursive: true })
     }
 
-    // Fetch all data
-    const [groups, items, settings, quotes, notes] = await Promise.all([
+    // Get all data
+    const [settings, groups, items, quotes, notes] = await prisma.$transaction([
+      prisma.settings.findFirst(),
       prisma.group.findMany(),
       prisma.item.findMany(),
-      prisma.settings.findFirst(),
       prisma.quote.findMany(),
-      prisma.note.findMany(),
+      prisma.note.findMany()
     ])
 
-    // Clean data for snapshot
-    const snapshotData = {
-      version: '1.0',
+    // Build snapshot data
+    const snapshot = {
+      version: '1.1.0',
       schema: {
-        includesEmail: false
+        includesNotes: true,
+        includesQuotes: true,
+        includesEmail: true
       },
       data: {
-        groups: groups.map(prepareDataForSnapshot),
-        items: items.map(prepareDataForSnapshot),
-        settings: settings ? prepareDataForSnapshot(settings) : null,
-        quotes: quotes.map(prepareDataForSnapshot),
-        notes: notes.map(prepareDataForSnapshot)
-      }
+        settings,
+        groups,
+        items,
+        quotes,
+        notes
+      },
+      createdAt: new Date().toISOString()
     }
 
-    // Create new snapshot
-    const timestamp = new Date().toISOString()
-    const filename = `snapshot-${timestamp.replace(/[:]/g, '_')}.json`
-    const path = join(snapshotsDir, filename)
+    // Save snapshot
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '_')
+    const filename = `snapshot-${timestamp}.json`
+    const filePath = path.join(snapshotsDir, filename)
 
-    // Write snapshot
-    await writeFile(path, JSON.stringify(snapshotData, null, 2))
+    fs.writeFileSync(filePath, JSON.stringify(snapshot, null, 2))
 
-    return NextResponse.json({ 
-      success: true,
-      id: filename,
-      createdAt: timestamp
-    })
+    return NextResponse.json({ success: true, filename })
   } catch (error) {
     console.error('Failed to create snapshot:', error)
     return NextResponse.json(
@@ -75,20 +57,15 @@ export async function POST(request: Request) {
 
 export async function GET() {
   try {
-    const snapshotsDir = join(process.cwd(), 'snapshots')
-    const files = await readdir(snapshotsDir)
+    const snapshotsDir = path.join(process.cwd(), 'snapshots')
+    const files = fs.readdirSync(snapshotsDir)
     const snapshots = files
       .filter(f => f.endsWith('.json'))
-      .map(f => {
-        // Extract timestamp and convert underscores back to colons for proper date parsing
-        const timestamp = f.replace('snapshot-', '').replace('.json', '')
-          .replace(/_/g, ':')
-        return {
-          id: f,
-          createdAt: timestamp
-        }
-      })
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .map(filename => ({
+        id: filename,
+        createdAt: new Date(filename.split('-')[1].replace('.json', '').replace(/_/g, ':'))
+      }))
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
 
     return NextResponse.json(snapshots)
   } catch (error) {

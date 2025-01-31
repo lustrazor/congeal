@@ -1,8 +1,8 @@
-import { NextResponse } from 'next/server'
-import { promises as fs } from 'fs'
+import { NextRequest, NextResponse } from 'next/server'
+import { prisma } from '@/lib/db'
+import { Encryption } from '@/lib/encryption'
 import path from 'path'
-import { prisma } from '@/lib/prisma'
-import type { PrismaClient } from '@prisma/client'
+import fs from 'fs'
 
 // Helper to clean data before insertion
 const cleanDataForPrisma = (data: any) => {
@@ -24,70 +24,77 @@ const cleanDataForPrisma = (data: any) => {
 }
 
 export async function POST(
-  request: Request,
+  req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const snapshotId = params.id
-    // Remove any extra .json extension that might have been added
-    const cleanId = snapshotId.replace(/\.json$/, '')
-    const filePath = path.join(process.cwd(), 'snapshots', `${cleanId}.json`)
-    
-    console.log('Restoring snapshot', { snapshotId })
-    
-    const fileContent = await fs.readFile(filePath, 'utf-8')
-    const snapshot = JSON.parse(fileContent)
+    console.log('Restoring snapshot', { snapshotId: params.id })
 
-    // Begin transaction to restore all data
-    await prisma.$transaction(async (tx: Omit<PrismaClient, '$connect' | '$disconnect' | '$on' | '$transaction' | '$use'>) => {
+    // Get the current user's encryption salt
+    const user = await prisma.user.findFirst()
+    if (!user?.encryptionSalt) {
+      throw new Error('No encryption salt found')
+    }
+
+    // Get password from request
+    const { password } = await req.json()
+    if (!password) {
+      throw new Error('Password is required')
+    }
+
+    // Initialize encryption with user's password and salt
+    await Encryption.initialize(password, user.encryptionSalt)
+
+    // Read snapshot file
+    const snapshotPath = path.join(process.cwd(), 'snapshots', params.id)
+    const snapshot = JSON.parse(fs.readFileSync(snapshotPath, 'utf8'))
+
+    // Get the data from the correct location based on schema version
+    const data = snapshot.version ? snapshot.data : snapshot
+
+    await prisma.$transaction(async (tx) => {
       // Clear existing data
-      await tx.item.deleteMany({})
-      await tx.group.deleteMany({})
-      await tx.settings.deleteMany({})
-      await tx.quote.deleteMany({})
-      await tx.note.deleteMany({})
-      if (snapshot.schema?.includesEmail) {
-        await tx.message.deleteMany({})
-        await tx.mailbox.deleteMany({})
-      }
+      await tx.note.deleteMany()
+      await tx.quote.deleteMany()
+      await tx.item.deleteMany()
+      await tx.group.deleteMany()
+      await tx.settings.deleteMany()
 
-      // Get the data from the correct location based on schema version
-      const data = snapshot.version ? snapshot.data : snapshot
-
-      // Restore data in correct order (handle foreign key constraints)
-      if (data.groups?.length) {
-        const cleanGroups = data.groups.map(cleanDataForPrisma)
-        await tx.group.createMany({ data: cleanGroups })
-      }
-
-      if (data.items?.length) {
-        const cleanItems = data.items.map(cleanDataForPrisma)
-        await tx.item.createMany({ data: cleanItems })
-      }
-
+      // Restore settings if present
       if (data.settings) {
         const cleanSettings = cleanDataForPrisma(data.settings)
         await tx.settings.create({ data: cleanSettings })
       }
 
-      if (data.quotes?.length) {
-        const cleanQuotes = data.quotes.map(cleanDataForPrisma)
-        await tx.quote.createMany({ data: cleanQuotes })
-      }
-
-      if (data.notes?.length) {
-        const cleanNotes = data.notes.map(cleanDataForPrisma)
-        await tx.note.createMany({ data: cleanNotes })
-      }
-
-      if (snapshot.schema?.includesEmail) {
-        if (data.mailboxes?.length) {
-          const cleanMailboxes = data.mailboxes.map(cleanDataForPrisma)
-          await tx.mailbox.createMany({ data: cleanMailboxes })
+      // Restore groups first (for foreign key constraints)
+      if (data.groups?.length) {
+        for (const group of data.groups) {
+          const cleanGroup = cleanDataForPrisma(group)
+          await tx.group.create({ data: cleanGroup })
         }
-        if (data.messages?.length) {
-          const cleanMessages = data.messages.map(cleanDataForPrisma)
-          await tx.message.createMany({ data: cleanMessages })
+      }
+
+      // Restore items
+      if (data.items?.length) {
+        for (const item of data.items) {
+          const cleanItem = cleanDataForPrisma(item)
+          await tx.item.create({ data: cleanItem })
+        }
+      }
+
+      // Restore quotes
+      if (data.quotes?.length) {
+        for (const quote of data.quotes) {
+          const cleanQuote = cleanDataForPrisma(quote)
+          await tx.quote.create({ data: cleanQuote })
+        }
+      }
+
+      // Restore notes
+      if (data.notes?.length) {
+        for (const note of data.notes) {
+          const cleanNote = cleanDataForPrisma(note)
+          await tx.note.create({ data: cleanNote })
         }
       }
     })

@@ -137,13 +137,13 @@ export default function FirstTimeSetup() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
-            {t('createAdminAccount')}
+            {t('setupTitle')}
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-            {t('setupInstructions')}
+            {t('setupSubtitle')}
           </p>
         </div>
-
+ 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">

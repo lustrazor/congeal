@@ -608,7 +608,7 @@ export default function QuotesPage() {
                 onClick={() => setViewMode('notes')}
                 className={`flex-1 py-2 px-4 rounded-md transition-colors ${
                   viewMode === 'notes'
-                    ? 'font-semibold bg-gray-200 dark:bg-gray-900/30 text-gray-600 dark:text-gray-300'
+                    ? 'font-semibold bg-gray-100 dark:bg-gray-900/30 text-gray-600 dark:text-gray-300'
                     : 'font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
                 }`}
               >
@@ -618,7 +618,7 @@ export default function QuotesPage() {
                 onClick={() => setViewMode('quotes')}
                 className={`flex-1 py-2 px-4 rounded-md transition-colors ${
                   viewMode === 'quotes'
-                    ? 'font-semibold bg-gray-200 dark:bg-gray-900/30 text-gray-600 dark:text-gray-300'
+                    ? 'font-semibold bg-gray-100 dark:bg-gray-900/30 text-gray-600 dark:text-gray-300'
                     : 'font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
                 }`}
               >
@@ -626,12 +626,12 @@ export default function QuotesPage() {
               </button>
             </div>
 
-            {/* Content Container */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden mb-6">
+            {/* Main Content Container */}
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden mb-20 p-2">
               {viewMode === 'quotes' ? (
                 // Quotes View
                 <>
-                  <div className="p-3">
+                  <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-xl mb-2 hover:bg-blue-200 dark:hover:bg-blue-700">
                     <button
                       onClick={() => setIsFormExpanded(!isFormExpanded)}
                       className="w-full font-medium text-left text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
@@ -691,12 +691,12 @@ export default function QuotesPage() {
                     </form>
                   )}
                   {/* Quotes List */}
-                  <div className="bg-gray-200 dark:bg-gray-700 rounded-lg p-4 pb-6">
+                  <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-4">
                     <div className="flex justify-between items-center mb-4">
                       <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
                         {t('quotes')}
                         <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
-                          ({filteredQuotes?.length || 0} total)
+                          ({filteredQuotes?.length || 0} {t('total')})
                         </span>
                       </h2>
                     </div>
@@ -788,61 +788,6 @@ export default function QuotesPage() {
                     </div>
 
                     {/* Top Quotes Pagination */}
-                    {quotesTotalPages > 1 && (
-                      <div className="mb-4 flex items-center justify-between px-4 
-                      bg-gray-50/50 dark:bg-gray-800/50 rounded-lg py-2">
-                        <div className="flex items-center gap-2 text-sm">
-                          <span className="text-gray-600 dark:text-gray-400">
-                            {getDisplayRange(quotesPage, pageSize, quotesTotalItems).start}-
-                            {getDisplayRange(quotesPage, pageSize, quotesTotalItems).end} {t('of')} {quotesTotalItems}
-                          </span>
-                        </div>
-                        
-                        <div className="flex items-center gap-1">
-                          <button
-                            onClick={() => setQuotesPage(prev => Math.max(1, prev - 1))}
-                            disabled={quotesPage === 1}
-                            className={`px-2 py-1 text-sm rounded-md border bg-gray-50 dark:bg-gray-800
-                              ${quotesPage === 1
-                                ? 'text-gray-400 dark:text-gray-600 border-gray-200 dark:border-gray-700 cursor-not-allowed'
-                                : 'text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-700'
-                              }`}
-                          >
-                            <i className='bx bx-chevron-left'></i>
-                          </button>
-
-                          {generatePageNumbers(quotesPage, quotesTotalPages).map((pageNum, idx) => (
-                            <button
-                              key={idx}
-                              onClick={() => typeof pageNum === 'number' && setQuotesPage(pageNum)}
-                              disabled={pageNum === '...'}
-                              className={`px-3 py-1 text-sm rounded-md border bg-gray-50 dark:bg-gray-800
-                                ${pageNum === quotesPage
-                                  ? 'bg-blue-100 border-blue-500 text-blue-600 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-400'
-                                  : pageNum === '...'
-                                    ? 'text-gray-400 dark:text-gray-600 border-gray-200 dark:border-gray-700 cursor-default'
-                                    : 'text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-700'
-                                }`}
-                            >
-                              {pageNum}
-                            </button>
-                          ))}
-
-                          <button
-                            onClick={() => setQuotesPage(prev => Math.min(quotesTotalPages, prev + 1))}
-                            disabled={quotesPage === quotesTotalPages}
-                            className={`px-2 py-1 text-sm rounded-md border bg-gray-50 dark:bg-gray-800
-                              ${quotesPage === quotesTotalPages
-                                ? 'text-gray-400 dark:text-gray-600 border-gray-200 dark:border-gray-700 cursor-not-allowed'
-                                : 'text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-700'
-                              }`}
-                          >
-                            <i className='bx bx-chevron-right'></i>
-                          </button>
-                        </div>
-                      </div>
-                    )}
-
                     <div className="space-y-2">
                       {paginatedQuotes?.map(quote => (
                         <div 
@@ -997,70 +942,44 @@ export default function QuotesPage() {
                           </div>
                         </div>
                       ))}
-
-                  {/* Bottom Quotes Pagination */}
-                  {quotesTotalPages > 1 && (
-                    <div className="mb-4 flex items-center justify-between px-4 
-                      bg-gray-50/50 dark:bg-gray-800/50 rounded-lg py-2">
-                      <div className="flex items-center gap-2 text-sm">
-                        <span className="text-gray-600 dark:text-gray-400">
-                          {getDisplayRange(quotesPage, pageSize, quotesTotalItems).start}-
-                          {getDisplayRange(quotesPage, pageSize, quotesTotalItems).end} {t('of')} {quotesTotalItems}
-                        </span>
-                      </div>
-                      
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={() => setQuotesPage(prev => Math.max(1, prev - 1))}
-                          disabled={quotesPage === 1}
-                          className={`px-2 py-1 text-sm rounded-md border bg-gray-50 dark:bg-gray-800
-                            ${quotesPage === 1
-                              ? 'text-gray-400 dark:text-gray-600 border-gray-200 dark:border-gray-700 cursor-not-allowed'
-                              : 'text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-700'
-                            }`}
-                        >
-                          <i className='bx bx-chevron-left'></i>
-                        </button>
-
-                        {generatePageNumbers(quotesPage, quotesTotalPages).map((pageNum, idx) => (
-                          <button
-                            key={idx}
-                            onClick={() => typeof pageNum === 'number' && setQuotesPage(pageNum)}
-                            disabled={pageNum === '...'}
-                            className={`px-3 py-1 text-sm rounded-md border bg-gray-50 dark:bg-gray-800
-                              ${pageNum === quotesPage
-                                ? 'bg-blue-100 border-blue-500 text-blue-600 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-400'
-                                : pageNum === '...'
-                                  ? 'text-gray-400 dark:text-gray-600 border-gray-200 dark:border-gray-700 cursor-default'
-                                  : 'text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-700'
-                              }`}
-                          >
-                            {pageNum}
-                          </button>
-                        ))}
-
-                        <button
-                          onClick={() => setQuotesPage(prev => Math.min(quotesTotalPages, prev + 1))}
-                          disabled={quotesPage === quotesTotalPages}
-                          className={`px-2 py-1 text-sm rounded-md border bg-gray-50 dark:bg-gray-800
-                            ${quotesPage === quotesTotalPages
-                              ? 'text-gray-400 dark:text-gray-600 border-gray-200 dark:border-gray-700 cursor-not-allowed'
-                              : 'text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-700'
-                            }`}
-                        >
-                          <i className='bx bx-chevron-right'></i>
-                        </button>
-                      </div>
                     </div>
-                  )}
+
+                    {/* Bottom Quotes Pagination */}
+                    <div className="flex justify-end gap-2 mt-4">
+                      <button
+                        onClick={() => setQuotesPage(prev => Math.max(1, prev - 1))}
+                        disabled={quotesPage === 1}
+                        className={`px-2 py-1 text-sm rounded-md border bg-gray-100 dark:bg-gray-800
+                          ${quotesPage === 1
+                            ? 'text-gray-400 dark:text-gray-600 border-gray-200 dark:border-gray-700 cursor-not-allowed'
+                            : 'text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+                          }`}
+                      >
+                        <i className='bx bx-chevron-left'></i>
+                      </button>
+
+                      <span className="px-3 py-1 text-sm text-gray-700 dark:text-gray-300">
+                        {t('page')} {quotesPage} / {quotesTotalPages}
+                      </span>
+
+                      <button
+                        onClick={() => setQuotesPage(prev => Math.min(quotesTotalPages, prev + 1))}
+                        disabled={quotesPage === quotesTotalPages}
+                        className={`px-2 py-1 text-sm rounded-md border bg-gray-100 dark:bg-gray-800
+                          ${quotesPage === quotesTotalPages
+                            ? 'text-gray-400 dark:text-gray-600 border-gray-200 dark:border-gray-700 cursor-not-allowed'
+                            : 'text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+                          }`}
+                      >
+                        <i className='bx bx-chevron-right'></i>
+                      </button>
                     </div>
                   </div>
-
                 </>
               ) : (
                 // Notes View
                 <>
-                  <div className="p-4">
+                  <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-xl mb-2 hover:bg-blue-200 dark:hover:bg-blue-700">
                     <button
                       onClick={() => setIsFormExpanded(!isFormExpanded)}
                       className="w-full font-medium text-left text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
@@ -1164,12 +1083,12 @@ export default function QuotesPage() {
                     </form>
                   )}
                   {/* Notes List */}
-                  <div className="bg-gray-200 dark:bg-gray-700 rounded-lg p-4 pb-6">
+                  <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-4">
                     <div className="flex justify-between items-center mb-4">
                       <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
                         {t('notes')}
                         <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
-                          ({filteredNotes?.length || 0} total)
+                          ({filteredNotes?.length || 0} {t('total')})
                         </span>
                       </h2>
                     </div>
@@ -1260,64 +1179,6 @@ export default function QuotesPage() {
                       </select>
                     </div>
 
-
-                    {/* Top Notes Pagination */}
-                    {notesTotalPages > 1 && (
-                      <div className="mb-1 flex items-center justify-between px-4 
-                      bg-gray-50/50 dark:bg-gray-800/50 rounded-lg py-2">
-                        <div className="flex items-center gap-2 text-sm">
-                          <span className="text-gray-600 dark:text-gray-400">
-                            {getDisplayRange(notesPage, pageSize, notesTotalItems).start}-
-                            {getDisplayRange(notesPage, pageSize, notesTotalItems).end} {t('of')} {notesTotalItems}
-                          </span>
-                        </div>
-                        
-                        <div className="flex items-center gap-1">
-                          <button
-                            onClick={() => setNotesPage(prev => Math.max(1, prev - 1))}
-                            disabled={notesPage === 1}
-                            className={`px-2 py-1 text-sm rounded-md border bg-gray-50 dark:bg-gray-800
-                              ${notesPage === 1
-                                ? 'text-gray-400 dark:text-gray-600 border-gray-200 dark:border-gray-700 cursor-not-allowed'
-                                : 'text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-700'
-                              }`}
-                          >
-                            <i className='bx bx-chevron-left'></i>
-                          </button>
-
-                          {generatePageNumbers(notesPage, notesTotalPages).map((pageNum, idx) => (
-                            <button
-                              key={idx}
-                              onClick={() => typeof pageNum === 'number' && setNotesPage(pageNum)}
-                              disabled={pageNum === '...'}
-                              className={`px-3 py-1 text-sm rounded-md border bg-gray-50 dark:bg-gray-800
-                                ${pageNum === notesPage
-                                  ? 'bg-blue-100 border-blue-500 text-blue-600 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-400'
-                                  : pageNum === '...'
-                                    ? 'text-gray-400 dark:text-gray-600 border-gray-200 dark:border-gray-700 cursor-default'
-                                    : 'text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-700'
-                                }`}
-                            >
-                              {pageNum}
-                            </button>
-                          ))}
-
-                          <button
-                            onClick={() => setNotesPage(prev => Math.min(notesTotalPages, prev + 1))}
-                            disabled={notesPage === notesTotalPages}
-                            className={`px-2 py-1 text-sm rounded-md border bg-gray-50 dark:bg-gray-800
-                              ${notesPage === notesTotalPages
-                                ? 'text-gray-400 dark:text-gray-600 border-gray-200 dark:border-gray-700 cursor-not-allowed'
-                                : 'text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-700'
-                              }`}
-                          >
-                            <i className='bx bx-chevron-right'></i>
-                          </button>
-                        </div>
-                      </div>
-                    )}
-
-
                     {/* Tag Cloud */}
                     <div className="mb-2">
                       <div className="flex flex-wrap gap-1">
@@ -1352,6 +1213,37 @@ export default function QuotesPage() {
                           {t('clearTags')}
                         </button>
                       )}
+                    </div>
+
+                    {/* Top Notes Pagination */}
+                    <div className="flex justify-end gap-2 my-4">
+                      <button
+                        onClick={() => setNotesPage(prev => Math.max(1, prev - 1))}
+                        disabled={notesPage === 1}
+                        className={`px-2 py-1 text-sm rounded-md border bg-gray-100 dark:bg-gray-800
+                          ${notesPage === 1
+                            ? 'text-gray-400 dark:text-gray-600 border-gray-200 dark:border-gray-700 cursor-not-allowed'
+                            : 'text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+                          }`}
+                      >
+                        <i className='bx bx-chevron-left'></i>
+                      </button>
+
+                      <span className="px-3 py-1 text-sm text-gray-700 dark:text-gray-300">
+                        {t('page')} {notesPage} / {notesTotalPages}
+                      </span>
+
+                      <button
+                        onClick={() => setNotesPage(prev => Math.min(notesTotalPages, prev + 1))}
+                        disabled={notesPage === notesTotalPages}
+                        className={`px-2 py-1 text-sm rounded-md border bg-gray-100 dark:bg-gray-800
+                          ${notesPage === notesTotalPages
+                            ? 'text-gray-400 dark:text-gray-600 border-gray-200 dark:border-gray-700 cursor-not-allowed'
+                            : 'text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+                          }`}
+                      >
+                        <i className='bx bx-chevron-right'></i>
+                      </button>
                     </div>
 
                     <div className="space-y-2">
@@ -1553,67 +1445,39 @@ export default function QuotesPage() {
                           </div>
                         </div>
                       ))}
-
-                  {/* Bottom Notes Pagination */}
-                  {notesTotalPages > 1 && (
-                    <div className="mt-4 flex items-center justify-between px-4 
-                      bg-gray-50/50 dark:bg-gray-800/50 rounded-lg py-2">
-                      <div className="flex items-center gap-2 text-sm">
-                        <span className="text-gray-600 dark:text-gray-400">
-                          {getDisplayRange(notesPage, pageSize, notesTotalItems).start}-
-                          {getDisplayRange(notesPage, pageSize, notesTotalItems).end} {t('of')} {notesTotalItems}
-                        </span>
-                      </div>
-                      
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={() => setNotesPage(prev => Math.max(1, prev - 1))}
-                          disabled={notesPage === 1}
-                          className={`px-2 py-1 text-sm rounded-md border bg-gray-100 dark:bg-gray-800
-                            ${notesPage === 1
-                              ? 'text-gray-400 dark:text-gray-600 border-gray-200 dark:border-gray-700 cursor-not-allowed'
-                              : 'text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-300 dark:hover:bg-gray-700'
-                            }`}
-                        >
-                          <i className='bx bx-chevron-left'></i>
-                        </button>
-
-                        {generatePageNumbers(notesPage, notesTotalPages).map((pageNum, idx) => (
-                          <button
-                            key={idx}
-                            onClick={() => typeof pageNum === 'number' && setNotesPage(pageNum)}
-                            disabled={pageNum === '...'}
-                            className={`px-3 py-1 text-sm rounded-md border bg-gray-100 dark:bg-gray-800
-                              ${pageNum === notesPage
-                                ? 'bg-blue-100 border-blue-500 text-blue-600 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-400'
-                                : pageNum === '...'
-                                  ? 'text-gray-400 dark:text-gray-600 border-gray-200 dark:border-gray-700 cursor-default'
-                                  : 'text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-700'
-                              }`}
-                          >
-                            {pageNum}
-                          </button>
-                        ))}
-
-                        <button
-                          onClick={() => setNotesPage(prev => Math.min(notesTotalPages, prev + 1))}
-                          disabled={notesPage === notesTotalPages}
-                          className={`px-2 py-1 text-sm rounded-md border bg-gray-100 dark:bg-gray-800
-                            ${notesPage === notesTotalPages
-                              ? 'text-gray-400 dark:text-gray-600 border-gray-200 dark:border-gray-700 cursor-not-allowed'
-                              : 'text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
-                            }`}
-                        >
-                          <i className='bx bx-chevron-right'></i>
-                        </button>
-                      </div>
                     </div>
-                  )}
+
+                    {/* Bottom Notes Pagination */}
+                    <div className="flex justify-end gap-2 mt-4">
+                      <button
+                        onClick={() => setNotesPage(prev => Math.max(1, prev - 1))}
+                        disabled={notesPage === 1}
+                        className={`px-2 py-1 text-sm rounded-md border bg-gray-100 dark:bg-gray-800
+                          ${notesPage === 1
+                            ? 'text-gray-400 dark:text-gray-600 border-gray-200 dark:border-gray-700 cursor-not-allowed'
+                            : 'text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+                          }`}
+                      >
+                        <i className='bx bx-chevron-left'></i>
+                      </button>
+
+                      <span className="px-3 py-1 text-sm text-gray-700 dark:text-gray-300">
+                        {t('page')} {notesPage} / {notesTotalPages}
+                      </span>
+
+                      <button
+                        onClick={() => setNotesPage(prev => Math.min(notesTotalPages, prev + 1))}
+                        disabled={notesPage === notesTotalPages}
+                        className={`px-2 py-1 text-sm rounded-md border bg-gray-100 dark:bg-gray-800
+                          ${notesPage === notesTotalPages
+                            ? 'text-gray-400 dark:text-gray-600 border-gray-200 dark:border-gray-700 cursor-not-allowed'
+                            : 'text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+                          }`}
+                      >
+                        <i className='bx bx-chevron-right'></i>
+                      </button>
                     </div>
                   </div>
-
-
-
                 </>
               )}
             </div>

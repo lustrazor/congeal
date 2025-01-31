@@ -128,7 +128,7 @@
         "useStatusColor": true,
         "dueAt": null,
         "groupId": 1,
-        "createdAt": "2025-01-14T23:49:50.014Z",
+          "createdAt": "2025-01-14T23:49:50.014Z",
         "updatedAt": "2025-01-17T23:50:28.945Z"
       },
       {
@@ -761,7 +761,7 @@
         "description": "Check out the settings page for more features and utilities.\n\n• Customize site title and tagline\n• Upload your own header image or disable the big header\n• Upload a notification sound for Due items\n• Enable email client [Experimental & Unfinished]\n• Debug mode adds a console footer\n• Show Private Groups\n• Language Selection (English or Japanese)\n• Logout & Factory Reset options\n• Data Snapshot Manager\n• UI Sample Page for developers",
         "status": "purple",
         "iconName": "pencil",
-        "order": 6,
+          "order": 6,
         "useStatusColor": true,
         "dueAt": null,
         "groupId": 1,
@@ -792,7 +792,7 @@
       "all_view_mode": "grid",
       "ungrouped_view_mode": "grid",
       "showPrivateGroups": false,
-      "version": "1.0.24",
+      "version": "1.0.25",
       "debugMode": false,
       "isPublic": false,
       "updatedAt": "2025-01-22T21:33:23.257Z",

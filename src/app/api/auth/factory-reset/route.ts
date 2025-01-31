@@ -1,46 +1,20 @@
-import { prisma } from '@/lib/prisma'
-import { NextRequest, NextResponse } from 'next/server'
-import bcrypt from 'bcryptjs'
+import { NextResponse } from 'next/server'
+import { prisma } from '@/lib/db'
+import fs from 'fs'
+import path from 'path'
 
-export async function POST(req: NextRequest) {
+export async function POST() {
   try {
-    const { password } = await req.json()
+    // First disconnect from database
+    await prisma.$disconnect()
 
-    // Get the current user
-    const user = await prisma.user.findFirst({
-      where: { isAdmin: true }
-    })
+    // Get path to database file
+    const dbPath = path.join(process.cwd(), 'prisma/dev.db')
 
-    if (!user) {
-      return NextResponse.json(
-        { error: 'No admin user found' },
-        { status: 404 }
-      )
-    }
-
-    // Verify password
-    const isValid = await bcrypt.compare(password, user.password)
-    if (!isValid) {
-      return NextResponse.json(
-        { error: 'Invalid password' },
-        { status: 401 }
-      )
-    }
-
-    // Proceed with factory reset
-    await prisma.$transaction([
-      prisma.item.deleteMany(),
-      prisma.quote.deleteMany(),
-      prisma.group.deleteMany(),
-      prisma.settings.deleteMany(),
-      prisma.user.deleteMany(),
-    ])
-
-    // Reset auto-increment
-    await prisma.$executeRaw`DELETE FROM sqlite_sequence`
+    // Empty the database file completely
+    fs.writeFileSync(dbPath, '')
 
     return NextResponse.json({ success: true })
-
   } catch (error) {
     console.error('Factory reset failed:', error)
     return NextResponse.json(

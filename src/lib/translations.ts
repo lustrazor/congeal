@@ -282,8 +282,8 @@ export const translations = {
     confirmFactoryReset: 'Confirm Factory Reset',
     factoryResetWarning: 'WARNING: This will delete ALL data and reset the application to factory settings. This action cannot be undone. Please enter your password to confirm.',
     resetting: 'Resetting...',
-    confirmReset: 'Reset Application',
-    resetFailed: 'Failed to reset application',
+    confirmReset: 'Confirm Reset',
+    resetFailed: 'The reset failed. Please try again.',
     setupTitle: "Create Admin Account",
     setupSubtitle: "Set up your administrator account to get started",
     setupSeedData: "Load example data. This will give you a good starting point to get familiar with using the app. Disabling this will start with a blank slate.",
@@ -331,7 +331,54 @@ export const translations = {
     snapshotUploadInvalidError: 'Invalid snapshot format',
     invalidIconName: 'Please check boxicons.com for available icons.',
     customIconHint: 'You can enter the name of any solid boxicon from',
+
+    // Password validation messages
+    passwordMinLength: 'Password must be at least 12 characters long',
+    passwordNeedsLower: 'Password must include at least one lowercase letter',
+    passwordNeedsUpper: 'Password must include at least one uppercase letter',
+    passwordNeedsNumber: 'Password must include at least one number',
+    passwordNeedsSpecial: 'Password must include at least one special character (!#$%&_-)',
+    passwordsDoNotMatch: 'Passwords do not match',
+
+    // Database reset
+    databaseReset: 'Database Reset',
+    databaseResetHint: 'Clears all data while leaving the user intact',
+    confirmDatabaseReset: 'Confirm Database Reset',
+    databaseResetWarning: 'This will permanently delete all your groups, items, quotes, and notes. Your account and settings will remain unchanged.',
+
+    // Status messages
+    userSort: "User Sort",
+    dateCreated: "Date Created",
+    dateUpdated: "Date Updated",
+    dueDate: "Due Date",
+    dueItems: "Items Due",
+    noDueItems: "No due items",
+    dueDateCleared: "Due date cleared",
+    errorClearingDueDate: "Failed to clear due date",
+    toggleSortField: "Change Sort Field",
+
+    // Email related
+    allMessages: "All Messages",
+    subject: "Subject",
+    body: "Message Body",
+    mailbox: "Mailbox",
+    noMailbox: "No Mailbox",
+    addMailbox: "Add Mailbox",
+    editMailbox: "Edit Mailbox",
+    createNewMailbox: "Create New Mailbox",
+    createNewMessage: "Create New Message",
+    editMessage: "Edit Message",
+    deleteMailbox: "Delete Mailbox",
+    deleteMailboxConfirm: "Are you sure you want to delete this mailbox?",
+    mailboxName: "Mailbox Name",
+
+    // New translations
+    passwordRequirements: 'Password must meet the requirements',
+    passwordMust: 'Password must:',
+    enterPasswordToRestore: 'Enter your password to restore snapshot',
+    page: 'Page',
   },
+  
   ja: {
     // General
     allItems: 'すべてのアイテム',
@@ -470,8 +517,21 @@ export const translations = {
     creating: '作成中...',
     download: 'ダウンロード',
     delete: '削除',
+    restore: '復元',
+    restoring: '復元中...',
+    confirmRestore: 'このスナップショットから復元してもよろしいですか？現在のデータはすべて上書きされます。',
+    restoreSuccess: 'スナップショットの復元が完了しました！ページを更新します。',
+    restoreFailed: 'スナップショットの復元に失敗しました。もう一度お試しください。',
     confirmDeleteSnapshot: 'このスナップショットを削除してもよろしいですか？',
     snapshotWarning: '注意：スナップショットは暗号化されていない形式で保存されます。データベースは暗号化されていますが、スナップショットには暗号化されていないデータが含まれています。安全に保管し、不要になったら削除してください。',
+    openSourceNotice: 'このプロジェクトはGPLv3ライセンスのオープンソースです。',
+    viewSource: 'GitHubでソースコードとライセンスを確認する',
+    rightsReserved: 'GPLv3ライセンスに記載されている場合を除き、すべての権利は留保されています。',
+    confirmDeleteItem: '削除してもよろしいですか？',
+    hiddenContent: '非表示のコンテンツ',
+    privateGroupDescription: 'このグループはプライベートです。コンテンツはロックが解除されるまで非表示です。',
+    unlockContent: 'コンテンツのロックを解除',
+    useStatusColorForIcon: 'アイコンの背景にステータスの色を使用',
     perPage: '件表示',
     total: '件',
     showing: '表示中',
@@ -481,14 +541,14 @@ export const translations = {
     resetting: 'リセット中...',
     confirmReset: 'アプリケーションをリセット',
     resetFailed: 'リセットに失敗しました',
-    setupTitle: "Create Admin Account",
-    setupSubtitle: "Set up your administrator account to get started",
-    setupSeedData: "Include example data to help learn the app",
-    setupUsername: "Username",
-    setupPassword: "Password",
-    setupConfirmPassword: "Confirm Password",
-    setupButton: "Create Admin Account",
-    setupProcessing: "Setting Up...",
+    setupTitle: "管理者アカウントの作成",
+    setupSubtitle: "管理者アカウントを作成して始めましょう",
+    setupSeedData: "アプリの使い方を学ぶためのサンプルデータを含める",
+    setupUsername: "ユーザー名",
+    setupPassword: "パスワード",
+    setupConfirmPassword: "パスワードの確認",
+    setupButton: "管理者アカウントを作成",
+    setupProcessing: "セットアップ中...",
     
     // Public Access
     publicAccess: 'パブリックアクセス',
@@ -512,8 +572,8 @@ export const translations = {
     verifyCodeTitle: 'リセットコードを入力',
     verifyCodeSubtitle: 'メールで送信されたコードを入力してください',
     enterNewPasswordSubtitle: '新しいパスワードを入力してください',
-    passwordChanged: 'Contraseña cambiada exitosamente',
-    passwordChangeFailed: 'No se pudo cambiar la contraseña. Por favor, inténtalo de nuevo.',
+    passwordChanged: 'パスワードが正常に変更されました',
+    passwordChangeFailed: 'パスワードの変更に失敗しました。もう一度お試しください。',
     privateGroupHidden: 'プライベートグループのコンテンツは非表示です',
     showDetails: '詳細を表示',
     hideDetails: '詳細を非表示',
@@ -528,6 +588,90 @@ export const translations = {
     snapshotUploadInvalidError: '無効なスナップショット形式です',
     invalidIconName: '無効なアイコン名です。利用可能なアイコンはboxicons.comで確認してください。',
     customIconHint: 'boxiconsの任意のソリッドアイコン名を入力できます：',
+
+    // Password validation messages
+    passwordMinLength: 'パスワードは12文字以上である必要があります',
+    passwordNeedsLower: 'パスワードには小文字が1文字以上必要です',
+    passwordNeedsUpper: 'パスワードには大文字が1文字以上必要です',
+    passwordNeedsNumber: 'パスワードには数字が1文字以上必要です',
+    passwordNeedsSpecial: 'パスワードには特殊文字(!#$%&_-)が1文字以上必要です',
+    passwordsDoNotMatch: 'パスワードが一致しません',
+
+    // Database reset
+    databaseReset: 'データベースリセット',
+    databaseResetHint: 'ユーザーを保持したままデータをクリアします',
+    confirmDatabaseReset: 'データベースリセットの確認',
+    databaseResetWarning: 'これにより、グループ、アイテム、引用、メモなどのすべてのデータが完全に削除されます。アカウントと設定は変更されません。',
+
+    // Status messages
+    userSort: "ユーザー並び替え",
+    dateCreated: "作成日",
+    dateUpdated: "更新日",
+    dueDate: "期限",
+    dueItems: "期限のあるアイテム",
+    noDueItems: "期限のあるアイテムはありません",
+    dueDateCleared: "期限がクリアされました",
+    errorClearingDueDate: "期限のクリアに失敗しました",
+    toggleSortField: "並び替えフィールドの変更",
+
+    // Email related
+    allMessages: "すべてのメッセージ",
+    subject: "件名",
+    body: "メッセージ本文",
+    mailbox: "メールボックス",
+    noMailbox: "メールボックスなし",
+    addMailbox: "メールボックスを追加",
+    editMailbox: "メールボックスを編集",
+    createNewMailbox: "新規メールボックスを作成",
+    createNewMessage: "新規メッセージを作成",
+    editMessage: "メッセージを編集",
+    deleteMailbox: "メールボックスを削除",
+    deleteMailboxConfirm: "このメールボックスを削除してもよろしいですか？",
+    mailboxName: "メールボックス名",
+
+    // New translations
+    passwordRequirements: 'パスワードは以下の要件を満たす必要があります',
+    passwordMust: 'パスワードの要件：',
+    enterPasswordToRestore: 'スナップショットを復元するにはパスワードを入力してください',
+    page: 'ページ',
+
+    // Notification sound
+    notificationSound: '通知音',
+    notificationSoundDescription: 'カスタム通知音として使用するMP3ファイルをアップロードしてください。',
+    chooseSound: '音声を選択',
+    testSound: '音声をテスト',
+    onlyMp3Allowed: 'MP3ファイルのみ許可されています',
+    notificationSoundUpdated: '通知音が更新されました',
+    uploadFailed: 'アップロードに失敗しました',
+
+    // Due dates and sorting
+    removeDueDate: '期限を削除',
+    toggleSortField: '並び替えフィールドを変更',
+
+    // Notes
+    quotes: '引用',
+    notes: 'メモ',
+    addNewNote: '+ 新規メモを追加',
+    writeYourNote: 'メモを入力...',
+    saving: '保存中...',
+    save: '保存',
+    noteTitle: 'メモのタイトル',
+    content: '内容',
+    tags: 'タグ',
+    tagsHint: 'タグをカンマで区切って入力',
+    tagsSeparator: '複数のタグはカンマで区切ってください',
+    searchNotes: 'メモを検索...',
+    clearTags: 'すべてのタグをクリア',
+    deleteConfirmation: 'メモを削除しますか？',
+    readMore: '... 続きを読む',
+
+    // Error messages
+    errorDeletingImage: '画像の削除に失敗しました',
+    dueDateCleared: '期限がクリアされました',
+    errorClearingDueDate: '期限のクリアに失敗しました',
+    snapshotCreated: 'スナップショットが作成されました',
+    snapshotError: 'スナップショットの作成に失敗しました',
+    snapshotRestored: 'スナップショットが復元されました',
   }
 } as const
 
@@ -557,3 +701,4 @@ export type TranslationKey =
   | 'passwordChanged'
   | 'passwordChangeFailed'
   // ... other translation keys ... 
+  

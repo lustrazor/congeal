@@ -19,6 +19,17 @@ import { Toaster } from 'react-hot-toast'
 
 const fetcher = (url: string) => fetch(url).then(res => res.json())
 
+const promptForPassword = async (): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const password = window.prompt('Please enter your password to restore the snapshot:')
+    if (password) {
+      resolve(password)
+    } else {
+      reject(new Error('Password is required'))
+    }
+  })
+}
+
 export default function SettingsPage() {
   const { t } = useTranslations()
   const { settings, mutate, updateSettings } = useSettings()
@@ -61,6 +72,13 @@ export default function SettingsPage() {
   const [uploadError, setUploadError] = useState<string>('')
   const [isUploading, setIsUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [isDatabaseResetModalOpen, setIsDatabaseResetModalOpen] = useState(false)
+  const [databaseResetPassword, setDatabaseResetPassword] = useState('')
+  const [databaseResetError, setDatabaseResetError] = useState('')
+  const [isDataResetting, setIsDataResetting] = useState(false)
+  const [isRestoreModalOpen, setIsRestoreModalOpen] = useState(false)
+  const [restorePassword, setRestorePassword] = useState('')
+  const [restoreSnapshotId, setRestoreSnapshotId] = useState('')
 
   // Initialize form state when settings load
   useEffect(() => {
@@ -159,7 +177,7 @@ export default function SettingsPage() {
 
     // Password validation
     if (newPassword.length < 12) {
-      const error = 'Password must be at least 12 characters long'
+      const error = t('passwordMinLength')
       debugStore.log('Password validation failed', {
         type: 'PASSWORD_VALIDATION_ERROR',
         error
@@ -174,24 +192,24 @@ export default function SettingsPage() {
     const hasSpecialChar = /[!#$%&_-]/.test(newPassword)
 
     if (!hasLowerCase) {
-      setPasswordError('Password must include at least one lowercase letter')
+      setPasswordError(t('passwordNeedsLower'))
       return
     }
     if (!hasUpperCase) {
-      setPasswordError('Password must include at least one uppercase letter')
+      setPasswordError(t('passwordNeedsUpper'))
       return
     }
     if (!hasNumber) {
-      setPasswordError('Password must include at least one number')
+      setPasswordError(t('passwordNeedsNumber'))
       return
     }
     if (!hasSpecialChar) {
-      setPasswordError('Password must include at least one special character (!#$%&_-)')
+      setPasswordError(t('passwordNeedsSpecial'))
       return
     }
 
     if (newPassword !== confirmPassword) {
-      setPasswordError('Passwords do not match')
+      setPasswordError(t('passwordsDoNotMatch'))
       return
     }
 
@@ -684,19 +702,23 @@ export default function SettingsPage() {
     }
   }
 
-  const handleRestoreSnapshot = async (snapshotId: string) => {
-    if (!confirm(t('confirmRestore'))) return
-    
+  const handleRestoreSnapshot = (snapshotId: string) => {
+    setRestoreSnapshotId(snapshotId)
+    setIsRestoreModalOpen(true)
+  }
+
+  const handleRestoreConfirm = async () => {
     setIsRestoring(true)
-    debugStore.log('Restoring snapshot', { snapshotId })
+    debugStore.log('Restoring snapshot', { snapshotId: restoreSnapshotId })
 
     try {
-      const response = await fetch(`/api/snapshots/${snapshotId}/restore`, {
-        method: 'POST'
+      const response = await fetch(`/api/snapshots/${restoreSnapshotId}/restore`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: restorePassword })
       })
 
       const result = await response.json()
-
       if (!response.ok) {
         throw new Error(result.error || 'Failed to restore snapshot')
       }
@@ -718,6 +740,8 @@ export default function SettingsPage() {
       })
 
       debugStore.log('Snapshot restored successfully')
+      setIsRestoreModalOpen(false)
+      setRestorePassword('')
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error)
       debugStore.log(`Failed to restore snapshot: ${errorMessage}`)
@@ -853,6 +877,48 @@ export default function SettingsPage() {
       toast.error(error instanceof Error ? error.message : t('snapshotUploadError'))
     } finally {
       setIsUploading(false)
+    }
+  }
+
+  const handleDatabaseReset = () => {
+    setIsDatabaseResetModalOpen(true)
+  }
+
+  const handleDatabaseResetConfirm = async () => {
+    setIsDataResetting(true)
+    setDatabaseResetError('')
+
+    try {
+      // Verify password first
+      const verifyResponse = await fetch('/api/auth/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: databaseResetPassword })
+      })
+
+      if (!verifyResponse.ok) {
+        setDatabaseResetError(t('incorrectPassword'))
+        return
+      }
+
+      // Password verified, proceed with reset
+      const response = await fetch('/api/auth/reset-data', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to reset data')
+      }
+
+      // Close modal and refresh
+      setIsDatabaseResetModalOpen(false)
+      window.location.reload()
+    } catch (error) {
+      console.error('Reset failed:', error)
+      setDatabaseResetError(t('resetFailed'))
+    } finally {
+      setIsDataResetting(false)
     }
   }
 
@@ -1409,14 +1475,13 @@ export default function SettingsPage() {
                             <div className="flex gap-2">
                               <button
                                 onClick={() => handleRestoreSnapshot(snapshot.id)}
-                                disabled={isRestoring}
                                 className="px-3 py-1 text-sm font-medium 
                                   text-green-600 dark:text-green-400
                                   hover:text-green-700 dark:hover:text-green-300
                                   disabled:opacity-50
                                   transition-colors"
                               >
-                                {isRestoring ? t('restoring') : t('restore')}
+                                {t('restore')}
                               </button>
                               <button
                                 onClick={() => handleDownloadSnapshot(snapshot.id)}
@@ -1509,17 +1574,17 @@ export default function SettingsPage() {
                             transition-colors"
                           required
                           pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!#$%&_-])[A-Za-z\d!#$%&_-]{12,}$"
-                          title="Password must meet the requirements"
+                          title={t('passwordRequirements')}
                         />
                       </div>
                       <div className="mt-1 text-sm text-gray-500 dark:text-gray-400 space-y-1">
-                        <p>Password must:</p>
+                        <p>{t('passwordMust')}</p>
                         <ul className="list-disc pl-5 space-y-1">
-                          <li>Be at least 12 characters long</li>
-                          <li>Include at least one lowercase letter</li>
-                          <li>Include at least one uppercase letter</li>
-                          <li>Include at least one number</li>
-                          <li>Include at least one special character (!#$%&_-)</li>
+                          <li>{t('passwordMinLength')}</li>
+                          <li>{t('passwordNeedsLower')}</li>
+                          <li>{t('passwordNeedsUpper')}</li>
+                          <li>{t('passwordNeedsNumber')}</li>
+                          <li>{t('passwordNeedsSpecial')}</li>
                         </ul>
                       </div>
                       <div>
@@ -1566,11 +1631,11 @@ export default function SettingsPage() {
                     </form>
                   </div>
 
-                  {/* Session Section */}
                   <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
-                    <div className="flex items-center justify-between">
+                  {/* Session Section */}
+                  <div className="flex items-center justify-between">
                       <div>
-                        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                           {t('session')}
                         </h2>
                         <p className="text-gray-600 dark:text-gray-400">
@@ -1581,19 +1646,37 @@ export default function SettingsPage() {
                         onClick={handleLogout}
                         className="px-4 py-2 text-sm font-medium 
                           text-white bg-gray-500 dark:bg-gray-600
-                          hover:bg-gray-600 dark:hover:bg-gray-700
-                          rounded-md transition-colors"
-                      >
+                          hover:bg-red-600 dark:hover:bg-red-700
+                          rounded-md transition-colors" >
                         {t('logout')}
                       </button>
                     </div>
-                  </div>
 
-                  {/* Factory Reset Section */}
-                  <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
-                    <div className="flex items-center justify-between">
+                    {/* Database Reset Section */}
+                    <div className="flex items-center justify-between mt-3">
                       <div>
-                        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                          {t('databaseReset')}
+                        </h2>
+                        <p className="text-gray-600 dark:text-gray-400">
+                          {t('databaseResetHint')}
+                        </p>
+                      </div>
+                      <button
+                        onClick={handleDatabaseReset}
+                        className="w-32 ml-5 px-4 py-2 text-sm font-medium 
+                          text-white bg-gray-500 dark:bg-gray-600
+                          hover:bg-red-600 dark:hover:bg-red-700
+                          rounded-md transition-colors"
+                      >
+                        {t('databaseReset')}
+                      </button>
+                    </div>
+
+                    {/* Factory Reset Section */}
+                    <div className="flex items-center justify-between mt-3">
+                      <div>
+                        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                           {t('factoryReset')}
                         </h2>
                         <p className="text-gray-600 dark:text-gray-400">
@@ -1603,7 +1686,7 @@ export default function SettingsPage() {
                       <button
                         onClick={handleFactoryReset}
                         className="w-32 ml-5 px-4 py-2 text-sm font-medium 
-                          text-white bg-red-500 dark:bg-red-600
+                          text-white bg-gray-500 dark:bg-gray-600
                           hover:bg-red-600 dark:hover:bg-red-700
                           rounded-md transition-colors"
                       >
@@ -1619,7 +1702,7 @@ export default function SettingsPage() {
                         {t('about')}
                       </h2>
                       <p className="text-gray-600 dark:text-gray-400">
-                        Congeal, {t('version')} 1.0.24
+                        Congeal, {t('version')} 1.0.25
                       </p>
                       <p className="text-gray-600 dark:text-gray-400">
                         {t('developers')}: <a href="/demo" className="text-blue-500 hover:text-blue-600">{t('sampleUI')} →</a>
@@ -1733,7 +1816,7 @@ export default function SettingsPage() {
                           rounded-md dark:bg-gray-700"
                         placeholder={t('enterPassword')}
                         pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!#$%&_-])[A-Za-z\d!#$%&_-]{12,}$"
-                        title="Password must meet all requirements"
+                        title={t('passwordRequirements')}
                         required
                       />
                       {factoryResetError && (
@@ -1765,6 +1848,114 @@ export default function SettingsPage() {
                     </div>
                   </div>
                 </Modal>
+
+                {/* Database Reset Password Modal */}
+                <Modal
+                  isOpen={isDatabaseResetModalOpen}
+                  onClose={() => {
+                    setIsDatabaseResetModalOpen(false)
+                    setDatabaseResetPassword('')
+                    setDatabaseResetError('')
+                  }}
+                >
+                  <div className="p-6">
+                    <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+                      {t('confirmDatabaseReset')}
+                    </h2>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                      {t('databaseResetWarning')}
+                    </p>
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        {t('password')}
+                      </label>
+                      <input
+                        type="password"
+                        value={databaseResetPassword}
+                        onChange={(e) => setDatabaseResetPassword(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 
+                          rounded-md dark:bg-gray-700"
+                        placeholder={t('enterPassword')}
+                        required
+                      />
+                      {databaseResetError && (
+                        <p className="mt-1 text-sm text-red-500">{databaseResetError}</p>
+                      )}
+                    </div>
+                    <div className="flex justify-end gap-2">
+                      <button
+                        onClick={() => {
+                          setIsDatabaseResetModalOpen(false)
+                          setDatabaseResetPassword('')
+                          setDatabaseResetError('')
+                        }}
+                        className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300
+                          bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600
+                          rounded-md hover:bg-gray-50 dark:hover:bg-gray-700"
+                      >
+                        {t('cancel')}
+                      </button>
+                      <button
+                        onClick={handleDatabaseResetConfirm}
+                        disabled={isDataResetting}
+                        className="px-4 py-2 text-sm font-medium text-white
+                          bg-red-600 rounded-md hover:bg-red-700
+                          disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isDataResetting ? t('resetting') : t('confirmReset')}
+                      </button>
+                    </div>
+                  </div>
+                </Modal>
+
+                {/* Restore Snapshot Modal */}
+                <Modal
+                  isOpen={isRestoreModalOpen}
+                  onClose={() => {
+                    setIsRestoreModalOpen(false)
+                    setRestorePassword('')
+                  }}
+                >
+                  <div className="p-6">
+                    <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+                      {t('enterPasswordToRestore')}
+                    </h2>
+                    <div className="mb-4">
+                      <input
+                        type="password"
+                        value={restorePassword}
+                        onChange={(e) => setRestorePassword(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 
+                          rounded-md dark:bg-gray-700"
+                        placeholder={t('enterPassword')}
+                        required
+                      />
+                    </div>
+                    <div className="flex justify-end gap-2">
+                      <button
+                        onClick={() => {
+                          setIsRestoreModalOpen(false)
+                          setRestorePassword('')
+                        }}
+                        className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300
+                          bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600
+                          rounded-md hover:bg-gray-50 dark:hover:bg-gray-700"
+                      >
+                        {t('cancel')}
+                      </button>
+                      <button
+                        onClick={handleRestoreConfirm}
+                        disabled={isRestoring}
+                        className="px-4 py-2 text-sm font-medium text-white
+                          bg-red-600 rounded-md hover:bg-red-700
+                          disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isRestoring ? t('restoring') : t('confirm')}
+                      </button>
+                    </div>
+                  </div>
+                </Modal>
+
               </div>
             </div>
           </div>

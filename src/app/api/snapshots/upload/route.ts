@@ -1,88 +1,54 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { writeFile } from 'fs/promises'
-import { join } from 'path'
-import { mkdir } from 'fs/promises'
-import { prisma } from '@/lib/prisma'
+import { prisma } from '@/lib/db'
 
-// Helper to sanitize data
-const sanitizeData = (data: any) => {
-  // Remove any potential script tags or dangerous content
-  const sanitize = (obj: any): any => {
-    if (typeof obj !== 'object' || obj === null) return obj
-    
-    if (Array.isArray(obj)) {
-      return obj.map(sanitize)
-    }
-    
-    return Object.fromEntries(
-      Object.entries(obj).map(([key, value]) => {
-        // Sanitize strings
-        if (typeof value === 'string') {
-          value = value
-            .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-            .replace(/javascript:/gi, '')
-            .replace(/on\w+=/gi, '')
-        }
-        return [key, sanitize(value)]
-      })
-    )
+// Helper to clean data before insertion
+const cleanDataForPrisma = (data: any) => {
+  // Remove _count and other computed fields
+  const { _count, ...cleanData } = data
+  
+  // Convert date strings to Date objects
+  if (cleanData.createdAt) {
+    cleanData.createdAt = new Date(cleanData.createdAt)
+  }
+  if (cleanData.updatedAt) {
+    cleanData.updatedAt = new Date(cleanData.updatedAt)
+  }
+  if (cleanData.dueAt) {
+    cleanData.dueAt = cleanData.dueAt ? new Date(cleanData.dueAt) : null
   }
   
-  return sanitize(data)
+  return cleanData
 }
 
 export async function POST(req: NextRequest) {
   try {
-    const snapshot = await req.json()
+    // Try to parse as JSON first, fallback to FormData
+    let snapshot
+    const contentType = req.headers.get('content-type') || ''
+    
+    if (contentType.includes('application/json')) {
+      snapshot = await req.json()
+    } else {
+      const formData = await req.formData()
+      const file = formData.get('file') as File
+      if (!file) {
+        throw new Error('No file uploaded')
+      }
+      snapshot = JSON.parse(await file.text())
+    }
 
-    // Debug logging
     console.log('Received snapshot:', {
       hasVersion: !!snapshot.version,
       hasSchema: !!snapshot.schema,
       hasData: !!snapshot.data,
       version: snapshot.version,
       schema: snapshot.schema,
-      dataKeys: snapshot.data ? Object.keys(snapshot.data) : []
+      dataKeys: Object.keys(snapshot.data || {})
     })
 
-    // Validate required fields - match backup format
-    if (!snapshot.version || !snapshot.schema || !snapshot.data) {
-      console.log('Validation failed:', {
-        missingVersion: !snapshot.version,
-        missingSchema: !snapshot.schema,
-        missingData: !snapshot.data
-      })
-      return NextResponse.json(
-        { error: 'Invalid snapshot format' },
-        { status: 400 }
-      )
-    }
+    // Get the data from the correct location based on schema version
+    const data = snapshot.version ? snapshot.data : snapshot
 
-    // Validate version compatibility
-    const currentVersion = '1.1.0'
-    if (snapshot.version > currentVersion) {
-      return NextResponse.json(
-        { error: 'Snapshot version not supported' },
-        { status: 400 }
-      )
-    }
-
-    // Validate data structure
-    const requiredCollections = ['groups', 'items', 'settings']
-    for (const collection of requiredCollections) {
-      if (!snapshot.data[collection]) {
-        console.log('Missing required collection:', collection)
-        return NextResponse.json(
-          { error: `Missing required data: ${collection}` },
-          { status: 400 }
-        )
-      }
-    }
-
-    // Sanitize the data before restoring
-    const sanitizedData = sanitizeData(snapshot.data)
-
-    // Restore data to database
     await prisma.$transaction(async (tx) => {
       // Clear existing data
       await tx.message.deleteMany()
@@ -93,32 +59,72 @@ export async function POST(req: NextRequest) {
       await tx.group.deleteMany()
       await tx.settings.deleteMany()
 
-      // Restore data
-      if (sanitizedData.settings) {
-        await tx.settings.create({ data: sanitizedData.settings })
+      // Restore settings if present
+      if (data.settings) {
+        const cleanSettings = cleanDataForPrisma(data.settings)
+        await tx.settings.create({ data: cleanSettings })
       }
-      
-      await tx.group.createMany({ data: sanitizedData.groups })
-      await tx.item.createMany({ data: sanitizedData.items })
-      await tx.quote.createMany({ data: sanitizedData.quotes })
-      await tx.note.createMany({ data: sanitizedData.notes })
 
-      // Restore email data if present
-      if (snapshot.schema.includesEmail) {
-        if (sanitizedData.mailboxes?.data) {
-          await tx.mailbox.createMany({ data: sanitizedData.mailboxes.data })
+      // Restore groups first (for foreign key constraints)
+      if (data.groups?.length) {
+        console.log('Restoring groups...')
+        for (const group of data.groups) {
+          const cleanGroup = cleanDataForPrisma(group)
+          await tx.group.create({ data: cleanGroup })
         }
-        if (sanitizedData.messages?.data) {
-          await tx.message.createMany({ data: sanitizedData.messages.data })
+      }
+
+      // Restore items
+      if (data.items?.length) {
+        console.log('Restoring items...')
+        for (const item of data.items) {
+          const cleanItem = cleanDataForPrisma(item)
+          await tx.item.create({ data: cleanItem })
+        }
+      }
+
+      // Restore quotes
+      if (data.quotes?.length) {
+        console.log('Restoring quotes...')
+        for (const quote of data.quotes) {
+          const cleanQuote = cleanDataForPrisma(quote)
+          await tx.quote.create({ data: cleanQuote })
+        }
+      }
+
+      // Restore notes
+      if (data.notes?.length) {
+        console.log('Restoring notes...')
+        for (const note of data.notes) {
+          const cleanNote = cleanDataForPrisma(note)
+          await tx.note.create({ data: cleanNote })
+        }
+      }
+
+      // Restore email data if present in schema
+      if (snapshot.schema?.includesEmail) {
+        if (data.mailboxes?.length) {
+          console.log('Restoring mailboxes...')
+          for (const mailbox of data.mailboxes) {
+            const cleanMailbox = cleanDataForPrisma(mailbox)
+            await tx.mailbox.create({ data: cleanMailbox })
+          }
+        }
+        if (data.messages?.length) {
+          console.log('Restoring messages...')
+          for (const message of data.messages) {
+            const cleanMessage = cleanDataForPrisma(message)
+            await tx.message.create({ data: cleanMessage })
+          }
         }
       }
     })
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('Snapshot upload failed:', error)
+    console.error('Upload failed:', error)
     return NextResponse.json(
-      { error: 'Failed to process snapshot upload' },
+      { error: 'Failed to restore from backup' },
       { status: 500 }
     )
   }

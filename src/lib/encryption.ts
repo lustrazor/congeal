@@ -1,61 +1,80 @@
 import crypto from 'crypto'
+import { cookies } from 'next/headers'
 
 const ALGORITHM = 'aes-256-gcm'
-const IV_LENGTH = 16
-const SALT_LENGTH = 64
-const TAG_LENGTH = 16
+const IV_LENGTH = 12
 const KEY_LENGTH = 32
 const ITERATIONS = 100000
 
 export class Encryption {
   private static key: Buffer | null = null
-  private static salt: Buffer | null = null
 
-  static async initialize(password: string, salt?: string) {
-    // If salt is provided, use it (for existing DB)
-    // If not, generate new salt (for first-time setup)
-    this.salt = salt ? Buffer.from(salt, 'hex') : crypto.randomBytes(SALT_LENGTH)
+  static generateSalt(): string {
+    return crypto.randomBytes(32).toString('hex')
+  }
+
+  static async initialize(password: string, salt: string): Promise<void> {
+    // Generate key from password and salt
+    this.key = await this.deriveKey(password, salt)
     
-    // Generate key from password using PBKDF2
-    this.key = await new Promise((resolve, reject) => {
-      crypto.pbkdf2(password, this.salt!, ITERATIONS, KEY_LENGTH, 'sha512', (err, key) => {
+    // Store key in cookie for persistence across requests
+    const cookieStore = cookies()
+    cookieStore.set('encryption-key', this.key.toString('hex'), {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/'
+    })
+  }
+
+  static encrypt(text: string): string {
+    const key = this.getKey()
+    const iv = crypto.randomBytes(IV_LENGTH)
+    const cipher = crypto.createCipheriv(ALGORITHM, key, iv)
+    
+    const encrypted = Buffer.concat([
+      cipher.update(text, 'utf8'),
+      cipher.final()
+    ])
+    
+    const tag = cipher.getAuthTag()
+    
+    return `${iv.toString('hex')}:${encrypted.toString('hex')}:${tag.toString('hex')}`
+  }
+
+  static decrypt(text: string): string {
+    const key = this.getKey()
+    const [ivHex, encryptedHex, tagHex] = text.split(':')
+    
+    const iv = Buffer.from(ivHex, 'hex')
+    const encrypted = Buffer.from(encryptedHex, 'hex')
+    const tag = Buffer.from(tagHex, 'hex')
+    
+    const decipher = crypto.createDecipheriv(ALGORITHM, key, iv)
+    decipher.setAuthTag(tag)
+    
+    return decipher.update(encrypted) + decipher.final('utf8')
+  }
+
+  private static getKey(): Buffer {
+    if (this.key) return this.key
+
+    // Try to get key from cookie
+    const cookieStore = cookies()
+    const keyHex = cookieStore.get('encryption-key')?.value
+    if (!keyHex) {
+      throw new Error('Encryption not initialized')
+    }
+    this.key = Buffer.from(keyHex, 'hex')
+    return this.key
+  }
+
+  private static async deriveKey(password: string, salt: string): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+      crypto.pbkdf2(password, salt, ITERATIONS, KEY_LENGTH, 'sha512', (err, key) => {
         if (err) reject(err)
         resolve(key)
       })
     })
-
-    return this.salt.toString('hex')
-  }
-
-  static encrypt(text: string): string {
-    if (!this.key) throw new Error('Encryption not initialized')
-
-    const iv = crypto.randomBytes(IV_LENGTH)
-    const cipher = crypto.createCipheriv(ALGORITHM, this.key, iv)
-    
-    let encrypted = cipher.update(text, 'utf8', 'hex')
-    encrypted += cipher.final('hex')
-    
-    const tag = cipher.getAuthTag()
-
-    // Combine IV, encrypted data, and auth tag
-    return iv.toString('hex') + ':' + encrypted + ':' + tag.toString('hex')
-  }
-
-  static decrypt(encryptedData: string): string {
-    if (!this.key) throw new Error('Encryption not initialized')
-
-    const [ivHex, encrypted, tagHex] = encryptedData.split(':')
-    
-    const iv = Buffer.from(ivHex, 'hex')
-    const tag = Buffer.from(tagHex, 'hex')
-    
-    const decipher = crypto.createDecipheriv(ALGORITHM, this.key, iv)
-    decipher.setAuthTag(tag)
-    
-    let decrypted = decipher.update(encrypted, 'hex', 'utf8')
-    decrypted += decipher.final('utf8')
-    
-    return decrypted
   }
 }

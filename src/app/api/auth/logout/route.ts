@@ -5,6 +5,7 @@ export async function POST() {
   try {
     // Clear the auth cookie
     cookies().delete('auth-token')
+    cookies().delete('encryption-key')
     
     return NextResponse.json({ success: true })
   } catch (error) {
