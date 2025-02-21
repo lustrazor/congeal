@@ -13,6 +13,20 @@ interface DebugStore {
   clear: () => void
 }
 
+const safeStringify = (data: any): string => {
+  try {
+    return JSON.stringify(data, (key, value) => {
+      // Handle circular references and DOM elements
+      if (value instanceof Window || value instanceof Document || value instanceof Event) {
+        return '[Circular]';
+      }
+      return value;
+    });
+  } catch (error) {
+    return '[Unable to stringify data]';
+  }
+};
+
 export const useDebugStore = create<DebugStore>((set) => ({
   isEnabled: typeof window !== 'undefined' 
     ? localStorage.getItem('debugMode') === 'true'
@@ -27,7 +41,7 @@ export const useDebugStore = create<DebugStore>((set) => ({
   
   log: (message: string, data?: any) => set((state) => ({
     logs: [...state.logs, 
-      data ? `[INFO] ${message} ${JSON.stringify(data)}` : `[INFO] ${message}`
+      data ? `[INFO] ${message} ${safeStringify(data)}` : `[INFO] ${message}`
     ]
   })),
 

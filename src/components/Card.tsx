@@ -290,13 +290,12 @@ export default function Card({
         absolute top-0 left-0 right-0 h-1 
         rounded-t-lg transition-colors
         bg-${item.status}-500
-        bg-black/0 group-hover:bg-black/20 dark:group-hover:bg-white/30
       `} />
 
       {/* Hover overlay */}
       <div className={`
         absolute inset-0 rounded-lg transition-colors
-        ${isDragging ? 'bg-black/0' : 'bg-black/0 group-hover:bg-black/5 dark:group-hover:bg-black/10'}
+        ${isDragging ? 'bg-black/0' : 'bg-black/0 group-hover:bg-black/5 dark:group-hover:bg-gray-400/10'}
       `} />
 
       <div className="relative flex gap-3">
@@ -346,7 +345,7 @@ export default function Card({
         </div>
 
         {/* Hover Menu Buttons */}
-        <div className="absolute bottom-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="absolute top-6 right-0 opacity-0 group-hover:opacity-100 transition-opacity">
           <div className="flex gap-1 bg-white dark:bg-gray-700 rounded-md shadow-md px-3 py-1 
           border border-1 border-b-2 border-b-gray-400 border-gray-300 dark:border-gray-600">
 

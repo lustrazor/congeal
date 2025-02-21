@@ -118,7 +118,6 @@ export default function CardPublic({
       <div className={`
         absolute top-0 left-0 right-0 h-1 
         rounded-t-lg transition-colors
-        bg-black/0 group-hover:bg-black/20 dark:group-hover:bg-white/30
         bg-${item.status}-500
       `} />
 

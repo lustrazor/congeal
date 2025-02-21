@@ -61,11 +61,19 @@ export async function GET() {
     const files = fs.readdirSync(snapshotsDir)
     const snapshots = files
       .filter(f => f.endsWith('.json'))
-      .map(filename => ({
-        id: filename,
-        createdAt: new Date(filename.split('-')[1].replace('.json', '').replace(/_/g, ':'))
-      }))
-      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .map(filename => {
+        // Extract timestamp from filename (format: snapshot-2025-01-31T17_09_16.json)
+        const timestamp = filename
+          .replace('snapshot-', '')
+          .replace('.json', '')
+          .replace(/_/g, ':')
+        
+        return {
+          id: filename,
+          createdAt: new Date(timestamp).toISOString()
+        }
+      })
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
 
     return NextResponse.json(snapshots)
   } catch (error) {

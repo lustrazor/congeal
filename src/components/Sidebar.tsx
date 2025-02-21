@@ -178,6 +178,18 @@ const Sidebar = memo(function Sidebar({
     );
   });
 
+  // Before the handleGroupFormClose function, add a helper:
+  const sanitizeForLogging = (data: any) => {
+    if (!data) return data;
+    const clean = { ...data };
+    // Remove any properties that might contain circular references
+    delete clean.window;
+    delete clean.document;
+    delete clean.event;
+    return clean;
+  };
+
+  // Then update the handleGroupFormClose function:
   const handleGroupFormClose = async (newGroupId?: number) => {
     setIsGroupModalOpen(false);
     setEditingGroup(null);
@@ -188,7 +200,19 @@ const Sidebar = memo(function Sidebar({
         mutateGroups(),
         mutateItems()
       ]);
+
+      // Log with sanitized data
+      debugStore.log('Group form closed with new group', {
+        type: 'GROUP_FORM_CLOSE',
+        groupId: newGroupId,
+        timestamp: new Date().toISOString()
+      });
+
+      // Select the new group
       onGroupSelect(newGroupId);
+    } else {
+      // Log simple close without data
+      debugStore.log('Group form closed without changes');
     }
   };
 

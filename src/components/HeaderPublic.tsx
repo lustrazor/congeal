@@ -103,7 +103,7 @@ const Header = () => {
   return (
     <header 
       className={`
-        relative border-b border-gray-400 dark:border-gray-700 
+        relative border-b border-slate-400 dark:border-gray-600
         shadow-sm transition-all duration-300
         ${settings?.headerEnabled ? 'h-80' : 'h-20'}
       `}
@@ -114,8 +114,10 @@ const Header = () => {
         className="absolute inset-0 w-full h-full object-cover"
       />
       
-      {/* Add overlay for both custom and default backgrounds */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+      {/* Overlay gradient Layer 1 - Soft, light, and large */}
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-slate-800/0 via-20% via-black/0 via-30% to-transparent" />
+      {/* Gradient Layer 2 - Denser and darker at the bottom */}
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-slate-900/0 via-15% via-black/0 via-15% to-transparent" />
 
        {/* Clock container - positioned at top */}
       <div className="absolute top-0 right-0 px-4 py-1 mt-2 mr-3 bg-black/70 dark:bg-black/70 rounded-md border border-gray-800 border-gray-800">
@@ -124,9 +126,8 @@ const Header = () => {
 
       <div className={`
         absolute bottom-0 left-0 right-0
-        container mx-auto px-6 h-11 
+        container mx-auto px-6 h-11 text-white
         flex items-baseline justify-between
-        text-white
       `}>
         <div className="flex items-baseline gap-6">
           <Link 
@@ -137,7 +138,7 @@ const Header = () => {
             </h1>
           </Link>
           {settings?.tagline && (
-            <span className="text-sm text-gray-400 dark:text-gray-400">
+            <span className="text-sm text-gray-300 dark:text-gray-300">
               {settings.tagline}
             </span>
           )}
@@ -147,7 +148,7 @@ const Header = () => {
           {/* Home Link */}
           <Link 
             href="/"
-            className="text-gray-400 hover:text-white transition-all transform hover:-translate-y-1 p-2 rounded-lg pb-2" >
+            className="text-gray-100/70 hover:text-white transition-all transform hover:-translate-y-1 p-2 rounded-lg pb-2" >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
             </svg>
@@ -156,7 +157,7 @@ const Header = () => {
           {/* Quotes Link */}
           <Link 
             href="/denied"
-            className="text-gray-400 hover:text-white transition-all transform hover:-translate-y-1 p-2 rounded-lg pb-0" >
+            className="text-gray-100/70 hover:text-white transition-all transform hover:-translate-y-1 p-2 rounded-lg pb-0" >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10.5h8m-8 4h8M9 17h6M3 8.2V14a2 2 0 002 2h14a2 2 0 002-2V8.2c0-1.12 0-1.68-.218-2.108a2 2 0 00-.874-.874C19.48 5 18.92 5 17.8 5H6.2c-1.12 0-1.68 0-2.108.218a2 2 0 00-.874.874C3 6.52 3 7.08 3 8.2z" />
             </svg>
@@ -166,7 +167,7 @@ const Header = () => {
           {/* Theme Toggle */}
           <button 
             onClick={handleThemeChange}
-            className="text-gray-400 hover:text-white transition-all transform hover:-translate-y-1 p-2 rounded-lg pb-2" >
+            className="text-gray-100/70 hover:text-white transition-all transform hover:-translate-y-1 p-2 rounded-lg pb-2" >
             {settings?.isDark ? (
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -181,7 +182,7 @@ const Header = () => {
           {/* Settings Link */}
           <Link 
             href="/login"
-            className="text-gray-400 hover:text-white transition-all transform hover:-translate-y-1 p-2 rounded-lg pb-1"
+            className="text-gray-100/70 hover:text-white transition-all transform hover:-translate-y-1 p-2 rounded-lg pb-1"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />

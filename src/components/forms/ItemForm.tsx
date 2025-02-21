@@ -143,6 +143,7 @@ const ItemForm: React.FC<ItemFormProps> = ({
       </div>
 
       {/* Description */}
+      {/* Adjust the height of the description input by changing h-32 */}
       <div>
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
           {t('description')}
@@ -150,7 +151,7 @@ const ItemForm: React.FC<ItemFormProps> = ({
         <textarea
           value={formData.description}
           onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-          className="mt-1 w-full px-3 py-2 
+          className="mt-1 w-full px-3 py-2 h-32 
             bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100
             rounded-md focus:ring-1 focus:ring-blue-500 border border-gray-300 
             shadow-sm focus:border-blue-500 focus:ring-blue-500 
@@ -212,12 +213,12 @@ const ItemForm: React.FC<ItemFormProps> = ({
             <div className="text-sm text-gray-500">
               {t('customIconHint')}{' '}
               <a 
-                href="https://boxicons.com/"
+                href="/icons"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-500 hover:underline"
               >
-                boxicons.com
+                {t('iconsPage')}
               </a>
             </div>
           </div>

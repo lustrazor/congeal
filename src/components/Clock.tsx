@@ -24,7 +24,7 @@ export default function Clock() {
   }
 
   return (
-    <div className="text-sm text-gray-500 dark:text-gray-500 font-mono">
+    <div className="text-sm text-slate-300/70 dark:text-slate-300/70 font-mono">
       {formatDate(time)}
     </div>
   )

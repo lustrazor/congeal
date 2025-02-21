@@ -330,12 +330,12 @@ const GroupForm: React.FC<GroupFormProps> = ({ onClose, editGroup, onItemsChange
             <div className="text-sm text-gray-500">
               {t('customIconHint')}{' '}
               <a 
-                href="https://boxicons.com/"
+                href="/icons"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-500 hover:underline"
               >
-                boxicons.com
+                {t('iconsPage')}
               </a>
             </div>
           </div>

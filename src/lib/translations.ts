@@ -16,7 +16,7 @@ export const translations = {
     item: 'Item',
     items: 'Items',
     createItem: 'Create Item',
-    editItem: 'Edit Item',
+    editItem: 'Update Item',
     deleteItem: 'Delete Item',
     
     // Groups
@@ -141,7 +141,7 @@ export const translations = {
     snapshotWarning: 'Note: Snapshots are stored in unencrypted form. While your database is encrypted, snapshots contain unencrypted data. Please store them securely and delete them when no longer needed.',
     openSourceNotice: 'This project is open source under the GPLv3 license.',
     viewSource: 'View the source code and license on GitHub.',
-    rightsReserved: 'All rights reserved except as otherwise noted in the GPLv3 license.',
+    rightsReserved: 'All rights reserved except as otherwise noted in the license.',
     restore: 'Restore',
     restoring: 'Restoring...',
     confirmRestore: 'Are you sure you want to restore from this snapshot? This will overwrite all current data.',
@@ -330,7 +330,8 @@ export const translations = {
     snapshotUploadFormatError: 'Invalid JSON format',
     snapshotUploadInvalidError: 'Invalid snapshot format',
     invalidIconName: 'Please check boxicons.com for available icons.',
-    customIconHint: 'You can enter the name of any solid boxicon from',
+    customIconHint: 'You can enter the name of any icon from the',
+    iconsPage: 'Icons Page',
 
     // Password validation messages
     passwordMinLength: 'Password must be at least 12 characters long',
@@ -377,6 +378,43 @@ export const translations = {
     passwordMust: 'Password must:',
     enterPasswordToRestore: 'Enter your password to restore snapshot',
     page: 'Page',
+
+    // Icons page
+    searchIcons: "Search icons...",
+    iconsFound: "{count} icons found",
+    iconInstructions: "💡 Click on an icon to copy its name to your clipboard. Use these names in the custom icon input when creating or editing Groups and Items.",
+    iconCopied: "Icon name copied to clipboard",
+
+    // Terms of Service
+    termsOfService: 'Terms of Service',
+    serviceDescription: 'Service Description',
+    serviceDescriptionText: 'Congeal is a subscription-based organization tool provided as a hosted service. Each subscriber receives an isolated instance of the application with their own secure, encrypted database.',
+    dataPrivacySecurity: 'Data Privacy & Security',
+    dataEncrypted: 'Your data is encrypted in our database and cannot be accessed by us',
+    httpsEncryption: 'All communications use end-to-end encryption over HTTPS',
+    noDataAccess: 'We do not have access to your data - encryption keys are derived from your password',
+    passwordResetNote: 'If you forget your password, you can reset it via email verification, but this will require re-encrypting your data with the new password',
+    snapshotWarning: 'Snapshots are not encrypted - store them securely and delete when not needed',
+    emailConfig: 'Email features require your own email provider configuration',
+    dataCollection: 'Data Collection',
+    anonymousStats: 'We collect anonymous usage statistics to improve the service (e.g., feature usage patterns)',
+    noDataMining: 'We do not read, mine, or analyze your actual data',
+    statsLimited: 'Usage statistics are limited to counts and metrics (e.g., number of items, groups, or notes)',
+    statsOptOut: 'You can opt out of anonymous statistics collection in settings',
+    subscription: 'Subscription',
+    subscriptionRequired: 'Access requires an active subscription',
+    subscriptionCosts: 'Subscription fees cover hosting, maintenance, and development costs',
+    serviceTermination: 'Service may be terminated for non-payment or violation of terms',
+    yourRights: 'Your Rights',
+    dataRights: 'You retain all rights to your data',
+    dataExport: 'You can export your data at any time',
+    dataDeletion: 'You can request complete deletion of your data and account',
+    optOut: 'You can opt out of any optional data collection',
+    warrantyLiability: 'Warranty & Liability',
+    warrantyText: 'The service is provided "as is". While we strive for 100% uptime and take extensive measures regarding data security, we cannot guarantee against service interruptions or security breaches. We are not liable for any damages arising from service use or interruption.',
+    acceptableUse: 'Acceptable Use',
+    acceptableUseText: 'You agree not to use the service for any illegal purposes or in ways that could damage, disable, overburden, or impair our servers or networks.',
+    termsFooter: 'By using Congeal, you agree to these terms of service. We reserve the right to modify these terms at any time. Continued use of the service constitutes acceptance of any modifications.',
   },
   
   ja: {
@@ -587,7 +625,8 @@ export const translations = {
     snapshotUploadFormatError: '無効なJSONフォーマットです',
     snapshotUploadInvalidError: '無効なスナップショット形式です',
     invalidIconName: '無効なアイコン名です。利用可能なアイコンはboxicons.comで確認してください。',
-    customIconHint: 'boxiconsの任意のソリッドアイコン名を入力できます：',
+    customIconHint: 'アイコンページから任意のアイコン名を入力できます:',
+    iconsPage: 'アイコンページ',
 
     // Password validation messages
     passwordMinLength: 'パスワードは12文字以上である必要があります',
@@ -672,6 +711,43 @@ export const translations = {
     snapshotCreated: 'スナップショットが作成されました',
     snapshotError: 'スナップショットの作成に失敗しました',
     snapshotRestored: 'スナップショットが復元されました',
+
+    // Icons page
+    searchIcons: "アイコンを検索...",
+    iconsFound: "{count}個のアイコンが見つかりました",
+    iconInstructions: "💡 アイコンをクリックすると名前がクリップボードにコピーされます。この名前をグループやアイテムの作成・編集時のカスタムアイコン入力で使用できます。",
+    iconCopied: "アイコン名をクリップボードにコピーしました",
+
+    // Terms of Service (日本語)
+    termsOfService: '利用規約',
+    serviceDescription: 'サービス概要',
+    serviceDescriptionText: 'Congealは、サブスクリプション型の組織管理ツールとして提供されるホステッドサービスです。各契約者は、独自の安全な暗号化データベースを持つ独立したインスタンスを利用できます。',
+    dataPrivacySecurity: 'データプライバシーとセキュリティ',
+    dataEncrypted: 'お客様のデータは当社のデータベースで暗号化され、当社もアクセスできません',
+    httpsEncryption: 'すべての通信はHTTPS経由でエンドツーエンド暗号化されています',
+    noDataAccess: '暗号化キーはお客様のパスワードから生成されるため、当社はデータにアクセスできません',
+    passwordResetNote: 'パスワードを忘れた場合、メール認証でリセットできますが、新しいパスワードでデータを再暗号化する必要があります',
+    snapshotWarning: 'スナップショットは暗号化されていません - 安全に保管し、不要になったら削除してください',
+    emailConfig: 'メール機能には独自のメールプロバイダー設定が必要です',
+    dataCollection: 'データ収集',
+    anonymousStats: 'サービス改善のため、匿名の使用統計を収集しています（機能の使用パターンなど）',
+    noDataMining: 'お客様の実際のデータの読み取り、マイニング、分析は行いません',
+    statsLimited: '使用統計は数値と指標のみに限定されています（アイテム数、グループ数、メモ数など）',
+    statsOptOut: '設定で匿名統計の収集をオプトアウトできます',
+    subscription: 'サブスクリプション',
+    subscriptionRequired: 'アクセスにはアクティブなサブスクリプションが必要です',
+    subscriptionCosts: 'サブスクリプション料金はホスティング、メンテナンス、開発コストに充てられます',
+    serviceTermination: '支払い不履行または利用規約違反の場合、サービスを終了することがあります',
+    yourRights: 'お客様の権利',
+    dataRights: 'データに関するすべての権利はお客様に帰属します',
+    dataExport: 'いつでもデータをエクスポートできます',
+    dataDeletion: 'データとアカウントの完全削除を要求できます',
+    optOut: 'オプションのデータ収集をオプトアウトできます',
+    warrantyLiability: '保証と責任',
+    warrantyText: 'サービスは「現状のまま」提供されます。100%の稼働時間とデータセキュリティを目指していますが、サービスの中断やセキュリティ侵害に対する保証はできません。サービスの使用または中断に起因する損害について、当社は責任を負いません。',
+    acceptableUse: '利用規約',
+    acceptableUseText: '違法な目的、または当社のサーバーやネットワークに損害を与える、無効化する、過負荷をかける、または障害を与える可能性のある方法でサービスを使用することはできません。',
+    termsFooter: 'Congealを使用することにより、この利用規約に同意したものとみなされます。当社は、これらの規約をいつでも変更する権利を有します。サービスの継続使用は、変更の受諾を意味します。',
   }
 } as const
 

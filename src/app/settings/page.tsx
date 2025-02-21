@@ -1702,17 +1702,14 @@ export default function SettingsPage() {
                         {t('about')}
                       </h2>
                       <p className="text-gray-600 dark:text-gray-400">
-                        Congeal, {t('version')} 1.0.25
+                        Congeal, {t('version')} 1.0.26
                       </p>
                       <p className="text-gray-600 dark:text-gray-400">
                         {t('developers')}: <a href="/demo" className="text-blue-500 hover:text-blue-600">{t('sampleUI')} →</a>
                       </p>
                       <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                        <p className="text-gray-600 dark:text-gray-400">
-                          {t('openSourceNotice')}
-                        </p>
                         <p className="mt-2 text-sm text-gray-500 dark:text-gray-500">
-                          {t('rightsReserved')}
+                          {t('rightsReserved')} <a href="/terms" className="text-blue-500 hover:text-blue-600">{t('termsOfService')}</a>
                         </p>
                       </div>
                     </div>
